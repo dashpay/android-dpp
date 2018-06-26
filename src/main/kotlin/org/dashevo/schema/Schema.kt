@@ -9,5 +9,6 @@ object Schema {
     val Create = org.dashevo.schema.Create
     val Object = org.dashevo.schema.Object
     val Hash = org.dashevo.schema.Hash
+    val Validate = org.dashevo.schema.Validate
 
 }

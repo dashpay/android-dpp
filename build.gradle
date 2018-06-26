@@ -9,6 +9,12 @@ buildscript {
     }
 }
 
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+
 group 'org.dashevo'
 version '1.0-SNAPSHOT'
 
@@ -20,7 +26,9 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     implementation 'org.json:json:20180130'
+    implementation 'com.github.everit-org.json-schema:org.everit.json.schema:1.9.1'
 }
 
 compileKotlin {
