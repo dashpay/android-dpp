@@ -1,10 +1,10 @@
 package org.dashevo.schema
 
+import org.json.JSONObject
+
 object Schema {
 
-    object System {
-        val pver: String = ""
-    }
+    val system: JSONObject = JSONObject(hashMapOf("pver" to ""))
 
     val Create = org.dashevo.schema.Create
     val Object = org.dashevo.schema.Object

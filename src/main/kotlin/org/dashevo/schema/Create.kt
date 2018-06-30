@@ -19,7 +19,7 @@ object Create {
     fun createTsHeaderInstance(pakid: String, uid: String, ptsid: String?): HashMap<String, Any> {
         val obj = TsHeader(uid, ptsid ?: "", pakid)
         val tsHeader: HashMap<String, Any> = hashMapOf(TSHEADER to obj)
-        Object.setID(tsHeader)
+        //Object.setID(tsHeader)
         return tsHeader
     }
 
@@ -38,7 +38,7 @@ object Create {
     fun createDapContract(dapSchema: JSONObject): HashMap<String, Any> {
         val obj = DapContract(dapSchema.getString("title"), dapSchema)
         val dap: HashMap<String, Any> = hashMapOf(DAPCONTRACT to obj)
-        Object.setID(dap)
+        //Object.setID(dap)
         return dap
     }
 
