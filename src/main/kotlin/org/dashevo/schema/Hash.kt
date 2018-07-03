@@ -14,11 +14,11 @@ object Hash {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun tsheader(obj: JSONObject): String {
+    fun stheader(obj: JSONObject): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun tspacket(obj: JSONObject, dapSchema: JSONObject): String {
+    fun stpacket(obj: JSONObject, dapSchema: JSONObject): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

@@ -2,7 +2,7 @@ package org.dashevo.schema.model
 
 import org.json.JSONObject
 
-data class TsPacket(
+data class STPacket(
         val pver: Int,
         var dapobjects: List<JSONObject>,
         val dapobjmerkleroot: String,

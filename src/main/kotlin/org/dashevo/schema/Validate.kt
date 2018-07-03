@@ -2,7 +2,7 @@ package org.dashevo.schema
 
 import org.apache.commons.collections.CollectionUtils
 import org.dashevo.schema.model.Error
-import org.dashevo.schema.model.TsPacket
+import org.dashevo.schema.model.STPacket
 import org.dashevo.schema.model.ValidationResult
 import org.dashevo.schema.util.ErrorUtils
 import org.dashevo.schema.util.ValidationResultUtils
@@ -56,7 +56,7 @@ object Validate {
             try {
                 validator.validate(clonedObj)
             } catch (e: ValidationException) {
-                //TODO: Covert ValidationException to Error or List of Error objects
+                //TODO: Convert ValidationException to Error or List of Error objects
                 e.allMessages.forEach { errorMessage ->
                     validateErrors.add(ErrorUtils.newError(errorMessage))
                 }
@@ -105,8 +105,8 @@ object Validate {
      * @param obj Schema object instance
      * @returns {{valid, validateErrors}}
      */
-    fun validateTsHeader(obj: Any) : ValidationResult {
-        return validateSysObject(obj, "tsheader")
+    fun validateSTHeader(obj: Any) : ValidationResult {
+        return validateSysObject(obj, "stheader")
     }
 
     /**
@@ -116,13 +116,13 @@ object Validate {
      * @param dapSchema DapSchema (optional)
      * @returns {{valid, validateErrors}}
      */
-    fun validateTsPacket(obj: HashMap<String, TsPacket>, dapSchema: JSONObject? = null): ValidationResult {
+    fun validateSTPacket(obj: HashMap<String, STPacket>, dapSchema: JSONObject? = null): ValidationResult {
         //TODO (?) is it needed in Kotlin?
         // deep extract a schema object from the object
         val outerObj = org.dashevo.schema.Schema.Object.fromObject(obj, dapSchema)
 
         // if this is a dapobjects packet...
-        if (obj[Object.TSPACKET] != null) {
+        if (obj[Object.STPACKET] != null) {
             // require dapSchema
             if (dapSchema == null) {
                 return ValidationResultUtils.result(ErrorUtils.newError("missing dapschema"))
@@ -131,21 +131,21 @@ object Validate {
             // temporarily remove the inner dapobjects,
             // so we can validate the containing packet using the System Schema, and the
             // contained Dap objects using the dapSchema.
-            ((outerObj[Object.TSPACKET]) as TsPacket).dapobjects = listOf(JSONObject())
+            ((outerObj[Object.STPACKET]) as STPacket).dapobjects = listOf(JSONObject())
 
             // validate the empty packet as a sys object...
-            val outerValid = validateSysObject(outerObj, Object.TSPACKET)
+            val outerValid = validateSysObject(outerObj, Object.STPACKET)
 
             if (CollectionUtils.isNotEmpty(outerValid.validateErrors)) {
                 return ValidationResultUtils.result(outerValid.validateErrors!!)
             }
 
             //...then validate the contents as dabobjects
-            return validateTsPacketObjects(obj[Object.TSPACKET]!!.dapobjects, dapSchema)
+            return validateSTPacketObjects(obj[Object.STPACKET]!!.dapobjects, dapSchema)
         }
 
         // not a dapobjects packet so validate as a sysobject
-        return validateSysObject(obj, Object.TSPACKET)
+        return validateSysObject(obj, Object.STPACKET)
 
     }
 
@@ -156,7 +156,7 @@ object Validate {
      * @param dapSchema DapSchema
      * @returns {*}
      */
-    fun validateTsPacketObjects(dapobjects: List<JSONObject>, dapSchema: JSONObject): ValidationResult {
+    fun validateSTPacketObjects(dapobjects: List<JSONObject>, dapSchema: JSONObject): ValidationResult {
         dapobjects.forEach { dapObj ->
             val objValid = validateDapObject(dapObj, dapSchema)
             if (!objValid.valid) {
@@ -244,7 +244,7 @@ object Validate {
             return false
         }
 
-        val invalid = Regex("[^A-Za-z0-9._]").containsMatchIn(uname)
+        val invalid = Regex("[^a-z0-9._]").containsMatchIn(uname)
 
         return !invalid
     }

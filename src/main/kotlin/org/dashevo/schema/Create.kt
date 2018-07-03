@@ -6,8 +6,8 @@ import org.json.JSONObject
 object Create {
 
     private const val DAPCONTRACT = "dapcontract"
-    private const val TSHEADER = "tsheader"
-    private const val TSPACKET = "tspacket"
+    private const val STHEADER = "stheader"
+    private const val STPACKET = "stpacket"
     private const val BLOCKCHAINUSER = "blockchainuser"
 
     /**
@@ -16,19 +16,20 @@ object Create {
      * @param uid Blockchain User id
      * @param ptsid Previous State Transition id
      */
-    fun createTsHeaderInstance(pakid: String, uid: String, ptsid: String?): HashMap<String, Any> {
-        val obj = TsHeader(uid, ptsid ?: "", pakid)
-        val tsHeader: HashMap<String, Any> = hashMapOf(TSHEADER to obj)
-        //Object.setID(tsHeader)
-        return tsHeader
+    fun createSTHeaderInstance(pakid: String, uid: String, ptsid: String?): HashMap<String, Any> {
+        val obj = STHeader(uid, ptsid ?: "", pakid)
+        val stHeader: HashMap<String, Any> = hashMapOf(STHEADER to obj)
+        //Object.setID(stHeader)
+        return stHeader
     }
 
     /**
      * Create an empty State Transition Packet instance
      */
-    fun createTsPacketInstance(): HashMap<String, Any> {
+    fun createSTPacketInstance(): HashMap<String, Any> {
         val obj = DapBaseInstance()
-        return hashMapOf(TSPACKET to obj)
+        //TODO: createBaseInstance('stpacket')
+        return hashMapOf(STPACKET to obj)
     }
 
     /**

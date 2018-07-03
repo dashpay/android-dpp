@@ -8,7 +8,7 @@ import org.json.JSONObject
 
 object Object {
 
-    const val TSPACKET = "tspacket"
+    const val STPACKET = "stpacket"
 
     fun setID(obj: JSONObject, dapSchema: JSONObject) {
         setMeta(obj, "id", toHash(obj, dapSchema))
@@ -113,8 +113,8 @@ object Object {
         return when (obj.keys().next()) {
             "subtx" -> Schema.Hash.subtx(obj as SubTx) //TODO: Parse JSON to subTx?
             "blockchainuser" -> Schema.Hash.blockchainuser(obj)
-            "tsheader" -> Schema.Hash.tsheader(obj)
-            "tspacket" -> Schema.Hash.tspacket(obj, dapSchema)
+            "stheader" -> Schema.Hash.stheader(obj)
+            "stpacket" -> Schema.Hash.stpacket(obj, dapSchema)
             "dapcontract" -> Schema.Hash.dapcontract(obj)
             "dapschema" -> Schema.Hash.dapschema(obj);
             else -> Schema.Hash.dapobject(obj, dapSchema)

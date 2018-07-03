@@ -1,6 +1,6 @@
 package org.dashevo.schema.model
 
-data class TsHeader(
+data class STHeader(
         val uid: String,
         val ptsid: String,
         val pakid: String,
