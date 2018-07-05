@@ -1,22 +1,35 @@
 package org.dashevo.schema
 
-import org.dashevo.schema.model.Error
 import org.dashevo.schema.model.SubTx
-import org.dashevo.schema.util.ErrorUtils
-import org.everit.json.schema.ValidationException
+import org.dashevo.schema.util.JsonSchemaUtils
 import org.json.JSONObject
 
 object Object {
 
+    const val ACT = "act"
+    const val ALL_OF = "allOf"
+    const val DAPOBJECTS = "dapobjects"
+    const val INDEX = "index"
+    const val IS_PROFILE = "isprofile"
+    const val OBJECTS = "objects"
+    const val OBJTYPE = "objtype"
+    const val PROPERTIES = "properties"
+    const val REF = "\$ref"
     const val STPACKET = "stpacket"
+    const val STHEADER = "stheader"
+    const val TITLE = "title"
+    const val TYPE = "type"
+    const val USER_ID = "userId"
+    const val UID = "uid"
+    const val S_SCHEMA = "\$schema"
 
     fun setID(obj: JSONObject, dapSchema: JSONObject) {
         setMeta(obj, "id", toHash(obj, dapSchema))
     }
 
-    fun <T> fromObject(obj: T, dapSchema: JSONObject?): HashMap<String, Any?> {
+    fun <T> fromObject(obj: T, dapSchema: JSONObject?): JSONObject {
+        return JSONObject()
         TODO("not implemented")
-        return hashMapOf()
     }
 
     /**
@@ -73,34 +86,13 @@ object Object {
      * @returns {*}
      */
     fun fromObject(obj: JSONObject, dapSchema: JSONObject?): JSONObject? {
-        //TODO: implement Schema.util.object.toClone
-        // deep clone to dereference (we only clone props not methods)
-        // val objCopy = Schema.util.`object`.toClone(obj)
-        val clonedObj = JSONObject(obj.toString())
-
-        val validators = arrayListOf(Validate.schemaValidator)
-        if (dapSchema != null) {
-            validators.add(Validate.createValidator(dapSchema))
+        if (obj == null) {
+            return null
         }
 
-        val validateErrors = arrayListOf<Error>()
-        validators.forEach { validator ->
-            try {
-                validator.validate(clonedObj)
-            } catch (e: ValidationException) {
-                e.allMessages.forEach { errorMessage ->
-                    validateErrors.add(ErrorUtils.newError(errorMessage))
-                }
-            }
-        }
+        val objCopy = JSONObject(obj)
 
-        //TODO Improve, does it work to add Error instances just like this?
-        if (validateErrors.isNotEmpty()) {
-            clonedObj.put("errors", validateErrors)
-        }
-
-        //TODO remove non-Schema properties
-        return clonedObj
+        return JsonSchemaUtils.extractSchemaObject(objCopy, dapSchema)
     }
 
     /**

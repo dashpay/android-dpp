@@ -1,14 +1,14 @@
 package org.dashevo.schema
 
-import org.apache.commons.collections.CollectionUtils
-import org.dashevo.schema.model.Error
+import org.dashevo.schema.Object.DAPOBJECTS
+import org.dashevo.schema.Object.STPACKET
+import org.dashevo.schema.model.Result
+import org.dashevo.schema.model.Rules
 import org.dashevo.schema.model.STPacket
-import org.dashevo.schema.model.ValidationResult
-import org.dashevo.schema.util.ErrorUtils
-import org.dashevo.schema.util.ValidationResultUtils
+import org.dashevo.schema.util.JsonSchemaUtils
 import org.everit.json.schema.Schema
-import org.everit.json.schema.ValidationException
 import org.everit.json.schema.loader.SchemaLoader
+import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 
@@ -34,36 +34,14 @@ object Validate {
      * @param dapSchema Dap Schema definition (optional)
      * @returns {*}
      */
-    private fun validateCore(obj: Any?, dapSchema: JSONObject? = null) : ValidationResult {
+    private fun validateCore(obj: Any?, dapSchema: JSONObject? = null) : Result {
         if (obj == null) {
-            return ErrorUtils.result("object is null")
+            return Result(false)
         }
 
         val clonedObj = org.dashevo.schema.Schema.Object.fromObject(obj, dapSchema)
 
-        if (clonedObj.containsKey(Validate.ERRORS)) {
-            //TODO (?) as List<Error> probably is not going to work
-            return ValidationResult(false, clonedObj[Validate.ERRORS] as List<Error>)
-        }
-
-        val validators = arrayListOf(Validate.schemaValidator)
-        if (dapSchema != null) {
-            validators.add(Validate.createValidator(dapSchema))
-        }
-
-        val validateErrors = arrayListOf<Error>()
-        validators.forEach { validator ->
-            try {
-                validator.validate(clonedObj)
-            } catch (e: ValidationException) {
-                //TODO: Convert ValidationException to Error or List of Error objects
-                e.allMessages.forEach { errorMessage ->
-                    validateErrors.add(ErrorUtils.newError(errorMessage))
-                }
-            }
-        }
-
-        return ValidationResultUtils.result(validateErrors)
+        return JsonSchemaUtils.validateSchemaObject(clonedObj, dapSchema)
     }
 
     /**
@@ -73,10 +51,10 @@ object Validate {
      * @returns {*}
      * @private
      */
-    private fun validateSysObject(sysObj: Any, subSchemaName: String?): ValidationResult {
+    private fun validateSysObject(sysObj: Any, subSchemaName: String?): Result {
         if (subSchemaName != null) {
             if (sysObj.javaClass.kotlin.members.any { it.name == subSchemaName }) {
-                return ValidationResultUtils.result(ErrorUtils.newError("Invalid obj type"))
+                return Result(Rules.DAPOBJECT_MISSING_SUBSCHEMA.code, subSchemaName)
             }
         }
         return validateCore(sysObj)
@@ -87,7 +65,7 @@ object Validate {
      * @param obj Schema object instance
      * @returns {{valid, validateErrors}}
      */
-    fun validateSubTx(obj: Any): ValidationResult {
+    fun validateSubTx(obj: Any): Result {
         return validateSysObject(obj, "subtx")
     }
 
@@ -96,7 +74,7 @@ object Validate {
      * @param obj Schema object instance
      * @returns {{valid, validateErrors}}
      */
-    fun validateBlockchainUser(obj: Any): ValidationResult {
+    fun validateBlockchainUser(obj: Any): Result {
         return validateSysObject(obj, "blockchainuser")
     }
 
@@ -105,7 +83,7 @@ object Validate {
      * @param obj Schema object instance
      * @returns {{valid, validateErrors}}
      */
-    fun validateSTHeader(obj: Any) : ValidationResult {
+    fun validateSTHeader(obj: Any) : Result {
         return validateSysObject(obj, "stheader")
     }
 
@@ -116,32 +94,35 @@ object Validate {
      * @param dapSchema DapSchema (optional)
      * @returns {{valid, validateErrors}}
      */
-    fun validateSTPacket(obj: HashMap<String, STPacket>, dapSchema: JSONObject? = null): ValidationResult {
+    fun validateSTPacket(obj: JSONObject, dapSchema: JSONObject? = null): Result {
         //TODO (?) is it needed in Kotlin?
         // deep extract a schema object from the object
         val outerObj = org.dashevo.schema.Schema.Object.fromObject(obj, dapSchema)
 
         // if this is a dapobjects packet...
-        if (obj[Object.STPACKET] != null) {
+        val objSTPacket = obj.getJSONObject(STPACKET)
+        val objDapObjects = objSTPacket?.getJSONArray(DAPOBJECTS)
+
+        if (objDapObjects != null && outerObj != null) {
             // require dapSchema
             if (dapSchema == null) {
-                return ValidationResultUtils.result(ErrorUtils.newError("missing dapschema"))
+                return Result(Rules.DAPOBJECT_MISSING_SUBSCHEMA.code) //TODO: (Confirm rule)
             }
 
             // temporarily remove the inner dapobjects,
             // so we can validate the containing packet using the System Schema, and the
             // contained Dap objects using the dapSchema.
-            ((outerObj[Object.STPACKET]) as STPacket).dapobjects = listOf(JSONObject())
+            outerObj.getJSONObject(DAPOBJECTS).put(DAPOBJECTS, JSONArray())
 
             // validate the empty packet as a sys object...
-            val outerValid = validateSysObject(outerObj, Object.STPACKET)
+            val outerValid = validateSysObject(outerObj, STPACKET)
 
-            if (CollectionUtils.isNotEmpty(outerValid.validateErrors)) {
-                return ValidationResultUtils.result(outerValid.validateErrors!!)
+            if (!outerValid.valid) {
+                return outerValid
             }
 
             //...then validate the contents as dabobjects
-            return validateSTPacketObjects(obj[Object.STPACKET]!!.dapobjects, dapSchema)
+            return validateSTPacketObjects(objDapObjects, dapSchema)
         }
 
         // not a dapobjects packet so validate as a sysobject
@@ -156,14 +137,15 @@ object Validate {
      * @param dapSchema DapSchema
      * @returns {*}
      */
-    fun validateSTPacketObjects(dapobjects: List<JSONObject>, dapSchema: JSONObject): ValidationResult {
-        dapobjects.forEach { dapObj ->
+    fun validateSTPacketObjects(dapobjects: JSONArray, dapSchema: JSONObject): Result {
+        for (i in 0..dapobjects.length()) {
+            val dapObj = dapobjects.getJSONObject(i)
             val objValid = validateDapObject(dapObj, dapSchema)
             if (!objValid.valid) {
-                return ValidationResultUtils.result(objValid.validateErrors!!)
+                return objValid
             }
         }
-        return ValidationResult(true)
+        return Result()
     }
 
     /**
@@ -171,49 +153,8 @@ object Validate {
      * @param obj Schema object instance
      * @returns {{valid, validateErrors}}
      */
-    fun validateDapContract(obj: Any): ValidationResult {
+    fun validateDapContract(obj: Any): Result {
         return validateSysObject(obj, "dapcontract")
-    }
-
-    /**
-     * Validate a DapSchema instance
-     * @param dapSchema {object} DapSchema
-     * @returns {*}
-     */
-    fun validateDapSchema(dapSchema: JSONObject): ValidationResult {
-        // JSON Meta-Schema validation
-        try {
-            schemaValidator.validate(dapSchema)
-        } catch (e: ValidationException) {
-            return ValidationResultUtils.result(ErrorUtils.newError(e.errorMessage, "metaschema"))
-        }
-        // TODO: Dash-specific Schema validation
-        /*
-        - confirm schema is JSON draft compliant
-
-        - confirm no reservered property names
-
-        - ensure property names lower case?
-
-        - require root schema "title" value?
-
-        - confirm ALL schema properties inherit from dapcontract objects
-          (otherwise dapcontract data isn't limited to system spec)
-
-        - require additionalProperties = false
-
-        - require oneOf constraint in root
-
-        - require valid $id
-
-        - prevent code injection
-
-        - validate property names using propertyNames schema (e.g. regex to limit charset used)
-
-        - $schema value *must* be equal $schema value in the system schema (so system schema controls the JSON schema version
-         */
-
-        return ValidationResult(true)
     }
 
     /**
@@ -222,12 +163,19 @@ object Validate {
      * @param dapSchema DapSchema
      * @returns {*}
      */
-    private fun validateDapObject(dapObj: JSONObject, dapSchema: JSONObject): ValidationResult {
+    private fun validateDapObject(dapObj: JSONObject, dapSchema: JSONObject): Result {
         if (dapObj[OBJTYPE] !is String) {
-            return ErrorUtils.result("missing dapobject type keyword")
+            return Result(Rules.DAPOBJECT_MISSING_OBJTYPE.code, "objtype",
+                    null, dapSchema.getString("title"))
         }
 
-        dapSchema[dapObj.getString(OBJTYPE)] ?: return ErrorUtils.result("invalid object type")
+        val subSchema = Definition.getDapSubSchema(dapObj, dapSchema)
+
+        if (subSchema != null) {
+            return Result(Rules.DAPOBJECT_UNKNOWN_OBJTYPE.code, "objtype",
+                    null, dapSchema.getString("title"))
+        }
+
         return validateCore(dapObj, dapSchema)
     }
 
