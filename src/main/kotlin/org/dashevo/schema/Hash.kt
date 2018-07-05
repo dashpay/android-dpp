@@ -1,11 +1,10 @@
 package org.dashevo.schema
 
-import org.dashevo.schema.model.SubTx
 import org.json.JSONObject
 
 object Hash {
 
-    fun subtx(subtx: SubTx): String {
+    fun subtx(subtx: JSONObject): String {
         //TODO
         return ""
     }

@@ -23,13 +23,8 @@ object Object {
     const val UID = "uid"
     const val S_SCHEMA = "\$schema"
 
-    fun setID(obj: JSONObject, dapSchema: JSONObject) {
+    fun setID(obj: JSONObject, dapSchema: JSONObject? = null) {
         setMeta(obj, "id", toHash(obj, dapSchema))
-    }
-
-    fun <T> fromObject(obj: T, dapSchema: JSONObject?): JSONObject {
-        return JSONObject()
-        TODO("not implemented")
     }
 
     /**
@@ -86,12 +81,7 @@ object Object {
      * @returns {*}
      */
     fun fromObject(obj: JSONObject, dapSchema: JSONObject?): JSONObject? {
-        if (obj == null) {
-            return null
-        }
-
         val objCopy = JSONObject(obj)
-
         return JsonSchemaUtils.extractSchemaObject(objCopy, dapSchema)
     }
 
@@ -101,15 +91,15 @@ object Object {
      * @param dapSchema {object} DapSchema
      * @returns {*}
      */
-    fun toHash(obj: JSONObject, dapSchema: JSONObject): String {
+    fun toHash(obj: JSONObject, dapSchema: JSONObject?): String {
         return when (obj.keys().next()) {
-            "subtx" -> Schema.Hash.subtx(obj as SubTx) //TODO: Parse JSON to subTx?
+            "subtx" -> Schema.Hash.subtx(obj)
             "blockchainuser" -> Schema.Hash.blockchainuser(obj)
             "stheader" -> Schema.Hash.stheader(obj)
-            "stpacket" -> Schema.Hash.stpacket(obj, dapSchema)
+            "stpacket" -> Schema.Hash.stpacket(obj, dapSchema!!)
             "dapcontract" -> Schema.Hash.dapcontract(obj)
             "dapschema" -> Schema.Hash.dapschema(obj);
-            else -> Schema.Hash.dapobject(obj, dapSchema)
+            else -> Schema.Hash.dapobject(obj, dapSchema!!)
         }
     }
 
