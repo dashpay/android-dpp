@@ -1,6 +1,5 @@
 package org.dashevo.schema
 
-import org.dashevo.schema.model.SubTx
 import org.dashevo.schema.util.JsonSchemaUtils
 import org.json.JSONObject
 

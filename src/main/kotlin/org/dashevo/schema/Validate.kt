@@ -4,13 +4,11 @@ import org.dashevo.schema.Object.DAPOBJECTS
 import org.dashevo.schema.Object.STPACKET
 import org.dashevo.schema.model.Result
 import org.dashevo.schema.model.Rules
-import org.dashevo.schema.model.STPacket
 import org.dashevo.schema.util.JsonSchemaUtils
 import org.everit.json.schema.Schema
 import org.everit.json.schema.loader.SchemaLoader
 import org.json.JSONArray
 import org.json.JSONObject
-import java.util.*
 
 
 object Validate {
@@ -34,14 +32,13 @@ object Validate {
      * @param dapSchema Dap Schema definition (optional)
      * @returns {*}
      */
-    private fun validateCore(obj: Any?, dapSchema: JSONObject? = null) : Result {
+    private fun validateCore(obj: JSONObject?, dapSchema: JSONObject? = null) : Result {
         if (obj == null) {
             return Result(false)
         }
 
         val clonedObj = org.dashevo.schema.Schema.Object.fromObject(obj, dapSchema)
-
-        return JsonSchemaUtils.validateSchemaObject(clonedObj, dapSchema)
+        return JsonSchemaUtils.validateSchemaObject(clonedObj!!, dapSchema)
     }
 
     /**
@@ -51,7 +48,7 @@ object Validate {
      * @returns {*}
      * @private
      */
-    private fun validateSysObject(sysObj: Any, subSchemaName: String?): Result {
+    private fun validateSysObject(sysObj: JSONObject, subSchemaName: String?): Result {
         if (subSchemaName != null) {
             if (sysObj.javaClass.kotlin.members.any { it.name == subSchemaName }) {
                 return Result(Rules.DAPOBJECT_MISSING_SUBSCHEMA.code, subSchemaName)
@@ -65,7 +62,7 @@ object Validate {
      * @param obj Schema object instance
      * @returns {{valid, validateErrors}}
      */
-    fun validateSubTx(obj: Any): Result {
+    fun validateSubTx(obj: JSONObject): Result {
         return validateSysObject(obj, "subtx")
     }
 
@@ -74,7 +71,7 @@ object Validate {
      * @param obj Schema object instance
      * @returns {{valid, validateErrors}}
      */
-    fun validateBlockchainUser(obj: Any): Result {
+    fun validateBlockchainUser(obj: JSONObject): Result {
         return validateSysObject(obj, "blockchainuser")
     }
 
@@ -83,7 +80,7 @@ object Validate {
      * @param obj Schema object instance
      * @returns {{valid, validateErrors}}
      */
-    fun validateSTHeader(obj: Any) : Result {
+    fun validateSTHeader(obj: JSONObject) : Result {
         return validateSysObject(obj, "stheader")
     }
 
@@ -95,7 +92,6 @@ object Validate {
      * @returns {{valid, validateErrors}}
      */
     fun validateSTPacket(obj: JSONObject, dapSchema: JSONObject? = null): Result {
-        //TODO (?) is it needed in Kotlin?
         // deep extract a schema object from the object
         val outerObj = org.dashevo.schema.Schema.Object.fromObject(obj, dapSchema)
 
@@ -106,7 +102,8 @@ object Validate {
         if (objDapObjects != null && outerObj != null) {
             // require dapSchema
             if (dapSchema == null) {
-                return Result(Rules.DAPOBJECT_MISSING_SUBSCHEMA.code) //TODO: (Confirm rule)
+                //TODO: * (Confirm rule)
+                return Result(Rules.DAPOBJECT_MISSING_SUBSCHEMA.code)
             }
 
             // temporarily remove the inner dapobjects,
@@ -153,7 +150,7 @@ object Validate {
      * @param obj Schema object instance
      * @returns {{valid, validateErrors}}
      */
-    fun validateDapContract(obj: Any): Result {
+    fun validateDapContract(obj: JSONObject): Result {
         return validateSysObject(obj, "dapcontract")
     }
 

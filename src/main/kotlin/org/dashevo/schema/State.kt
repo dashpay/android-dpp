@@ -45,7 +45,7 @@ object State {
                 return relationsValid
             }
         } else {
-            // TODO: verify dapcontract
+            // TODO: * verify dapcontract
         }
 
         return Result()
@@ -86,11 +86,10 @@ object State {
      * @returns {ValidationResult}
      */
     private fun validateIndexes(stp: JSONObject, dapSpace: JSONObject?): Result {
-        // TODO: recursively check updated state as packet objects are applied
+        // TODO: * recursively check updated state as packet objects are applied
         var maxIdx = dapSpace?.getInt("maxidx") ?: 0
 
-        //TODO: check https://github.com/dashevo/dash-schema/issues/31 before moving everything inside the if
-        //TODO: or early returning the result
+        //TODO: * check https://github.com/dashevo/dash-schema/issues/31 before moving everything inside the if or early returning the result
 
         val stPacket = stp.getJSONObject(STPACKET)
         val dapObjects = stPacket.getJSONArray(DAPOBJECTS)

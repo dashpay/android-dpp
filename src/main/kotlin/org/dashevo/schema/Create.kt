@@ -11,7 +11,7 @@ object Create {
     private const val BLOCKCHAINUSER = "blockchainuser"
     private const val PVER = "pver"
 
-    fun createBaseInstance(keyword: String): JSONObject {
+    private fun createBaseInstance(keyword: String): JSONObject {
         val subSchema = JSONObject()
         subSchema.put(keyword, JSONObject(hashMapOf(
                 PVER to Schema.system.get(PVER)

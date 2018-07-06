@@ -1,36 +1,52 @@
 package org.dashevo.schema
 
+import org.dashevo.schema.Object.DAPOBJECTS
+import org.dashevo.schema.Object.STPACKET
+import org.dashevo.schema.util.HashUtils
 import org.json.JSONObject
 
 object Hash {
 
     fun subtx(subtx: JSONObject): String {
-        //TODO
-        return ""
+        return HashUtils.toHash(subtx)
     }
 
     fun blockchainuser(obj: JSONObject): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return HashUtils.toHash(obj)
     }
 
     fun stheader(obj: JSONObject): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return HashUtils.toHash(obj)
     }
 
     fun stpacket(obj: JSONObject, dapSchema: JSONObject): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val objList = arrayListOf(obj)
+
+        //TODO: * Different from JS Lib, however, js lib seems to be hashing string chars instead of properties: needs verification.
+        val stPacket = obj.getJSONObject(STPACKET)
+        if (stPacket.has(DAPOBJECTS)) {
+            val dapObjects = stPacket.getJSONArray(DAPOBJECTS)
+            for (i in 0..dapObjects.length()) {
+                val dapObject = Object.fromObject(dapObjects.getJSONObject(i), dapSchema)
+                if (dapObject != null) {
+                    objList.add(dapObject)
+                }
+            }
+        }
+
+        return HashUtils.toHash(objList)
     }
 
     fun dapcontract(obj: JSONObject): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return HashUtils.toHash(obj)
     }
 
     fun dapschema(obj: JSONObject): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return HashUtils.toHash(obj)
     }
 
     fun dapobject(obj: JSONObject, dapSchema: JSONObject): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return HashUtils.toHash(Object.fromObject(obj, dapSchema)!!)
     }
 
 }

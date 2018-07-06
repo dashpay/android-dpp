@@ -45,7 +45,7 @@ object HashUtils {
             size = Math.floor(((size + 1) / 2).toDouble()).toInt()
         }
 
-        //TODO: (?) What to do when data is smaller than 32 bytes
+        //TODO: * What to do when data is smaller than 32 bytes
         if (tree.last().size < 32) {
             val byteArray = ByteArray(32)
             var i = 0
@@ -56,6 +56,14 @@ object HashUtils {
         }
 
         return Sha256Hash.wrapReversed(tree.last()).toString()
+    }
+
+    fun toHash(objList: List<JSONObject>): String {
+        val bos = ByteArrayOutputStream()
+        objList.forEach {
+            bos.write(Sha256Hash.wrap(toHash(it)).bytes)
+        }
+        return Sha256Hash.hashTwice(bos.toByteArray()).toString()
     }
 
 }
