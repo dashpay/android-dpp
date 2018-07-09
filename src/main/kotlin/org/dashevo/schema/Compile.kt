@@ -1,6 +1,7 @@
 package org.dashevo.schema
 
 import org.dashevo.schema.Object.ALL_OF
+import org.dashevo.schema.Object.DEFINITIONS
 import org.dashevo.schema.Object.PROPERTIES
 import org.dashevo.schema.Object.REF
 import org.dashevo.schema.Object.S_SCHEMA
@@ -29,7 +30,7 @@ object Compile {
         }
 
         //has title
-        if (dapSchema.get(TITLE) !is String || dapSchema.getString(TITLE).length !in 3..24) {
+        if (!dapSchema.has(TITLE) || dapSchema.get(TITLE) !is String || dapSchema.getString(TITLE).length !in 3..24) {
             return Result(Rules.INVALID_SCHEMA_TITLE.code, "DAPSchema", "title")
         }
 
@@ -71,7 +72,14 @@ object Compile {
                 }
             }
 
-            val subSchema = dapSchema.getJSONObject(keyword)
+            //subschema reserved keyword from sys schema definitions
+            Schema.system.getJSONObject(DEFINITIONS).keys().forEach {
+                if (keyword == it) {
+                    return Result(Rules.RESERVED_DAP_SUBSCHEMA_NAME.code, "reserved syschema definition keyword", keyword)
+                }
+            }
+
+            val subSchema = dapSchema.optJSONObject(keyword) ?: JSONObject()
             //schema inheritance
             if (!subSchema.has(ALL_OF)) {
                 return Result(Rules.DAP_SUBSCHEMA_INHERITANCE.code, "dap subschema inheritance missing", keyword)
@@ -79,7 +87,7 @@ object Compile {
 
             if (subSchema.get(ALL_OF) !is JSONArray) {
                 return Result(Rules.DAP_SUBSCHEMA_INHERITANCE.code, "dap subschema inheritance invalid", keyword)
-            } else if (subSchema.getJSONArray(ALL_OF).getJSONObject(0).getString(REF) !=
+            } else if (subSchema.getJSONArray(ALL_OF).getJSONObject(0).optString(REF, "") !=
                     Params.dapObjectBaseRef) {
                 return Result(Rules.DAP_SUBSCHEMA_INHERITANCE.code, "dap subschema inheritance invalid", keyword)
             }

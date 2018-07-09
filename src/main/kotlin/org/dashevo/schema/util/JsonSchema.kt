@@ -85,7 +85,7 @@ object JsonSchemaUtils {
 
     fun validateDapSchemaDef(dapSchema: JSONObject): Result {
         try {
-            Validate.createValidator(Schema.system).validate(dapSchema)
+            Validate.systemSchemaValidator.validate(dapSchema)
         } catch (e: ValidationException) {
             return Result(0) //TODO (?)
         }

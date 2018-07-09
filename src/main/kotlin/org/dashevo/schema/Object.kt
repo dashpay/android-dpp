@@ -8,6 +8,7 @@ object Object {
     const val ACT = "act"
     const val ALL_OF = "allOf"
     const val DAPOBJECTS = "dapobjects"
+    const val DEFINITIONS = "definitions"
     const val INDEX = "index"
     const val IS_PROFILE = "isprofile"
     const val OBJECTS = "objects"
