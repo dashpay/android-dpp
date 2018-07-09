@@ -79,8 +79,8 @@ object Object {
      * @param dapSchema DapSchema (optional)
      * @returns {*}
      */
-    fun fromObject(obj: JSONObject, dapSchema: JSONObject?): JSONObject? {
-        val objCopy = JSONObject(obj)
+    fun fromObject(obj: JSONObject, dapSchema: JSONObject? = null): JSONObject {
+        val objCopy = JSONObject(obj.toString())
         return JsonSchemaUtils.extractSchemaObject(objCopy, dapSchema)
     }
 
@@ -92,13 +92,13 @@ object Object {
      */
     fun toHash(obj: JSONObject, dapSchema: JSONObject?): String {
         return when (obj.keys().next()) {
-            "subtx" -> Schema.Hash.subtx(obj)
-            "blockchainuser" -> Schema.Hash.blockchainuser(obj)
-            "stheader" -> Schema.Hash.stheader(obj)
-            "stpacket" -> Schema.Hash.stpacket(obj, dapSchema!!)
-            "dapcontract" -> Schema.Hash.dapcontract(obj)
-            "dapschema" -> Schema.Hash.dapschema(obj);
-            else -> Schema.Hash.dapobject(obj, dapSchema!!)
+            "subtx" -> Hash.subtx(obj)
+            "blockchainuser" -> Hash.blockchainuser(obj)
+            "stheader" -> Hash.stheader(obj)
+            "stpacket" -> Hash.stpacket(obj, dapSchema!!)
+            "dapcontract" -> Hash.dapcontract(obj)
+            "dapschema" -> Hash.dapschema(obj);
+            else -> Hash.dapobject(obj, dapSchema!!)
         }
     }
 

@@ -3,16 +3,17 @@ package org.dashevo.schema
 import org.dashevo.schema.Object.DAPOBJECTS
 import org.dashevo.schema.Object.STPACKET
 import org.dashevo.schema.util.HashUtils
+import org.dashevo.schema.util.JsonSchemaUtils
 import org.json.JSONObject
 
 object Hash {
 
     fun subtx(subtx: JSONObject): String {
-        return HashUtils.toHash(subtx)
+        return HashUtils.toHash(Object.fromObject(subtx))
     }
 
     fun blockchainuser(obj: JSONObject): String {
-        return HashUtils.toHash(obj)
+        return HashUtils.toHash(Object.fromObject(obj))
     }
 
     fun stheader(obj: JSONObject): String {
@@ -38,11 +39,11 @@ object Hash {
     }
 
     fun dapcontract(obj: JSONObject): String {
-        return HashUtils.toHash(obj)
+        return HashUtils.toHash(Object.fromObject(obj))
     }
 
     fun dapschema(obj: JSONObject): String {
-        return HashUtils.toHash(obj)
+        return HashUtils.toHash(Object.fromObject(obj))
     }
 
     fun dapobject(obj: JSONObject, dapSchema: JSONObject): String {

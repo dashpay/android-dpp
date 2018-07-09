@@ -1,7 +1,6 @@
 package org.dashevo.schema.util
 
 import org.apache.commons.collections.CollectionUtils
-import org.dashevo.schema.Definition
 import org.dashevo.schema.Schema
 import org.dashevo.schema.Validate
 import org.dashevo.schema.model.Result
@@ -12,43 +11,33 @@ import org.json.JSONObject
 object JsonSchemaUtils {
 
     fun validateSchemaObject(clonedObj: JSONObject, dapSchema: JSONObject?): Result {
-
-        val validators = arrayListOf(Validate.schemaValidator)
-        if (dapSchema != null) {
-            val dapSubSchema = Definition.getDapSubSchema(clonedObj, dapSchema)
-            if (dapSubSchema != null) {
-                validators.add(Validate.createValidator(dapSubSchema))
-            }
-        }
-
-        val validationErrors = arrayListOf<ValidationException>()
-        validators.forEach { validator ->
-            try {
-                validator.validate(clonedObj)
-            } catch (e: ValidationException) {
-                validationErrors.add(e)
-            }
-        }
-
-        val objType: String
-        val schema: JSONObject
-        if (dapSchema != null) {
-            objType = clonedObj.getString("objtype")
-            schema = dapSchema
+        val validator = if (dapSchema != null) {
+            Validate.createValidator(dapSchema)
         } else {
-            objType = clonedObj.keys().next()
-            schema = Schema.system
+            Validate.systemSchemaValidator
         }
 
-        return convertValidationError(validationErrors, objType, schema)
+        val errors = arrayListOf<ValidationException>()
+        try {
+            validator.validate(clonedObj)
+        } catch (e: ValidationException) {
+            errors.addAll(e.causingExceptions)
+        }
+
+        val objType: String = if (dapSchema != null) {
+            clonedObj.getString("objtype")
+        } else {
+            clonedObj.keys().next()
+        }
+
+        return convertValidationError(listOf(), objType)
     }
 
     /**
      * Convert ValidationError to Dash Schema Errors (Result) ?
      */
-    private fun convertValidationError(validationErrors: ArrayList<ValidationException>, objType: String,
-                                       schema: JSONObject): Result {
-        if (CollectionUtils.isNotEmpty(validationErrors)) {
+    private fun convertValidationError(validationErrors: List<ValidationException>, objType: String): Result {
+        if (CollectionUtils.isEmpty(validationErrors)) {
             return Result()
         }
 
@@ -71,28 +60,27 @@ object JsonSchemaUtils {
         return Result(code, objType, propName, validationError.violatedSchema.title)
     }
 
-    fun extractSchemaObject(objCopy: JSONObject, dapSchema: JSONObject?): JSONObject {
-        val validators = arrayListOf(Validate.schemaValidator)
-        if (dapSchema != null) {
-            validators.add(Validate.createValidator(dapSchema))
+    fun extractSchemaObject(clonedObj: JSONObject, dapSchema: JSONObject? = null): JSONObject {
+        val validator = if (dapSchema != null) {
+            Validate.createValidator(dapSchema, true)
+        } else {
+            Validate.systemSchemaValidator
         }
 
-        val validationErrors = arrayListOf<ValidationException>()
-        validators.forEach { validator ->
-            try {
-                validator.validate(objCopy)
-            } catch (e: ValidationException) {
-                validationErrors.add(e)
-            }
+        val errors = arrayListOf<ValidationException>()
+        try {
+            validator.validate(clonedObj)
+        } catch (e: ValidationException) {
+            errors.addAll(e.causingExceptions)
         }
 
         //TODO: remove non-schema properties using the validation errors as source of the filter
 
-        if (CollectionUtils.isNotEmpty(validationErrors)) {
-            objCopy.put("errors", validationErrors) //TODO: Check expected type of added errors
+        if (CollectionUtils.isNotEmpty(errors)) {
+            clonedObj.put("errors", errors) //TODO: Check expected type of added errors
         }
 
-        return objCopy
+        return clonedObj
     }
 
     fun validateDapSchemaDef(dapSchema: JSONObject): Result {
@@ -107,7 +95,7 @@ object JsonSchemaUtils {
 
     fun validateSysSchemaDef(sysSchema: JSONObject): Result {
         try {
-            Validate.schemaValidator.validate(sysSchema)
+            Validate.systemSchemaValidator.validate(sysSchema)
         } catch (e: ValidationException) {
             return Result(0) //TODO (?)
         }

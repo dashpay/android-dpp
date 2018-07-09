@@ -1,0 +1,54 @@
+{
+  "valid_dapobject_1": {
+    "objtype": "someObject1",
+    "idx": 1,
+    "rev": 1,
+    "act": 1,
+    "dapobjectid1": 1
+  },
+  "valid_dapobject_2": {
+    "objtype": "someObject2",
+    "idx": 1,
+    "rev": 1,
+    "act": 1,
+    "dapobjectid2": 1
+  },
+  "additional_properties": {
+    "objtype": "someObject1",
+    "idx": 1,
+    "rev": 1,
+    "act": 1,
+    "dapobjectid1": 1,
+    "someAdditionalProp": 1
+  },
+  "missing_inherited_properties": {
+    "objtype": "someObject1",
+    "dapobjectid1": 1
+  },
+  "missing_local_properties": {
+    "objtype": "someObject1",
+    "idx": 1,
+    "rev": 1,
+    "act": 1
+  },
+  "missing_object_type": {
+    "idx": 1,
+    "rev": 1,
+    "act": 1,
+    "dapobjectid1": 1
+  },
+  "unknown_object_type": {
+    "objtype": "missing object!",
+    "idx": 1,
+    "rev": 1,
+    "act": 1,
+    "dapobjectid1": 1
+  },
+  "mismatched_object_type": {
+    "objtype": "someObject2",
+    "idx": 1,
+    "rev": 1,
+    "act": 1,
+    "dapobjectid1": 1
+  }
+}

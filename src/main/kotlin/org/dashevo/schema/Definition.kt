@@ -8,7 +8,12 @@ object Definition {
     private const val RELATION_DEFINITION = "http://dash.org/schemas/sys#/definitions/relation"
 
     fun getDapSubSchema(obj: JSONObject, dapSchema: JSONObject): JSONObject? {
-        return dapSchema.getJSONObject(obj.getString("objtype"))
+        val key = obj.optString("objtype")
+        return if (dapSchema.has(key)) {
+            dapSchema.getJSONObject(key)
+        } else {
+            null
+        }
     }
 
     /**

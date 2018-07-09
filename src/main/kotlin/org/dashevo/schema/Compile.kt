@@ -24,7 +24,7 @@ object Compile {
      */
     fun compileDapSchema(dapSchema: JSONObject): Result {
         // valid $schema tag
-        if (dapSchema.getString(S_SCHEMA) != Params.dapSchemaMetaURI) {
+        if (!dapSchema.has(S_SCHEMA) || dapSchema.getString(S_SCHEMA) != Params.dapSchemaMetaURI) {
             return Result(Rules.INVALID_METASCHEMA.code, "DAPSchema", "\$schemaid")
         }
 

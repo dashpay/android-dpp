@@ -1,0 +1,28 @@
+{
+  "$id": "http://somedap.org/dapschema",
+  "title": "SomeDap",
+  "someObject1": {
+    "$id": "http://dash.org/schemas/sys/dapobject",
+    "allOf": [{"$ref": "http://dash.org/schemas/sys#/definitions/dapobjectbase"}],
+    "properties": {
+      "dapobjectid1": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "dapobjectid1"
+    ]
+  },
+  "someObject2": {
+    "$id": "http://dash.org/schemas/sys/dapobject",
+    "allOf": [{"$ref": "http://dash.org/schemas/sys#/definitions/dapobjectbase"}],
+    "properties": {
+      "dapobjectid2": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "dapobjectid2"
+    ]
+  }
+}

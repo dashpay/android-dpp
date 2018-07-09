@@ -9,6 +9,7 @@ import org.everit.json.schema.Schema
 import org.everit.json.schema.loader.SchemaLoader
 import org.json.JSONArray
 import org.json.JSONObject
+import java.nio.charset.Charset
 
 
 object Validate {
@@ -16,14 +17,14 @@ object Validate {
     const val ERRORS = "errors"
     private const val OBJTYPE = "objtype"
 
-    var schemaValidator: Schema //Schema.System
+    var systemSchemaValidator: Schema //Schema.System
 
     init {
         val schemaLoader= SchemaLoader.builder()
-                .schemaJson("path/to/schema")
+                .schemaJson(org.dashevo.schema.Schema.system)
                 .draftV7Support()
                 .build()
-        schemaValidator = schemaLoader.load().build()
+        systemSchemaValidator = schemaLoader.load().build()
     }
 
     /**
@@ -37,7 +38,7 @@ object Validate {
             return Result(false)
         }
 
-        val clonedObj = org.dashevo.schema.Schema.Object.fromObject(obj, dapSchema)
+        val clonedObj = Object.fromObject(obj, dapSchema)
         return JsonSchemaUtils.validateSchemaObject(clonedObj!!, dapSchema)
     }
 
@@ -93,7 +94,7 @@ object Validate {
      */
     fun validateSTPacket(obj: JSONObject, dapSchema: JSONObject? = null): Result {
         // deep extract a schema object from the object
-        val outerObj = org.dashevo.schema.Schema.Object.fromObject(obj, dapSchema)
+        val outerObj = Object.fromObject(obj, dapSchema)
 
         // if this is a dapobjects packet...
         val objSTPacket = obj.getJSONObject(STPACKET)
@@ -160,15 +161,15 @@ object Validate {
      * @param dapSchema DapSchema
      * @returns {*}
      */
-    private fun validateDapObject(dapObj: JSONObject, dapSchema: JSONObject): Result {
-        if (dapObj[OBJTYPE] !is String) {
+    fun validateDapObject(dapObj: JSONObject, dapSchema: JSONObject): Result {
+        if (!dapObj.has(OBJTYPE) || dapObj[OBJTYPE] !is String) {
             return Result(Rules.DAPOBJECT_MISSING_OBJTYPE.code, "objtype",
                     null, dapSchema.getString("title"))
         }
 
         val subSchema = Definition.getDapSubSchema(dapObj, dapSchema)
 
-        if (subSchema != null) {
+        if (subSchema == null) {
             return Result(Rules.DAPOBJECT_UNKNOWN_OBJTYPE.code, "objtype",
                     null, dapSchema.getString("title"))
         }
@@ -194,8 +195,20 @@ object Validate {
         return !invalid
     }
 
-    fun createValidator(dapSchema: JSONObject): Schema {
-        return SchemaLoader.builder().schemaJson(dapSchema).build().load().build()
+    fun createValidator(dapSchema: JSONObject, removeAdditional: Boolean = false): Schema {
+        return SchemaLoader.builder()
+                .schemaJson(dapSchema)
+                //.removeAdditional(removeAdditional) //TODO
+                .httpClient {
+                    println(it)
+                    if (it.equals("http://dash.org/schemas/sys")) {
+                        org.dashevo.schema.Schema.system.toString().byteInputStream(Charset.defaultCharset())
+                    } else {
+                        throw(RuntimeException("Schema not Found"))
+                    }
+
+                }
+                .build().load().build()
     }
 
 }

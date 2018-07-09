@@ -1,0 +1,419 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://dash.org/schemas/sys",
+  "pver": 1,
+  "type": "object",
+  "title": "DashSystemSchema",
+  "definitions": {
+    "objectbase": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "type": "object",
+          "properties": {
+            "uid": {
+              "type": "string"
+            },
+            "uname": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "block": {
+              "type": "number"
+            },
+            "height": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "sysobjectbase": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/objectbase"
+        }
+      ],
+      "properties": {
+        "pver": {
+          "type": "number"
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "uname": {
+              "type": "number"
+            },
+            "hash": {
+              "type": "string"
+            },
+            "height": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "required": [
+        "pver"
+      ]
+    },
+    "dapobjectbase": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/objectbase"
+        }
+      ],
+      "properties": {
+        "objtype": {
+          "type": "string"
+        },
+        "idx": {
+          "type": "number",
+          "multipleOf": 1,
+          "minimum": 0,
+          "maximum": 999
+        },
+        "rev": {
+          "type": "number",
+          "multipleOf": 1,
+          "minimum": 0
+        },
+        "act": {
+          "type": "number",
+          "multipleOf": 1,
+          "minimum": 1,
+          "maximum": 3
+        },
+        "rel": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "items": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "uniqueItems": true,
+          "additionalItems": false
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "dapid": {
+              "type": "string"
+            },
+            "pkid": {
+              "type": "string"
+            },
+            "tsid": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "objtype",
+        "idx",
+        "rev",
+        "act"
+      ]
+    },
+    "dapcontractbase": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/objectbase"
+        }
+      ],
+      "properties": {
+        "dapschemaid": {
+          "type": "string"
+        },
+        "dapname": {
+          "type": "string"
+        },
+        "dapver": {
+          "type": "string"
+        },
+        "dapschema": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "dapid",
+        "dapname",
+        "dapver"
+      ],
+      "additionalItems": false
+    },
+    "relation": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "type": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["userId", "type"],
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "subtx": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/sysobjectbase"
+        }
+      ],
+      "properties": {
+        "pver": {},
+        "action": {
+          "type": "number"
+        },
+        "uname": {
+          "type": "string"
+        },
+        "pubkey": {
+          "type": "string"
+        },
+        "mroot": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "action",
+        "uname",
+        "pubkey"
+      ],
+      "additionalProperties": false
+    },
+    "blockchainuser": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/sysobjectbase"
+        }
+      ],
+      "properties": {
+        "pver": {},
+        "uname": {
+          "type": "string"
+        },
+        "uid": {
+          "type": "string"
+        },
+        "pubkey": {
+          "type": "string"
+        },
+        "credits": {
+          "type": "number"
+        },
+        "subtx": {
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "subtx": {
+                    "$ref": "#/properties/subtx"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "uname",
+        "uid",
+        "pubkey",
+        "credits"
+      ],
+      "additionalProperties": false
+    },
+    "stheader": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/sysobjectbase"
+        }
+      ],
+      "properties": {
+        "pver": {},
+        "fee": {
+          "type": "number"
+        },
+        "uid": {
+          "type": "string"
+        },
+        "ptsid": {
+          "type": "string"
+        },
+        "pakid": {
+          "type": "string"
+        },
+        "usig": {
+          "type": "string"
+        },
+        "qsig": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "fee",
+        "uid",
+        "ptsid",
+        "pakid",
+        "usig"
+      ],
+      "additionalProperties": false
+    },
+    "stpacket": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/sysobjectbase"
+        }
+      ],
+      "oneOf": [
+        {
+          "properties": {
+            "dapcontract": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/dapcontractbase"
+                }
+              ],
+              "additionalItems": false
+            }
+          },
+          "required": [
+            "dapcontract"
+          ]
+        },
+        {
+          "properties": {
+            "dapid": {
+              "type": "string"
+            },
+            "dapobjmerkleroot": {
+              "type": "string"
+            },
+            "dapobjects": {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 1,
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "patternProperties": {
+                      "^.*$": {
+                        "allOf": [
+                          {
+                            "$ref": "#/definitions/dapobjectbase"
+                          }
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          },
+          "required": [
+            "dapobjmerkleroot",
+            "dapobjects",
+            "dapid"
+          ]
+        },
+        {
+          "properties": {
+            "sysmod": {
+              "type": "object",
+              "properties": {
+                "sysmodid": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "sysmodid"
+              ]
+            }
+          },
+          "required": [
+            "sysmod"
+          ]
+        }
+      ],
+      "properties": {
+        "pver": {},
+        "dapid": {},
+        "dapobjmerkleroot": {},
+        "dapobjects": {},
+        "activestatehash": {
+          "type": "string"
+        },
+        "dapcontract": {},
+        "sysmod": {}
+      },
+      "additionalProperties": false
+    },
+    "dapcontract": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/dapcontractbase"
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "subtx"
+      ]
+    },
+    {
+      "required": [
+        "blockchainuser"
+      ]
+    },
+    {
+      "required": [
+        "stheader"
+      ]
+    },
+    {
+      "required": [
+        "stpacket"
+      ]
+    },
+    {
+      "required": [
+        "dapcontract"
+      ]
+    }
+  ],
+  "additionalProperties": false
+}

@@ -7,16 +7,12 @@ import java.nio.charset.Charset
 
 object HashUtils {
 
-    /**
-     * Return a double SHA256 hash of a Schema object instance
-     * @param obj {object} Schema object instance
-     * @returns {*|string}
-     */
-    fun toHash(obj: JSONObject): String {
-        println(obj)
-        val tree = arrayListOf<ByteArray>()
-
+    private fun buildTree(obj: JSONObject, tree: ArrayList<ByteArray> = arrayListOf()): ArrayList<ByteArray> {
         obj.keys().forEach { key ->
+            if (obj[key] is JSONObject) {
+                buildTree(obj.getJSONObject(key), tree)
+                return@forEach
+            }
             val ba = ("{" + "\"key\":" + (
                     if (obj[key] is String) {
                         ("\"" + obj[key] + "\"")
@@ -27,8 +23,16 @@ object HashUtils {
             tree.add(hash)
         }
 
-        println(tree.size)
+        return tree
+    }
 
+    /**
+     * Return a double SHA256 hash of a Schema object instance
+     * @param obj {object} Schema object instance
+     * @returns {*|string}
+     */
+    fun toHash(obj: JSONObject): String {
+        val tree = buildTree(obj)
         var j = 0
         var size = tree.size
         while (size > 1) {
