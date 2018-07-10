@@ -10,7 +10,7 @@ import org.json.JSONObject
 
 object JsonSchemaUtils {
 
-    fun validateSchemaObject(clonedObj: JSONObject, dapSchema: JSONObject?): Result {
+    fun validateSchemaObject(clonedObj: JSONObject, dapSchema: JSONObject? = null): Result {
         val validator = if (dapSchema != null) {
             Validate.createValidator(dapSchema)
         } else {
@@ -30,7 +30,7 @@ object JsonSchemaUtils {
             clonedObj.keys().next()
         }
 
-        return convertValidationError(listOf(), objType)
+        return convertValidationError(errors, objType)
     }
 
     /**

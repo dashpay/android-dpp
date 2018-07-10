@@ -1,0 +1,16 @@
+{
+  "valid_inherited_sys_object": {
+    "sysobjectchild": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "sysobjectchildid": 1
+    }
+  },
+  "missing_required_field": {
+    "sysobjectchild": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "sysobjectchildid": null
+    }
+  }
+}
