@@ -198,17 +198,14 @@ object Validate {
     fun createValidator(dapSchema: JSONObject, removeAdditional: Boolean = false): Schema {
         return SchemaLoader.builder()
                 .schemaJson(dapSchema)
-                //.removeAdditional(removeAdditional) //TODO
+                .removeAdditional(removeAdditional)
                 .httpClient {
-                    println(it)
                     if (it.equals("http://dash.org/schemas/sys")) {
                         org.dashevo.schema.Schema.system.toString().byteInputStream(Charset.defaultCharset())
                     } else {
                         throw(RuntimeException("Schema not Found"))
                     }
-
-                }
-                .build().load().build()
+                }.build().load().build()
     }
 
 }

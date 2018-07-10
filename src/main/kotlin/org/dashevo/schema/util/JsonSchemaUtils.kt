@@ -25,7 +25,7 @@ object JsonSchemaUtils {
         }
 
         val objType: String = if (dapSchema != null) {
-            clonedObj.getString("objtype")
+            clonedObj.optString("objtype", "")
         } else {
             clonedObj.keys().next()
         }
@@ -36,7 +36,7 @@ object JsonSchemaUtils {
     /**
      * Convert ValidationError to Dash Schema Errors (Result) ?
      */
-    private fun convertValidationError(validationErrors: List<ValidationException>, objType: String): Result {
+    fun convertValidationError(validationErrors: List<ValidationException>, objType: String): Result {
         if (CollectionUtils.isEmpty(validationErrors)) {
             return Result()
         }
@@ -73,8 +73,6 @@ object JsonSchemaUtils {
         } catch (e: ValidationException) {
             errors.addAll(e.causingExceptions)
         }
-
-        //TODO: remove non-schema properties using the validation errors as source of the filter
 
         if (CollectionUtils.isNotEmpty(errors)) {
             clonedObj.put("errors", errors) //TODO: Check expected type of added errors

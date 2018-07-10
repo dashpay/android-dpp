@@ -12,5 +12,403 @@
       "sysobjectbaseid": 1,
       "sysobjectchildid": null
     }
+  },
+  "missing_required_field_in_super": {
+    "sysobjectchild": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": null,
+      "sysobjectchildid": 1
+    }
+  },
+  "missing_required_field_in_base": {
+    "sysobjectchild": {
+      "objectbaseid": null,
+      "sysobjectbaseid": 1,
+      "sysobjectchildid": 1
+    }
+  },
+  "no_valid_schema": {
+    "sysobjectchild2": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "sysobjectchildid": 1
+    }
+  },
+  "additional_properties_in_main_schema": {
+    "sysobjectchild": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "sysobjectchildid": 1
+    },
+    "sysobjectchild2": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "sysobjectchildid": 1
+    }
+  },
+  "additional_properties_is_sys_subschema": {
+    "sysobjectchild": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "sysobjectchildid": 1,
+      "unknownproperty": 1
+    }
+  },
+  "valid_container": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "sysobjectchild": {
+            "dapobjectbaseid": 1,
+            "objectbaseid": 1,
+            "sysobjectbaseid": 1,
+            "sysobjectchildid": 1
+          }
+        }
+      ]
+    }
+  },
+  "missing_list": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects2": null
+    }
+  },
+  "null_list": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": null
+    }
+  },
+  "empty_list": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": []
+    }
+  },
+  "incorrect_item_type": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "sysobjectchild2": {
+            "objectbaseid": 1,
+            "sysobjectbaseid": 1,
+            "sysobjectchildid": 1
+          }
+        }
+      ]
+    }
+  },
+  "missing_array_item_required_field": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "sysobjectchild": {
+            "objectbaseid": 1,
+            "sysobjectbaseid": 1,
+            "sysobjectchildid": null
+          }
+        }
+      ]
+    }
+  },
+  "missing_array_item_required_base_field": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "sysobjectchild": {
+            "objectbaseid": null,
+            "sysobjectbaseid": 1,
+            "sysobjectchildid": 1
+          }
+        }
+      ]
+    }
+  }
+,
+  "prevent_multiple_subschematype_definitions": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "sysobjectchild": {
+            "objectbaseid": 1,
+            "sysobjectbaseid": 1,
+            "sysobjectchildid": 1
+          }
+        },
+        {
+          "sysobjectchild2": {
+            "objectbaseid": 1
+          }
+        }
+      ]
+    }
+  },
+  "prevent_additional_item_types": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "sysobjectchild": {
+            "objectbaseid": 1,
+            "sysobjectbaseid": 1,
+            "sysobjectchildid": 1
+          }
+        },
+        {
+          "sysobjectchild2": {
+            "objectbaseid": 1
+          }
+        }
+      ]
+    }
+  },
+  "prevent_duplicate_items": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "sysobjectchild": {
+            "objectbaseid": 1,
+            "sysobjectbaseid": 1,
+            "sysobjectchildid": 1
+          }
+        },
+        {
+          "sysobjectchild": {
+            "objectbaseid": 1,
+            "sysobjectbaseid": 1,
+            "sysobjectchildid": 1
+          }
+        }
+      ]
+    }
+  },
+  "valid_dapcontract_object": {
+    "dapobjectchild": {
+      "objectbaseid": 1,
+      "dapobjectbaseid": 1,
+      "dapobjectid": 1
+    }
+  },
+  "dapobject_missing_required_field": {
+    "dapobjectchild": {
+      "objectbaseid": 1,
+      "dapobjectbaseid": 1,
+      "dapobjectid": null
+    }
+  },
+  "dapobject_missing_required_field_in_super1": {
+    "dapobjectchild": {
+      "objectbaseid": 1,
+      "dapobjectbaseid": null,
+      "dapobjectid": 1
+    }
+  },
+  "dapobject_missing_required_field_in_base": {
+    "dapobjectchild": {
+      "objectbaseid": null,
+      "dapobjectbaseid": 1,
+      "dapobjectid": 1
+    }
+  },
+  "prevent_additional_properties_in_main_dapcontract_schema": {
+    "dapobjectchild": {
+      "objectbaseid": 1,
+      "dapobjectbaseid": 1,
+      "dapobjectid": 1
+    },
+    "dapobject2": {
+      "objectbaseid": 1
+    }
+  },
+  "allow_additional_properties_in_dapcontract_subschemas": {
+    "dapobjectchild": {
+      "objectbaseid": 1,
+      "dapobjectbaseid": 1,
+      "dapobjectid": 1,
+      "unknownproperty": 1
+    }
+  },
+  "dapcontract_object_container": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "dapobjectchild": {
+            "objectbaseid": 1,
+            "dapobjectbaseid": 1,
+            "dapobjectid": 1
+          }
+        }
+      ]
+    }
+  },
+  "dapcontract_missing_list": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1
+    }
+  },
+  "dapcontract_empty_list": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": []
+    }
+  },
+  "dapcontract_incorrect_item_type": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "dapobjectchild2": {
+            "objectbaseid": 1,
+            "dapobjectbaseid": 1,
+            "dapobjectid": 1
+          }
+        }
+      ]
+    }
+  },
+  "dapcontract_missing_array_item_required_field": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "dapobjectchild": {
+            "objectbaseid": 1,
+            "dapobjectbaseid": 1,
+            "dapobjectid": null
+          }
+        }
+      ]
+    }
+  },
+  "dapcontract_missing_array_item_required_base_field": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "dapobjectchild": {
+            "objectbaseid": 1,
+            "dapobjectbaseid": null,
+            "dapobjectid": 1
+          }
+        }
+      ]
+    }
+  },
+  "dapcontract_prevent_multiple_subschematype_definitions": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "dapobjectchild": {
+            "objectbaseid": 1,
+            "dapobjectbaseid": 1,
+            "dapobjectid": 1
+          }
+        },
+        {
+          "dapobjectchild2": {
+            "objectbaseid": 1,
+            "dapobjectbaseid": 1,
+            "dapobjectid": 1
+          }
+        }
+      ]
+    }
+  },
+  "dapcontract_prevent_additional_item_types": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "dapobjectchild": {
+            "objectbaseid": 1,
+            "dapobjectbaseid": 1,
+            "dapobjectid": 1
+          },
+          "dapobjectchild2": {
+            "objectbaseid": 1,
+            "dapobjectbaseid": 1,
+            "dapobjectid": 1
+          }
+        }
+      ]
+    }
+  },
+  "dapcontract_prevent_duplicate_items": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "dapobjects": [
+        {
+          "dapobjectchild": {
+            "objectbaseid": 1,
+            "dapobjectbaseid": 1,
+            "dapobjectid": 1
+          }
+        },
+        {
+          "dapobjectchild": {
+            "objectbaseid": 1,
+            "dapobjectbaseid": 1,
+            "dapobjectid": 1
+          }
+        }
+      ]
+    }
+  },
+  "sysmod_container_valid": {
+    "dapobjectcontainer": {
+      "objectbaseid": 1,
+      "sysobjectbaseid": 1,
+      "dapobjectcontainerid": 1,
+      "sysmod": {
+        "sysmodid": 1
+      }
+    }
   }
 }
