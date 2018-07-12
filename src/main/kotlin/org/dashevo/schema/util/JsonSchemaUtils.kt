@@ -14,7 +14,7 @@ object JsonSchemaUtils {
         val validator = if (dapSchema != null) {
             Validate.createValidator(dapSchema)
         } else {
-            Validate.systemSchemaValidator
+            Validate.createValidator(Schema.system)
         }
 
         val errors = arrayListOf<ValidationException>()
@@ -64,7 +64,7 @@ object JsonSchemaUtils {
         val validator = if (dapSchema != null) {
             Validate.createValidator(dapSchema, true)
         } else {
-            Validate.systemSchemaValidator
+            Validate.createValidator(Schema.system, true)
         }
 
         val errors = arrayListOf<ValidationException>()
@@ -77,13 +77,12 @@ object JsonSchemaUtils {
         if (CollectionUtils.isNotEmpty(errors)) {
             clonedObj.put("errors", errors) //TODO: Check expected type of added errors
         }
-
         return clonedObj
     }
 
     fun validateDapSchemaDef(dapSchema: JSONObject): Result {
         try {
-            Validate.systemSchemaValidator.validate(dapSchema)
+            Validate.createValidator(Schema.system).validate(dapSchema)
         } catch (e: ValidationException) {
             return Result(0) //TODO (?)
         }
@@ -93,7 +92,7 @@ object JsonSchemaUtils {
 
     fun validateSysSchemaDef(sysSchema: JSONObject): Result {
         try {
-            Validate.systemSchemaValidator.validate(sysSchema)
+            Validate.createValidator(Schema.system).validate(sysSchema)
         } catch (e: ValidationException) {
             return Result(0) //TODO (?)
         }

@@ -17,6 +17,7 @@ object Validate {
     const val ERRORS = "errors"
     private const val OBJTYPE = "objtype"
 
+    /*
     var systemSchemaValidator: Schema //Schema.System
 
     init {
@@ -26,6 +27,7 @@ object Validate {
                 .build()
         systemSchemaValidator = schemaLoader.load().build()
     }
+    */
 
     /**
      * Validates both System and Dap objects
@@ -51,7 +53,7 @@ object Validate {
      */
     private fun validateSysObject(sysObj: JSONObject, subSchemaName: String?): Result {
         if (subSchemaName != null) {
-            if (sysObj.javaClass.kotlin.members.any { it.name == subSchemaName }) {
+            if (!sysObj.has(subSchemaName)) {
                 return Result(Rules.DAPOBJECT_MISSING_SUBSCHEMA.code, subSchemaName)
             }
         }
@@ -94,23 +96,24 @@ object Validate {
      */
     fun validateSTPacket(obj: JSONObject, dapSchema: JSONObject? = null): Result {
         // deep extract a schema object from the object
-        val outerObj = Object.fromObject(obj, dapSchema)
+        val outerObj = Object.fromObject(obj)
 
         // if this is a dapobjects packet...
         val objSTPacket = obj.getJSONObject(STPACKET)
-        val objDapObjects = objSTPacket?.getJSONArray(DAPOBJECTS)
+        val objDapObjects = objSTPacket?.optJSONArray(DAPOBJECTS)
 
-        if (objDapObjects != null && outerObj != null) {
+        if (objDapObjects != null) {
             // require dapSchema
             if (dapSchema == null) {
-                //TODO: * (Confirm rule)
-                return Result(Rules.DAPOBJECT_MISSING_SUBSCHEMA.code)
+                return Result("missing dapschema")
             }
 
             // temporarily remove the inner dapobjects,
             // so we can validate the containing packet using the System Schema, and the
             // contained Dap objects using the dapSchema.
-            outerObj.getJSONObject(DAPOBJECTS).put(DAPOBJECTS, JSONArray())
+            val emptyObjectJSONArray = JSONArray()
+            emptyObjectJSONArray.put(0, JSONObject())
+            outerObj.getJSONObject(STPACKET).put(DAPOBJECTS, emptyObjectJSONArray)
 
             // validate the empty packet as a sys object...
             val outerValid = validateSysObject(outerObj, STPACKET)
@@ -125,7 +128,6 @@ object Validate {
 
         // not a dapobjects packet so validate as a sysobject
         return validateSysObject(obj, Object.STPACKET)
-
     }
 
     /**
@@ -136,7 +138,7 @@ object Validate {
      * @returns {*}
      */
     fun validateSTPacketObjects(dapobjects: JSONArray, dapSchema: JSONObject): Result {
-        for (i in 0..dapobjects.length()) {
+        for (i in 0 until dapobjects.length()) {
             val dapObj = dapobjects.getJSONObject(i)
             val objValid = validateDapObject(dapObj, dapSchema)
             if (!objValid.valid) {
@@ -197,6 +199,7 @@ object Validate {
 
     fun createValidator(dapSchema: JSONObject, removeAdditional: Boolean = false): Schema {
         return SchemaLoader.builder()
+                .draftV7Support()
                 .schemaJson(dapSchema)
                 .removeAdditional(removeAdditional)
                 .httpClient {

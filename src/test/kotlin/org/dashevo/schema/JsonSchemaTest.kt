@@ -36,16 +36,6 @@ class JsonSchemaTest {
     val dapSchema = JSONObject(File("src/test/resources/data/simplified-dap-schema.json").readText())
     val data = JSONObject(File("src/test/resources/data/jsonschema-test-data.json").readText())
 
-    fun validateAgainstSystemSchema(obj: JSONObject): Result {
-        var valid = Result()
-        try {
-            Validate.systemSchemaValidator.validate(obj)
-        } catch (e: ValidationException) {
-            valid = JsonSchemaUtils.convertValidationError(e.causingExceptions, "")
-        }
-        return valid
-    }
-
     fun validateAgainstDapSchema(obj: JSONObject, dapObjectIndex: Int = 0): Result {
         var valid = Result()
         try {
@@ -284,7 +274,7 @@ class JsonSchemaTest {
 
             var valid = Result()
             try {
-                Validate.systemSchemaValidator.validate(obj)
+                Validate.createValidator(Schema.system).validate(obj)
             } catch (e: ValidationException) {
                 valid = JsonSchemaUtils.convertValidationError(e.causingExceptions, "")
             }
@@ -299,7 +289,7 @@ class JsonSchemaTest {
 
             var valid = Result()
             try {
-                Validate.systemSchemaValidator.validate(obj)
+                Validate.createValidator(Schema.system).validate(obj)
             } catch (e: ValidationException) {
                 valid = JsonSchemaUtils.convertValidationError(e.causingExceptions, "")
             }

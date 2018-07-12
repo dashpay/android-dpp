@@ -60,13 +60,13 @@ object Object {
         }
 
         // first property should be the subschema
-        val subSchemaName = obj.keys().next()
-
-        val keys = Schema.system.getJSONObject("properties").keys()
-
-        keys.forEach { key ->
-            if (subSchemaName == key) {
-                return true
+        if (obj.keys().hasNext()) {
+            val subSchemaName = obj.keys().next()
+            val keys = Schema.system.getJSONObject("properties").keys()
+            keys.forEach { key ->
+                if (subSchemaName == key) {
+                    return true
+                }
             }
         }
 

@@ -10,7 +10,6 @@ import java.io.File
 @DisplayName("SubTx Tests")
 class SubTxTest : BaseTest() {
 
-
     @Nested
     @DisplayName("SubTx Hash")
     inner class SubTxHash {
