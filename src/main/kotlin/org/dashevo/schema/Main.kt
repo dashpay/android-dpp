@@ -11,7 +11,7 @@ fun main(args : Array<String>) {
     val schemaContent = File(fileName).readText()
     val schema = JSONObject(schemaContent)
 
-    Schema.system = schema
+    //Schema.system = schema
     val data = JSONObject(File("src/test/resources/data/contactsdap-test-data.json").readText())
     val aliceSubTx = data.getJSONObject("alice_subtx_1")
     val bobSubTx = data.getJSONObject("bob_subtx_1")

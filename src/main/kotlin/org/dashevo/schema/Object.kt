@@ -23,8 +23,10 @@ object Object {
     const val UID = "uid"
     const val S_SCHEMA = "\$schema"
 
-    fun setID(obj: JSONObject, dapSchema: JSONObject? = null) {
-        setMeta(obj, "id", toHash(obj, dapSchema))
+    fun setID(obj: JSONObject, dapSchema: JSONObject? = null): String {
+        val id = toHash(obj, dapSchema)
+        setMeta(obj, "id", id)
+        return id
     }
 
     /**
@@ -62,8 +64,8 @@ object Object {
         // first property should be the subschema
         if (obj.keys().hasNext()) {
             val subSchemaName = obj.keys().next()
-            val keys = Schema.system.getJSONObject("properties").keys()
-            keys.forEach { key ->
+            val keys = Schema.system.optJSONObject("properties")?.keys()
+            keys?.forEach { key ->
                 if (subSchemaName == key) {
                     return true
                 }

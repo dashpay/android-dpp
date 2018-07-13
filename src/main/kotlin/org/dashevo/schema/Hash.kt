@@ -25,7 +25,7 @@ object Hash {
 
         //TODO: * Different from JS Lib, however, js lib seems to be hashing string chars instead of properties: needs verification.
         val stPacket = obj.getJSONObject(STPACKET)
-        if (stPacket.has(DAPOBJECTS)) {
+        return if (stPacket.has(DAPOBJECTS)) {
             val dapObjects = stPacket.getJSONArray(DAPOBJECTS)
             for (i in 0..dapObjects.length()) {
                 val dapObject = Object.fromObject(dapObjects.getJSONObject(i), dapSchema)
@@ -33,9 +33,10 @@ object Hash {
                     objList.add(dapObject)
                 }
             }
+            HashUtils.toHash(objList)
+        } else {
+            HashUtils.toHash(obj)
         }
-
-        return HashUtils.toHash(objList)
     }
 
     fun dapcontract(obj: JSONObject): String {

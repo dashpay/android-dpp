@@ -25,8 +25,9 @@ object Create {
      * @param uid Blockchain User id
      * @param ptsid Previous State Transition id
      */
-    fun createSTHeaderInstance(pakid: String, uid: String, ptsid: String?): JSONObject {
-        val stHeader = createBaseInstance(STHEADER)
+    fun createSTHeaderInstance(pakid: String, uid: String, ptsid: String? = null): JSONObject {
+        val stHeaderObject = createBaseInstance(STHEADER)
+        val stHeader = stHeaderObject.getJSONObject(STHEADER)
 
         stHeader.put("fee", 0)
         stHeader.put("uid", uid)
@@ -35,9 +36,9 @@ object Create {
         stHeader.put("usig", "")
         stHeader.put("qsig", "")
 
-        Object.setID(stHeader)
+        Object.setID(stHeaderObject)
 
-        return stHeader
+        return stHeaderObject
     }
 
     /**
