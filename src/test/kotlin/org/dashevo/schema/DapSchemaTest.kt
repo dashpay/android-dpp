@@ -11,10 +11,6 @@ import java.io.File
 @DisplayName("DapSchema Tests")
 class DapSchemaTest {
 
-    init {
-        Schema.system = JSONObject(File("src/test/resources/data/dash-system-schema.json").readText())
-    }
-
     @Nested
     @DisplayName("Invalid Dap Schemas")
     inner class InvalidSchemas {

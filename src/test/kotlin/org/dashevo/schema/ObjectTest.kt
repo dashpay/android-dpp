@@ -10,9 +10,6 @@ import java.io.File
 @DisplayName("Schema.Object unit tests")
 class ObjectTest {
 
-    init {
-        Schema.system = JSONObject(File("src/test/resources/data/dash-system-schema.json").readText())
-    }
 
     fun dapObj(): JSONObject {
         return JSONObject(hashMapOf(

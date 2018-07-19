@@ -10,10 +10,6 @@ import java.io.File
 @DisplayName("Packet Tests")
 class STPacketTest {
 
-    init {
-        Schema.system = JSONObject(File("src/test/resources/data/dash-system-schema.json").readText())
-    }
-
     private val dapSchema = JSONObject(File("src/test/resources/data/somedap.json").readText())
     private val testData = JSONObject(File("src/test/resources/data/stpacket-test-data.json").readText())
     private val data = JSONObject()

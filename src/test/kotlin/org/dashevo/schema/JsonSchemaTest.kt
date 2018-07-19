@@ -28,11 +28,6 @@ import java.io.File
 @DisplayName("JSON Schema Draft ")
 class JsonSchemaTest {
 
-    init {
-        //Simplified System Schema
-        Schema.system = JSONObject(File("src/test/resources/data/simplified-system-schema.json").readText())
-    }
-
     val dapSchema = JSONObject(File("src/test/resources/data/simplified-dap-schema.json").readText())
     val data = JSONObject(File("src/test/resources/data/jsonschema-test-data.json").readText())
 
