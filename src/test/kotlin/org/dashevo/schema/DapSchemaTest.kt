@@ -6,7 +6,6 @@ import org.json.JSONObject
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.io.File
 
 @DisplayName("DapSchema Tests")
 class DapSchemaTest {
@@ -16,18 +15,18 @@ class DapSchemaTest {
     inner class InvalidSchemas {
 
         @Test
-        @DisplayName("missing meta schema")
+        @DisplayName("missing schema id")
         fun missingMetaSchema() {
             val dapSchema = JSONObject()
             val valid = Compile.compileDapSchema(dapSchema)
-            assertThat(valid.errCode).isEqualTo(Rules.INVALID_METASCHEMA.code)
+            assertThat(valid.errCode).isEqualTo(Rules.INVALID_ID.code)
         }
 
         @Test
         @DisplayName("missing schema title")
         fun missingSchemaTitle() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI
+                    "\$id" to Params.dapSchemaIdURI
             ))
             val valid = Compile.compileDapSchema(dapSchema)
             assertThat(valid.errCode).isEqualTo(Rules.INVALID_SCHEMA_TITLE.code)
@@ -37,7 +36,7 @@ class DapSchemaTest {
         @DisplayName("schema title too short")
         fun shortSchemaTitle() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "ab"
             ))
             val valid = Compile.compileDapSchema(dapSchema)
@@ -48,7 +47,7 @@ class DapSchemaTest {
         @DisplayName("schema title too long")
         fun longSchemaTitle() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdefghijklmnopqrstuvwxy"
             ))
             val valid = Compile.compileDapSchema(dapSchema)
@@ -65,7 +64,7 @@ class DapSchemaTest {
         @DisplayName("no subschemas")
         fun noSubSchemas() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdef"
             ))
             val valid = Compile.compileDapSchema(dapSchema)
@@ -76,7 +75,7 @@ class DapSchemaTest {
         @DisplayName("more than max dap subschemas")
         fun exceedSubSchemasCount() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdef"
             ))
 
@@ -92,9 +91,9 @@ class DapSchemaTest {
         @DisplayName("invalid dap subchema name (reserved params keyword)")
         fun reservedParamsKeyword() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdef",
-                    "type" to "1"
+                    "dash" to "1"
             ))
 
             val valid = Compile.compileDapSchema(dapSchema)
@@ -105,7 +104,7 @@ class DapSchemaTest {
         @DisplayName("invalid dap subchema name (reserved sysobject keyword)")
         fun reservedSysObjectKeyword() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdef",
                     "subtx" to "1"
             ))
@@ -118,7 +117,7 @@ class DapSchemaTest {
         @DisplayName("invalid dap subchema name (reserved syschema definition keyword)")
         fun reservedSysSchemaKeyword() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdef",
                     "dapobjectbase" to "1"
             ))
@@ -128,10 +127,10 @@ class DapSchemaTest {
         }
 
         @Test
-        @DisplayName("invalid dap subchema name (disallowed characters)")
+        @DisplayName("invalid dap subschema name (disallowed characters)")
         fun disallowedCharacters() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdef",
                     "#" to "1"
             ))
@@ -144,7 +143,7 @@ class DapSchemaTest {
         @DisplayName("invalid dap subchema name (below min length)")
         fun nameBelowMinLength() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdef",
                     "ab" to "1"
             ))
@@ -157,7 +156,7 @@ class DapSchemaTest {
         @DisplayName("invalid dap subchema name (above max length)")
         fun nameAboveMaxLength() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdef",
                     "abcdefghijklmnopqrstuvwxy" to "1"
             ))
@@ -176,7 +175,7 @@ class DapSchemaTest {
         @DisplayName("missing DAP subschema inheritance")
         fun missingSubSchemaInheritance() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdef",
                     "someobject" to "1"
             ))
@@ -189,7 +188,7 @@ class DapSchemaTest {
         @DisplayName("invalid DAP subschema inheritance (missing allOf)")
         fun missingAllOf() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdef",
                     "someobject" to JSONObject()
             ))
@@ -202,7 +201,7 @@ class DapSchemaTest {
         @DisplayName("invalid DAP subschema inheritance (invalid type)")
         fun invalidType() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdef",
                     "someobject" to JSONObject(hashMapOf(
                             "allOf" to JSONObject(hashMapOf(
@@ -219,7 +218,7 @@ class DapSchemaTest {
         @DisplayName("invalid DAP subschema inheritance (missing \$ref)")
         fun missingRef() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdef",
                     "someobject" to JSONObject(hashMapOf(
                             "allOf" to listOf(JSONObject())
@@ -234,7 +233,7 @@ class DapSchemaTest {
         @DisplayName("invalid DAP subschema inheritance (unknown \$ref)")
         fun unknownRef() {
             val dapSchema = JSONObject(hashMapOf(
-                    "\$schema" to Params.dapSchemaMetaURI,
+                    "\$id" to Params.dapSchemaIdURI,
                     "title" to "abcdef",
                     "someobject" to JSONObject(hashMapOf(
                             "allOf" to listOf(JSONObject(hashMapOf(

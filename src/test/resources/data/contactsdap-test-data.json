@@ -40,15 +40,14 @@
       "debug": "valid registration of a new DAP on the chain",
       "pver": 0,
       "idx": 0,
-      "dapid": 0,
       "dapname": "DashPay",
-      "dapver": "1",
+      "dapver": 1,
       "dapschema": {
         "$id": "http://dash.org/schemas/sys/dapschema",
         "title": "Contacts",
         "user": {
           "$id": "http://dash.org/schemas/sys/dapobject",
-          "isprofile": true,
+          "_isrole": true,
           "allOf": [
             {
               "$ref": "http://dash.org/schemas/sys#/definitions/dapobjectbase"
@@ -95,21 +94,18 @@
   "alice_stpacket_0": {
     "stpacket": {
       "pver": 1,
-      "dapid": 1,
-      "dapname": "DashPay",
       "dapcontract": {
         "debug": "valid registration of a new DAP on the chain",
         "pver": 0,
         "idx": 0,
-        "dapid": 0,
         "dapname": "DashPay",
-        "dapver": "1",
+        "dapver": 1,
         "dapschema": {
           "$id": "http://dash.org/schemas/sys/dapschema",
           "title": "Contacts",
           "user": {
             "$id": "http://dash.org/schemas/sys/dapobject",
-            "isprofile": true,
+            "_isrole": true,
             "allOf": [
               {
                 "$ref": "http://dash.org/schemas/sys#/definitions/dapobjectbase"
@@ -160,12 +156,13 @@
   "alice_stheader_0": {
     "stheader": {
       "pver": 1,
-      "fee": 0,
-      "uid": "2d30902738f48f6f927a296bfbf058f1e09ebb201ca3c1a6c462f2bb2ee05705",
-      "ptsid": "",
-      "pakid": "17fd52f465d2e8021ae006e4c20eee277621ca22d150b4f6381c9aa6ee671122",
-      "usig": "",
-      "qsig": "",
+      "nver": 1,
+      "feeperbyte": 0,
+      "buid": "2d30902738f48f6f927a296bfbf058f1e09ebb201ca3c1a6c462f2bb2ee05705",
+      "prevstid": "",
+      "packetid": "17fd52f465d2e8021ae006e4c20eee277621ca22d150b4f6381c9aa6ee671122",
+      "packetsize": 780,
+      "stsig": "",
       "meta": {
         "id": "a933700b10c3584e8e48058f176ba7badbfe7f44d5b737aa711bff3a9a3bd305"
       }
@@ -183,7 +180,7 @@
       "debug": "alice_stpacket_1: valid transition packet containing Alice's DashPay DAPUser signup for L2 storage",
       "pver": 1,
       "dapid": "ac5784e7dd8fc9f1b638a353fb10015d3841bb9076c20e2ebefc3e97599e92b5",
-      "dapobjmerkleroot": "35dd1a700ecc2b78fb2dbd0f976486b63cf0f6d7052a0741dbc5d25d5cd37422",
+      "dapobjectshash": "35dd1a700ecc2b78fb2dbd0f976486b63cf0f6d7052a0741dbc5d25d5cd37422",
       "dapobjects": [
         {
           "objtype": "user",
@@ -194,26 +191,29 @@
         }
       ],
       "meta": {
-        "id": "575a4ac20aec98db0ed734a23e43a8a7f82fa87fdf9df7dce0f380464c25c9c6"
+        "id": "e84b82d08800e9cb2bf8e25d5e65954c9ef6158b5c72e25eaf28faa36ea5cec3"
       }
     }
   },
   "alice_stheader_1": {
     "stheader": {
+      "debug": "valid transition for adding a DashPay signup (DAPUser) object to Alice's data in L2",
       "pver": 1,
-      "fee": 0,
-      "uid": "2d30902738f48f6f927a296bfbf058f1e09ebb201ca3c1a6c462f2bb2ee05705",
-      "ptsid": "a933700b10c3584e8e48058f176ba7badbfe7f44d5b737aa711bff3a9a3bd305",
-      "pakid": "575a4ac20aec98db0ed734a23e43a8a7f82fa87fdf9df7dce0f380464c25c9c6",
-      "usig": "",
-      "qsig": "",
+      "nver": 1,
+      "feeperbyte": 1,
+      "buid": "2d30902738f48f6f927a296bfbf058f1e09ebb201ca3c1a6c462f2bb2ee05705",
+      "prevstid": "c84ddc27ceb0623ab07a090b9bf981456e9e6eff9df219c18a92d1f142afe234",
+      "packetid": "e84b82d08800e9cb2bf8e25d5e65954c9ef6158b5c72e25eaf28faa36ea5cec3",
+      "packetsize": 438,
+      "stsig": "",
       "meta": {
-        "id": "ceeb31e6625558b030404ba18fb82691dd3caa68d9f17ed612963056f32dc9e5"
+        "id": "40733ccfd75a991f8f20c51c91c9da8473b19fdfe9a08d83bc1d639d9fbe8b54"
       }
     }
   },
   "alice_contact_1": {
     "objtype": "user",
+    "debug": "valid Contact object by Alice referencing Bob",
     "pver": 1,
     "rev": 0,
     "act": 1,
@@ -227,12 +227,14 @@
   },
   "alice_stpacket_2": {
     "stpacket": {
+      "debug": "valid transition packet containing Alice's Contact object referencing Bob",
       "pver": 1,
-      "dapid": "ac5784e7dd8fc9f1b638a353fb10015d3841bb9076c20e2ebefc3e97599e92b5",
-      "dapobjmerkleroot": "7a485fdb68cd4dc7075d063ee0e8a5f8e9b459089647e1c4c536cf4127a555b9",
+      "dapid": "21af565312c6556c3a1bcda2d389b11ea400ec5c06cd0aea47e3302309377371",
+      "dapobjectshash": "fbae00bad2477d1af72e7c02d3198b3fe5970ffdad3b0df2610d967f2de59f64",
       "dapobjects": [
         {
           "objtype": "user",
+          "debug": "valid Contact object by Alice referencing Bob",
           "pver": 1,
           "rev": 0,
           "act": 1,
@@ -246,27 +248,30 @@
         }
       ],
       "meta": {
-        "id": "657131c70ce6b87b19e9d42d937ea769993985a1499dec0b4500827e1b2e19a8"
+        "id": "5244eb12475938651d3be358298cf6dd70eab8f0c334234defac722ee68af6db"
       }
     }
   },
   "alice_stheader_2": {
     "stheader": {
+      "debug": "valid transition for adding a Contact Request in Alice's data in L2",
       "pver": 1,
-      "fee": 1,
-      "uid": "2d30902738f48f6f927a296bfbf058f1e09ebb201ca3c1a6c462f2bb2ee05705",
-      "ptsid": "ceeb31e6625558b030404ba18fb82691dd3caa68d9f17ed612963056f32dc9e5",
-      "pakid": "657131c70ce6b87b19e9d42d937ea769993985a1499dec0b4500827e1b2e19a8",
-      "usig": "1",
-      "qsig": "1",
+      "nver": 1,
+      "feeperbyte": 1,
+      "buid": "2d30902738f48f6f927a296bfbf058f1e09ebb201ca3c1a6c462f2bb2ee05705",
+      "prevstid": "40733ccfd75a991f8f20c51c91c9da8473b19fdfe9a08d83bc1d639d9fbe8b54",
+      "packetid": "5244eb12475938651d3be358298cf6dd70eab8f0c334234defac722ee68af6db",
+      "packetsize": 647,
+      "stsig": "1",
       "meta": {
-        "id": "d0c2b0d64b5550fc305c8e7297cc7cad84b7065cb7a769f8301347e63db4b948"
+        "id": "f92a92add142f384e9124804ea35128265e3d72a7d36b8c115d01214f5c50bad"
       }
     }
   },
   "bob_dashpay_user": {
     "objtype": "user",
-    "dapid": "ac5784e7dd8fc9f1b638a353fb10015d3841bb9076c20e2ebefc3e97599e92b5",
+    "debug": "valid dashpay blockchainuser for bob",
+    "dapid": "21af565312c6556c3a1bcda2d389b11ea400ec5c06cd0aea47e3302309377371",
     "rev": 0,
     "idx": 0,
     "act": 1,
@@ -274,12 +279,14 @@
   },
   "bob_stpacket_0": {
     "stpacket": {
+      "debug": "valid transition packet containing Bob's DashPay DAPUser signup for L2 storage",
       "pver": 1,
       "dapid": "ac5784e7dd8fc9f1b638a353fb10015d3841bb9076c20e2ebefc3e97599e92b5",
-      "dapobjmerkleroot": "8969a6336b2be9fd987d3a3a1bac327859b3cf1764c146be55344837b95b7c35",
+      "dapobjectshash": "70fd29d1a4dd51f1e7d0cb57f63a48f33084197ffd10e399962d4a1228eb524d",
       "dapobjects": [
         {
           "objtype": "user",
+          "debug": "valid dashpay blockchainuser for bob",
           "dapid": "ac5784e7dd8fc9f1b638a353fb10015d3841bb9076c20e2ebefc3e97599e92b5",
           "rev": 0,
           "idx": 0,
@@ -288,19 +295,21 @@
         }
       ],
       "meta": {
-        "id": "a4ba898076a9193dd8a32e03aeb83ab31f1fff3b3fe26e4b3f10fc8277db0264"
+        "id": "0e45c6fb92850dc28d501a7e43e6be808c099c1ddf8a43949304c47d64d180bc"
       }
     }
   },
   "bob_transition_0": {
     "stheader": {
+      "debug": "valid transition for adding a DashPay signup (DAPUser) object to Bob's data in L2",
       "pver": 1,
-      "fee": 0,
-      "uid": "76b19e926e6ea960ce19a9ba7db205b3c5f05c178240348e4236abb821e9c261",
-      "ptsid": "",
-      "pakid": "a4ba898076a9193dd8a32e03aeb83ab31f1fff3b3fe26e4b3f10fc8277db0264",
-      "usig": "",
-      "qsig": "",
+      "nver": 1,
+      "feeperbyte": 0,
+      "buid": "76b19e926e6ea960ce19a9ba7db205b3c5f05c178240348e4236abb821e9c261",
+      "prevstid": "",
+      "packetid": "a4ba898076a9193dd8a32e03aeb83ab31f1fff3b3fe26e4b3f10fc8277db0264",
+      "packetsize": 499,
+      "stsig": "",
       "meta": {
         "id": "bde06bb9a0249e8b18189eaaca908f96d808acfc819a6014a6b22c9003e0a7c5"
       }
@@ -308,6 +317,7 @@
   },
   "bob_contact_1": {
     "objtype": "user",
+    "debug": "valid contact object from Bob referencing Alice",
     "pver": 1,
     "dapid": "ac5784e7dd8fc9f1b638a353fb10015d3841bb9076c20e2ebefc3e97599e92b5",
     "rev": 0,
@@ -325,10 +335,11 @@
       "debug": "valid transition packet containing Bob's Contact response to Alice in his DashPay DAP space",
       "pver": 1,
       "dapid": "ac5784e7dd8fc9f1b638a353fb10015d3841bb9076c20e2ebefc3e97599e92b5",
-      "dapobjmerkleroot": "bedd5d2339351cc90660a3624248b87d908a0ac172b37039d53c575006d6c36b",
+      "dapobjectshash": "bedd5d2339351cc90660a3624248b87d908a0ac172b37039d53c575006d6c36b",
       "dapobjects": [
         {
           "objtype": "user",
+          "debug": "valid contact object from Bob referencing Alice",
           "pver": 1,
           "dapid": "ac5784e7dd8fc9f1b638a353fb10015d3841bb9076c20e2ebefc3e97599e92b5",
           "rev": 0,
@@ -343,19 +354,21 @@
         }
       ],
       "meta": {
-        "id": "b30365d824d6902463eb2b611c2a297fab2ce13f9a2fc3db4f50f53625c93a34"
+        "id": "5162628a24b36ef3f3f63685278e41e101fa2543015f77c064808dd07f12c0f3"
       }
     }
   },
   "bob_transition_1": {
     "stheader": {
+      "debug": "valid transition for adding a Contact Request to Alice in Bob's DashPay DAP space",
       "pver": 1,
-      "fee": 1,
-      "uid": "76b19e926e6ea960ce19a9ba7db205b3c5f05c178240348e4236abb821e9c261",
-      "ptsid": "bde06bb9a0249e8b18189eaaca908f96d808acfc819a6014a6b22c9003e0a7c5",
-      "pakid": "b30365d824d6902463eb2b611c2a297fab2ce13f9a2fc3db4f50f53625c93a34",
-      "usig": "1",
-      "qsig": "1",
+      "nver": 1,
+      "feeperbyte": 1,
+      "buid": "76b19e926e6ea960ce19a9ba7db205b3c5f05c178240348e4236abb821e9c261",
+      "prevstid": "bde06bb9a0249e8b18189eaaca908f96d808acfc819a6014a6b22c9003e0a7c5",
+      "packetid": "b30365d824d6902463eb2b611c2a297fab2ce13f9a2fc3db4f50f53625c93a34",
+      "packetsize": 739,
+      "stsig": "1",
       "meta": {
         "id": "400849a8a8d37b6bac45b5b9fa7fafda3e8c55a04003db8eaffa03e66eca0166"
       }

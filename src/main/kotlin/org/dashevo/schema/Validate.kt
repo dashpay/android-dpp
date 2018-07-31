@@ -9,25 +9,12 @@ import org.everit.json.schema.Schema
 import org.everit.json.schema.loader.SchemaLoader
 import org.json.JSONArray
 import org.json.JSONObject
-import java.nio.charset.Charset
-
+import java.io.File
 
 object Validate {
 
     const val ERRORS = "errors"
     private const val OBJTYPE = "objtype"
-
-    /*
-    var systemSchemaValidator: Schema //Schema.System
-
-    init {
-        val schemaLoader= SchemaLoader.builder()
-                .schemaJson(org.dashevo.schema.Schema.system)
-                .draftV7Support()
-                .build()
-        systemSchemaValidator = schemaLoader.load().build()
-    }
-    */
 
     /**
      * Validates both System and Dap objects
@@ -41,7 +28,7 @@ object Validate {
         }
 
         val clonedObj = Object.fromObject(obj, dapSchema)
-        return JsonSchemaUtils.validateSchemaObject(clonedObj!!, dapSchema)
+        return JsonSchemaUtils.validateSchemaObject(clonedObj, dapSchema)
     }
 
     /**
@@ -203,10 +190,16 @@ object Validate {
                 .schemaJson(dapSchema)
                 .removeAdditional(removeAdditional)
                 .httpClient {
-                    if (it.equals("http://dash.org/schemas/sys")) {
-                        org.dashevo.schema.Schema.system.toString().byteInputStream(Charset.defaultCharset())
-                    } else {
-                        throw(RuntimeException("Schema not Found"))
+                    when (it) {
+                        "http://dash.org/schemas/sys" -> {
+                            org.dashevo.schema.Schema.system.toString().byteInputStream()
+                        }
+                        "http://json-schema.org/draft-07/schema#" -> {
+                            File(org.dashevo.schema.Schema::class.java
+                                    .getResource("/schema-v7.json").path).readText().byteInputStream()
+                        } else -> {
+                            throw(RuntimeException("Schema not Found"))
+                        }
                     }
                 }.build().load().build()
     }

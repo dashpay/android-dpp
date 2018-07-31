@@ -3,13 +3,13 @@ package org.dashevo.schema
 import org.dashevo.schema.Object.ACT
 import org.dashevo.schema.Object.DAPOBJECTS
 import org.dashevo.schema.Object.INDEX
-import org.dashevo.schema.Object.IS_PROFILE
+import org.dashevo.schema.Object.IS_ROLE
 import org.dashevo.schema.Object.OBJECTS
 import org.dashevo.schema.Object.OBJTYPE
 import org.dashevo.schema.Object.STHEADER
 import org.dashevo.schema.Object.STPACKET
 import org.dashevo.schema.Object.TYPE
-import org.dashevo.schema.Object.UID
+import org.dashevo.schema.Object.BUID
 import org.dashevo.schema.Object.USER_ID
 import org.dashevo.schema.model.Result
 import org.json.JSONArray
@@ -137,7 +137,7 @@ object State {
 
                 if (dapObject.has(relationName)
                         && dapObject.getJSONObject(relationName).getString(USER_ID) == st.getJSONObject(STHEADER)
-                                .getString(UID)) {
+                                .getString(BUID)) {
 
                     return Result("object cannot relate to self")
                 }
@@ -219,9 +219,9 @@ object State {
         val act = dapObject.getInt(ACT)
         val objtype = dapObject.getString(OBJTYPE)
 
-        if (act == 1 && isProfile(dapObject, dapSchema)) {
+        if (act == 1 && isRole(dapObject, dapSchema)) {
             val duplicate = dapSpace.getJSONArray(OBJECTS).find {
-                objtype == (it as JSONObject).getString(OBJTYPE) && isProfile(it, dapSchema)
+                objtype == (it as JSONObject).getString(OBJTYPE) && isRole(it, dapSchema)
             }
             return duplicate != null
         }
@@ -236,11 +236,11 @@ object State {
      * @param dapSchema {object} DapSchema instance
      * @returns {boolean}
      */
-    private fun isProfile(dapObject: JSONObject, dapSchema: JSONObject): Boolean {
+    private fun isRole(dapObject: JSONObject, dapSchema: JSONObject): Boolean {
         val key = dapObject.getString(OBJTYPE)
 
         if (dapSchema.has(key)) {
-            if (dapSchema.getJSONObject(key).getBoolean(IS_PROFILE)) {
+            if (dapSchema.getJSONObject(key).getBoolean(IS_ROLE)) {
                 return true
             }
         }

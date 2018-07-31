@@ -3,10 +3,14 @@
   "properties": {
     "dapobjectchild": {
       "type": "object",
-      "allOf": [{"$ref": "http://dash.org/schemas/sys#/definitions/dapobjectbase"}],
+      "allOf": [
+        {
+          "$ref": "http://dash.org/schemas/sys#/definitions/dapobjectbase"
+        }
+      ],
       "properties": {
         "dapobjectid": {
-          "type": "number",
+          "type": "number"
         }
       },
       "required": [

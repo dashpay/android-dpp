@@ -9,8 +9,9 @@ object Object {
     const val ALL_OF = "allOf"
     const val DAPOBJECTS = "dapobjects"
     const val DEFINITIONS = "definitions"
+    const val DAPMETASCHEMA = "dapmetaschema"
     const val INDEX = "index"
-    const val IS_PROFILE = "isprofile"
+    const val IS_ROLE = "_isrole"
     const val OBJECTS = "objects"
     const val OBJTYPE = "objtype"
     const val PROPERTIES = "properties"
@@ -20,8 +21,8 @@ object Object {
     const val TITLE = "title"
     const val TYPE = "type"
     const val USER_ID = "userId"
-    const val UID = "uid"
-    const val S_SCHEMA = "\$schema"
+    const val BUID = "buid"
+    const val SCHEMA_ID = "\$id"
 
     fun setID(obj: JSONObject, dapSchema: JSONObject? = null): String {
         val id = toHash(obj, dapSchema)
@@ -103,6 +104,10 @@ object Object {
             "dapschema" -> Hash.dapschema(obj);
             else -> Hash.dapobject(obj, dapSchema!!)
         }
+    }
+
+    fun getMeta(obj: JSONObject, key: String): String? {
+        return obj.getJSONObject("meta").getString(key)
     }
 
 }

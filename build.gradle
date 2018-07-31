@@ -45,6 +45,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
     testImplementation 'org.assertj:assertj-core:3.10.0'
+    testImplementation 'org.skyscreamer:jsonassert:1.5.0'
 }
 
 compileKotlin {

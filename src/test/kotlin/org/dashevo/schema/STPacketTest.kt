@@ -1,6 +1,9 @@
 package org.dashevo.schema
 
 import org.assertj.core.api.Assertions.assertThat
+import org.dashevo.schema.model.Result
+import org.dashevo.schema.util.JsonSchemaUtils
+import org.everit.json.schema.ValidationException
 import org.json.JSONObject
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -13,6 +16,16 @@ class STPacketTest {
     private val dapSchema = JSONObject(File("src/test/resources/data/somedap.json").readText())
     private val testData = JSONObject(File("src/test/resources/data/stpacket-test-data.json").readText())
     private val data = JSONObject()
+
+    fun validateAgainstSystemSchema(obj: JSONObject): Result {
+        var valid = Result()
+        try {
+            Validate.createValidator(Schema.system).validate(obj)
+        } catch (e: ValidationException) {
+            valid = JsonSchemaUtils.convertValidationError(e.causingExceptions, "")
+        }
+        return valid
+    }
 
     @Nested
     @DisplayName("DapContract Packet")

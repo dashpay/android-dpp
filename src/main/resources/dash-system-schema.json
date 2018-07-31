@@ -11,7 +11,7 @@
         "meta": {
           "type": "object",
           "properties": {
-            "uid": {
+            "buid": {
               "type": "string"
             },
             "uname": {
@@ -133,25 +133,70 @@
         }
       ],
       "properties": {
-        "dapschemaid": {
-          "type": "string"
+        "upgradedapid": {
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 64
         },
         "dapname": {
-          "type": "string"
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 24
         },
         "dapver": {
-          "type": "string"
+          "type": "number",
+          "multipleOf": 1.0,
+          "minimum": 1
         },
         "dapschema": {
           "type": "object"
         }
       },
       "required": [
-        "dapid",
         "dapname",
-        "dapver"
+        "dapver",
+        "dapschema"
       ],
       "additionalItems": false
+    },
+    "dapobjectkeyproperty": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        }
+      }
+    },
+    "dapobjectrelation": {
+      "type": "object",
+      "properties": {
+        "buid": {
+          "type": "string"
+        },
+        "multiplicity": {
+          "type": "string",
+          "enum": [
+            "red",
+            "amber",
+            "green"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "red",
+            "amber",
+            "green"
+          ]
+        }
+      }
+    },
+    "dapmetaschema": {
+      "$id": "http://dash.org/schemas/dapmeta",
+      "title": "DAP Subschema meta-schema",
+      "properties": {
+        "default": {}
+      }
     },
     "relation": {
       "type": "object",
@@ -168,7 +213,10 @@
           "minimum": 0
         }
       },
-      "required": ["userId", "type"],
+      "required": [
+        "userId",
+        "type"
+      ],
       "additionalProperties": false
     }
   },
@@ -214,7 +262,7 @@
         "uname": {
           "type": "string"
         },
-        "uid": {
+        "buid": {
           "type": "string"
         },
         "pubkey": {
@@ -244,7 +292,7 @@
       },
       "required": [
         "uname",
-        "uid",
+        "buid",
         "pubkey",
         "credits"
       ],
@@ -259,31 +307,48 @@
       ],
       "properties": {
         "pver": {},
-        "fee": {
-          "type": "number"
+        "nver": {
+          "type": "number",
+          "multipleOf": 1.0,
+          "minimum": 1
         },
-        "uid": {
-          "type": "string"
+        "feeperbyte": {
+          "type": "number",
+          "multipleOf": 0.00000001,
+          "minimum": 0
         },
-        "ptsid": {
-          "type": "string"
+        "buid": {
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 64
         },
-        "pakid": {
-          "type": "string"
+        "prevstid": {
+          "type": "string",
+          "minLength": 0 ,
+          "maxLength": 64
         },
-        "usig": {
-          "type": "string"
+        "packetid": {
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 64
         },
-        "qsig": {
+        "packetsize": {
+          "type": "number",
+          "multipleOf": 1.0,
+          "minimum": 0
+        },
+        "stsig": {
           "type": "string"
         }
       },
       "required": [
-        "fee",
-        "uid",
-        "ptsid",
-        "pakid",
-        "usig"
+        "nver",
+        "feeperbyte",
+        "buid",
+        "prevstid",
+        "packetid",
+        "packetsize",
+        "stsig"
       ],
       "additionalProperties": false
     },
@@ -314,9 +379,11 @@
         {
           "properties": {
             "dapid": {
-              "type": "string"
+              "type": "string",
+              "minLength": 64,
+              "maxLength": 64
             },
-            "dapobjmerkleroot": {
+            "dapobjectshash": {
               "type": "string"
             },
             "dapobjects": {
@@ -343,40 +410,18 @@
             }
           },
           "required": [
-            "dapobjmerkleroot",
+            "dapobjectshash",
             "dapobjects",
             "dapid"
-          ]
-        },
-        {
-          "properties": {
-            "sysmod": {
-              "type": "object",
-              "properties": {
-                "sysmodid": {
-                  "type": "number"
-                }
-              },
-              "required": [
-                "sysmodid"
-              ]
-            }
-          },
-          "required": [
-            "sysmod"
           ]
         }
       ],
       "properties": {
         "pver": {},
         "dapid": {},
-        "dapobjmerkleroot": {},
+        "dapobjectshash": {},
         "dapobjects": {},
-        "activestatehash": {
-          "type": "string"
-        },
-        "dapcontract": {},
-        "sysmod": {}
+        "dapcontract": {}
       },
       "additionalProperties": false
     },

@@ -9,4 +9,8 @@ object Schema {
         JSONObject(File(Schema::class.java.getResource("/dash-system-schema.json").path).readText())
     }
 
+    val jsonSchema by lazy {
+        JSONObject(File(Schema::class.java.getResource("/schema-v7.json").path).readText())
+    }
+
 }

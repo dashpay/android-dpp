@@ -1,6 +1,8 @@
 package org.dashevo.schema.util
 
 import org.apache.commons.collections.CollectionUtils
+import org.dashevo.schema.Object.DAPMETASCHEMA
+import org.dashevo.schema.Object.DEFINITIONS
 import org.dashevo.schema.Schema
 import org.dashevo.schema.Validate
 import org.dashevo.schema.model.Result
@@ -10,6 +12,10 @@ import org.json.JSONObject
 
 object JsonSchemaUtils {
 
+    /**
+     * Validate a System Object or DAP Object.
+     * DAP Object validation requires input of the DAP Schema.
+     */
     fun validateSchemaObject(clonedObj: JSONObject, dapSchema: JSONObject? = null): Result {
         val validator = if (dapSchema != null) {
             Validate.createValidator(dapSchema)
@@ -37,6 +43,7 @@ object JsonSchemaUtils {
      * Convert ValidationError to Dash Schema Errors (Result) ?
      */
     fun convertValidationError(validationErrors: List<ValidationException>, objType: String): Result {
+        // TODO: * ... catch more Validation Errors and tie to consensus rule errors
         if (CollectionUtils.isEmpty(validationErrors)) {
             return Result()
         }
@@ -48,11 +55,11 @@ object JsonSchemaUtils {
         when (validationError.keyword) {
             "required" -> {
                 code = Rules.DAPOBJECT_MISSING_PROPERTY.code
-                propName = validationError.schemaLocation.split("/").last() //TODO: Verify
+                propName = validationError.schemaLocation.split("/").last() //TODO: * Verify
             }
             "type" -> {
                 code = Rules.DAPOBJECT_INVALID_TYPE.code
-                propName = validationError.schemaLocation.split("/").last() //TODO: Verify
+                propName = validationError.schemaLocation.split("/").last() //TODO: * Verify
             }
 
         }
@@ -75,28 +82,48 @@ object JsonSchemaUtils {
         }
 
         if (CollectionUtils.isNotEmpty(errors)) {
-            clonedObj.put("errors", errors) //TODO: Check expected type of added errors
+            clonedObj.put("errors", errors) //TODO: * Check expected type of added errors
         }
         return clonedObj
     }
 
     fun validateDapSchemaDef(dapSchema: JSONObject): Result {
         try {
-            Validate.createValidator(Schema.system).validate(dapSchema)
+            Validate.createValidator(Schema.system)
+            Validate.createValidator(dapSchema)
         } catch (e: ValidationException) {
-            return Result(0) //TODO (?)
+            val result = Result(Rules.JSON_SCHEMA.code)
+            result.errMsg = e.errorMessage
+            return result
         }
 
         return Result()
     }
 
-    fun validateSysSchemaDef(sysSchema: JSONObject): Result {
-        try {
-            Validate.createValidator(Schema.system).validate(sysSchema)
-        } catch (e: ValidationException) {
-            return Result(0) //TODO (?)
-        }
+    fun validateDapSubschemaDef(dapSubschema: JSONObject): Result {
+        val dapMetaSchema = Schema.system.getJSONObject("definitions").getJSONObject("dapmetaschema")
+        val dapMetaSchemaValidator = Validate.createValidator(dapMetaSchema)
+        val systemValidator = Validate.createValidator(Schema.system)
 
+        try {
+            dapMetaSchemaValidator.validate(dapSubschema)
+            systemValidator.validate(dapSubschema)
+        } catch (e: ValidationException) {
+            val result = Result(Rules.JSON_SCHEMA.code)
+            result.errMsg = e.errorMessage
+            return result
+        }
+        return Result()
+    }
+
+    fun validateSchemaDef(schema: JSONObject): Result {
+        try {
+            Validate.createValidator(Schema.jsonSchema).validate(schema)
+        } catch (e: ValidationException) {
+            val result = Result(Rules.JSON_SCHEMA.code)
+            result.errMsg = e.errorMessage
+            return result
+        }
         return Result()
     }
 

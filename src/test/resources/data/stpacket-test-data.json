@@ -5,7 +5,7 @@
       "idx": 0,
       "dapid": "abcdef",
       "dapname": "DashPay",
-      "dapver": "1"
+      "dapver": 1
     }
   },
   "dapspace_valid_packet": {
@@ -13,7 +13,7 @@
       "debug": "valid packet",
       "pver": 1,
       "dapid": "456",
-      "dapobjmerkleroot": "123",
+      "dapobjectshash": "123",
       "dapobjects": [
         {
           "objtype": "someObject1",
@@ -62,7 +62,7 @@
     "stpacket": {
       "pver": 1,
       "dapid": "123",
-      "dapobjmerkleroot": "",
+      "dapobjectshash": "",
       "meta": {}
     }
   },
@@ -79,7 +79,7 @@
       "dapcontract": {
         "dapid": 1,
         "dapname": "DashPay",
-        "dapver": "1",
+        "dapver": 1,
         "dapschema": {}
       }
     }

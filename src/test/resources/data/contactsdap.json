@@ -3,7 +3,7 @@
   "title": "Contacts",
   "user": {
     "$id": "http://dash.org/schemas/sys/dapobject",
-    "isprofile": true,
+    "_isrole": true,
     "allOf": [
       {
         "$ref": "http://dash.org/schemas/sys#/definitions/dapobjectbase"

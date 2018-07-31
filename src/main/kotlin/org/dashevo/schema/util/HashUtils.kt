@@ -1,9 +1,7 @@
 package org.dashevo.schema.util
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.cbor.CBORFactory
-import com.fasterxml.jackson.datatype.jsonorg.JsonOrgModule
 import org.bitcoinj.core.Sha256Hash
+import org.dashevo.schema.Serialize
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 
@@ -15,11 +13,8 @@ object HashUtils {
      * @returns {*|string}
      */
     fun toHash(obj: JSONObject): String {
-        val cborFactory = CBORFactory()
-        val mapper =  ObjectMapper(cborFactory)
-        mapper.registerModule(JsonOrgModule())
-        val byteArr = mapper.writeValueAsBytes(obj.toMap())
-        //TODO: Jackson's Cbor seems to be adding additional bytes to the end
+        val byteArr = Serialize.encode(obj)
+        //TODO: * Jackson's Cbor seems to be adding additional bytes to the end
         //byteArr = Arrays.copyOfRange(byteArr, 0, byteArr.size-2)
         return Sha256Hash.wrap(Sha256Hash.hashTwice(byteArr)).toString()
         //Old code in: https://gist.github.com/sambarboza/db5c4d6880f057e899bccd70c846d3d6

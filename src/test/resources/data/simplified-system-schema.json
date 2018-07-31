@@ -1,3 +1,4 @@
+
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://dash.org/schemas/sys",
@@ -16,7 +17,11 @@
     },
     "sysobjectbase": {
       "type": "object",
-      "allOf": [{"$ref": "#/definitions/objectbase"}],
+      "allOf": [
+        {
+          "$ref": "#/definitions/objectbase"
+        }
+      ],
       "properties": {
         "sysobjectbaseid": {
           "type": "number"
@@ -28,7 +33,11 @@
     },
     "dapobjectbase": {
       "type": "object",
-      "allOf": [{"$ref": "#/definitions/objectbase"}],
+      "allOf": [
+        {
+          "$ref": "#/definitions/objectbase"
+        }
+      ],
       "properties": {
         "dapobjectbaseid": {
           "type": "number"
@@ -40,7 +49,11 @@
     },
     "dapcontractbase": {
       "type": "object",
-      "allOf": [{"$ref": "#/definitions/objectbase"}],
+      "allOf": [
+        {
+          "$ref": "#/definitions/objectbase"
+        }
+      ],
       "properties": {
         "dapcontract": {
           "type": "object",
@@ -62,7 +75,11 @@
   "properties": {
     "sysobjectchild": {
       "type": "object",
-      "allOf": [{"$ref": "#/definitions/sysobjectbase"}],
+      "allOf": [
+        {
+          "$ref": "#/definitions/sysobjectbase"
+        }
+      ],
       "properties": {
         "sysobjectchildid": {
           "type": "number"
@@ -72,11 +89,13 @@
         "sysobjectchildid"
       ]
     },
-
     "dapobjectcontainer": {
       "type": "object",
-      "allOf": [{"$ref": "#/definitions/sysobjectbase"}],
-
+      "allOf": [
+        {
+          "$ref": "#/definitions/sysobjectbase"
+        }
+      ],
       "oneOf": [
         {
           "$ref": "#/definitions/dapcontractbase"
@@ -88,15 +107,21 @@
               "uniqueItems": true,
               "minItems": 1,
               "items": {
-                "oneOf": [{
-                  "type": "object",
-                  "patternProperties": {
-                    "^.*$": {
-                      "allOf": [{"$ref": "#/definitions/dapobjectbase"}]
-                    }
-                  },
-                  "additionalProperties": false
-                }]
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "patternProperties": {
+                      "^.*$": {
+                        "allOf": [
+                          {
+                            "$ref": "#/definitions/dapobjectbase"
+                          }
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
               }
             }
           },
@@ -123,14 +148,13 @@
           ]
         }
       ],
-
       "properties": {
         "dapobjectcontainerid": {
           "type": "number"
         },
         "contents": {
           "type": "number"
-        },
+        }
       },
       "required": [
         "dapobjectcontainerid"

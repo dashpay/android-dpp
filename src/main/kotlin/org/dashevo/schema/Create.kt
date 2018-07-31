@@ -21,20 +21,22 @@ object Create {
 
     /**
      * Create a State Transition Header instance
-     * @param pakid ST Packet id
-     * @param uid Blockchain User id
-     * @param ptsid Previous State Transition id
+     * @param stp ST Packet schema instance
+     * @param buid Blockchain User id
+     * @param prevstid Previous State Transition id
      */
-    fun createSTHeaderInstance(pakid: String, uid: String, ptsid: String? = null): JSONObject {
+    fun createSTHeaderInstance(stp: JSONObject, buid: String, prevstid: String? = ""): JSONObject {
         val stHeaderObject = createBaseInstance(STHEADER)
         val stHeader = stHeaderObject.getJSONObject(STHEADER)
 
-        stHeader.put("fee", 0)
-        stHeader.put("uid", uid)
-        stHeader.put("ptsid", ptsid ?: "")
-        stHeader.put("pakid", pakid)
-        stHeader.put("usig", "")
-        stHeader.put("qsig", "")
+        stHeader.put("feeperbyte", 0) // blockchainuser fee set for this ts
+        stHeader.put("buid", buid) // blockchainuser id, taken from the tx hash of the blockchainuser's first subtx
+        stHeader.put("prevstid", prevstid ?: "") // hash of the previous transition for this blockchainuser (chained)
+        // hash of the associated data packet for this transition
+        stHeader.put("packetid", Object.getMeta(stp.getJSONObject(STPACKET), "id"))
+        stHeader.put("stsig", "") // sig of the blockchainuser & the dapi quorum that validated the transition data
+        stHeader.put("nver", 1)
+        stHeader.put("packetsize", Serialize.encode(stp).size)
 
         Object.setID(stHeaderObject)
 
@@ -57,10 +59,10 @@ object Create {
 
         val obj = dapContract.getJSONObject(DAPCONTRACT)
         obj.put("idx", 0)
-        obj.put("dapid", "") // specify when revising an existing dap (orig dapcontract id)
+        //obj.put("upgradedapid", "") // specify when revising an existing dap (orig dapcontract id)
         obj.put("dapname", dapSchema.getString("title"))
         obj.put("dapschema", dapSchema)
-        obj.put("dapver", "")
+        obj.put("dapver", 1)
 
         Object.setID(dapContract)
 
@@ -85,7 +87,7 @@ object Create {
     /**
      * Create a new Blockchain User instance from a subtx
      * @param subtx Subscription Transaction
-     * @returns {{blockchainuser: {pver: number, uname: string, uid: *|string, pubkey: string, credits: number}}}
+     * @returns {{blockchainuser: {pver: number, uname: string, buid: *|string, pubkey: string, credits: number}}}
      */
     fun createBlockchainUser(subTx: JSONObject): JSONObject {
         val blockchainUser = JSONObject()
@@ -93,7 +95,7 @@ object Create {
 
         blockchainUser.put("pver", obj["pver"])
         blockchainUser.put("uname", obj["uname"])
-        blockchainUser.put("uid", Hash.subtx(subTx))
+        blockchainUser.put("buid", Hash.subtx(subTx))
         blockchainUser.put("pubkey", obj["pubkey"])
         blockchainUser.put("credits", 100000)
 
