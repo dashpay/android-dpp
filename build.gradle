@@ -1,10 +1,10 @@
 apply plugin: 'maven'
 
 buildscript {
-    ext.kotlin_version = '1.2.50'
-
+    ext.kotlin_version = '1.2.51'
     repositories {
         mavenCentral()
+        maven { url "https://kotlin.bintray.com/kotlinx" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -24,9 +24,6 @@ apply plugin: 'kotlin'
 
 repositories {
     mavenCentral()
-    flatDir {
-        dirs 'libs'
-    }
 }
 
 dependencies {
@@ -34,13 +31,10 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
+    implementation "co.nstant.in:cbor:0.8"
     implementation 'org.json:json:20180130'
     implementation 'org.bitcoinj:bitcoinj-core:0.14.7'
-
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.7.4'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-json-org:2.7.4'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.7.4'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.7.4'
+    implementation 'com.github.sambarboza:json-schema:-SNAPSHOT'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'

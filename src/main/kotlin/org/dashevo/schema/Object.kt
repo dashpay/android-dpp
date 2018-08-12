@@ -24,6 +24,10 @@ object Object {
     const val BUID = "buid"
     const val SCHEMA_ID = "\$id"
 
+    const val CREATE_OBJECT_ACTION = 1
+    const val UPDATE_OBJECT_ACTION = 2
+    const val REMOVE_OBJECT_ACTION = 3
+
     fun setID(obj: JSONObject, dapSchema: JSONObject? = null): String {
         val id = toHash(obj, dapSchema)
         setMeta(obj, "id", id)
@@ -104,6 +108,15 @@ object Object {
             "dapschema" -> Hash.dapschema(obj);
             else -> Hash.dapobject(obj, dapSchema!!)
         }
+    }
+
+    /**
+     * Set's removal action on a Schema Object
+     */
+    fun prepareForRemoval(schemaObject: JSONObject): JSONObject {
+        schemaObject.put("act", REMOVE_OBJECT_ACTION)
+        schemaObject.put("rev", schemaObject.getInt("rev") + 1)
+        return schemaObject
     }
 
     fun getMeta(obj: JSONObject, key: String): String? {

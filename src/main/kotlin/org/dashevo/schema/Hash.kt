@@ -21,6 +21,8 @@ object Hash {
     }
 
     fun stpacket(obj: JSONObject, dapSchema: JSONObject): String {
+        return HashUtils.toHash(obj.getJSONObject("stpacket"))
+        /*
         val objList = arrayListOf(obj)
 
         //TODO: * Different from JS Lib, however, js lib seems to be hashing string chars instead of properties: needs verification.
@@ -37,6 +39,7 @@ object Hash {
         } else {
             HashUtils.toHash(obj)
         }
+        */
     }
 
     fun dapcontract(obj: JSONObject): String {

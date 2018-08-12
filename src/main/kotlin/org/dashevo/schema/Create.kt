@@ -1,5 +1,6 @@
 package org.dashevo.schema
 
+import org.dashevo.schema.Object.CREATE_OBJECT_ACTION
 import org.dashevo.schema.Object.OBJTYPE
 import org.json.JSONObject
 
@@ -79,7 +80,7 @@ object Create {
         obj.put(OBJTYPE, typeName)
         obj.put("idx", 0)
         obj.put("rev", 0)
-        obj.put("act", 1)
+        obj.put("act", CREATE_OBJECT_ACTION)
 
         return obj
     }
