@@ -6,8 +6,8 @@ import co.nstant.`in`.cbor.builder.AbstractBuilder
 import co.nstant.`in`.cbor.builder.ArrayBuilder
 import co.nstant.`in`.cbor.builder.MapBuilder
 import org.bitcoinj.core.Sha256Hash
-import org.json.JSONArray
-import org.json.JSONObject
+import org.jsonorg.JSONArray
+import org.jsonorg.JSONObject
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import java.nio.ByteBuffer

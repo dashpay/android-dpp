@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.dashevo.schema.model.Result
 import org.dashevo.schema.util.JsonSchemaUtils
 import org.everit.json.schema.ValidationException
-import org.json.JSONObject
+import org.jsonorg.JSONObject
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

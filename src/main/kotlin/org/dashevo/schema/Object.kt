@@ -1,7 +1,7 @@
 package org.dashevo.schema
 
 import org.dashevo.schema.util.JsonSchemaUtils
-import org.json.JSONObject
+import org.jsonorg.JSONObject
 
 object Object {
 
@@ -16,6 +16,7 @@ object Object {
     const val OBJTYPE = "objtype"
     const val PROPERTIES = "properties"
     const val REF = "\$ref"
+    const val REV = "rev"
     const val STPACKET = "stpacket"
     const val STHEADER = "stheader"
     const val TITLE = "title"
@@ -114,8 +115,8 @@ object Object {
      * Set's removal action on a Schema Object
      */
     fun prepareForRemoval(schemaObject: JSONObject): JSONObject {
-        schemaObject.put("act", REMOVE_OBJECT_ACTION)
-        schemaObject.put("rev", schemaObject.getInt("rev") + 1)
+        schemaObject.put(ACT, REMOVE_OBJECT_ACTION)
+        schemaObject.put(REV, schemaObject.getInt(REV) + 1)
         return schemaObject
     }
 

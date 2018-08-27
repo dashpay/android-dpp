@@ -1,9 +1,8 @@
 package org.dashevo.schema
 
-import org.json.JSONObject
+import org.jsonorg.JSONObject
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.skyscreamer.jsonassert.JSONAssert
 import java.io.File
 
 @DisplayName("Serialize Tests")

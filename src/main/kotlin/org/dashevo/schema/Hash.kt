@@ -4,7 +4,7 @@ import org.dashevo.schema.Object.DAPOBJECTS
 import org.dashevo.schema.Object.STPACKET
 import org.dashevo.schema.util.HashUtils
 import org.dashevo.schema.util.JsonSchemaUtils
-import org.json.JSONObject
+import org.jsonorg.JSONObject
 
 object Hash {
 

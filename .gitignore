@@ -12,6 +12,9 @@
 bin/
 gen/
 out/
+classes/
+target/
+pom.xml
 
 # Gradle files
 .gradle/

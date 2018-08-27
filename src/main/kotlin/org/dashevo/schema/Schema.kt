@@ -1,16 +1,26 @@
 package org.dashevo.schema
 
-import org.json.JSONObject
+import org.jsonorg.JSONObject
 import java.io.File
 
 object Schema {
 
+    var schemaLoader: SchemaLoader = object : SchemaLoader {
+        override fun loadJsonSchema(): JSONObject {
+            return JSONObject(File(Schema::class.java.getResource("/schema_v7.json").path).readText())
+        }
+
+        override fun loadDashSystemSchema(): JSONObject {
+            return JSONObject(File(Schema::class.java.getResource("/dash_system_schema.json").path).readText())
+        }
+    }
+
     val system by lazy {
-        JSONObject(File(Schema::class.java.getResource("/dash-system-schema.json").path).readText())
+        schemaLoader.loadDashSystemSchema()
     }
 
     val jsonSchema by lazy {
-        JSONObject(File(Schema::class.java.getResource("/schema-v7.json").path).readText())
+        schemaLoader.loadJsonSchema()
     }
 
 }

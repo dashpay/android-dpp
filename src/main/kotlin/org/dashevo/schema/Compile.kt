@@ -9,8 +9,9 @@ import org.dashevo.schema.Object.TITLE
 import org.dashevo.schema.model.Result
 import org.dashevo.schema.model.Rules
 import org.dashevo.schema.util.JsonSchemaUtils
-import org.json.JSONArray
-import org.json.JSONObject
+import org.jsonorg.JSONArray
+
+import org.jsonorg.JSONObject
 
 object Compile {
 

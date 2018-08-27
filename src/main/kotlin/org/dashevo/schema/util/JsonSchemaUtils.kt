@@ -8,7 +8,7 @@ import org.dashevo.schema.Validate
 import org.dashevo.schema.model.Result
 import org.dashevo.schema.model.Rules
 import org.everit.json.schema.ValidationException
-import org.json.JSONObject
+import org.jsonorg.JSONObject
 
 object JsonSchemaUtils {
 

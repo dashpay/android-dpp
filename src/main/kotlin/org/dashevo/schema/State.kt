@@ -12,8 +12,8 @@ import org.dashevo.schema.Object.TYPE
 import org.dashevo.schema.Object.BUID
 import org.dashevo.schema.Object.USER_ID
 import org.dashevo.schema.model.Result
-import org.json.JSONArray
-import org.json.JSONObject
+import org.jsonorg.JSONArray
+import org.jsonorg.JSONObject
 
 object State {
 

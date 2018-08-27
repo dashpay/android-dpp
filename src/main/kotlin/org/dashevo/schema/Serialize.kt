@@ -1,7 +1,7 @@
 package org.dashevo.schema
 
 import org.dashevo.schema.util.HashUtils
-import org.json.JSONObject
+import org.jsonorg.JSONObject
 
 object Serialize {
 

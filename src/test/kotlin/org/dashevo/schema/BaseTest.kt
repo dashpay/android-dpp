@@ -1,6 +1,6 @@
 package org.dashevo.schema
 
-import org.json.JSONObject
+import org.jsonorg.JSONObject
 import java.io.File
 
 open class BaseTest {

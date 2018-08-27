@@ -1,26 +1,28 @@
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'kotlin'
 
 buildscript {
     ext.kotlin_version = '1.2.51'
     repositories {
+        jcenter()
         mavenCentral()
+        mavenLocal()
         maven { url "https://kotlin.bintray.com/kotlinx" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
     }
 }
 
 allprojects {
     repositories {
-        maven { url 'https://jitpack.io' }
+        mavenLocal()
     }
 }
 
 group 'org.dashevo'
 version '1.0-SNAPSHOT'
-
-apply plugin: 'kotlin'
 
 repositories {
     mavenCentral()
@@ -31,15 +33,13 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-    implementation "co.nstant.in:cbor:0.8"
-    implementation 'org.json:json:20180130'
-    implementation 'org.bitcoinj:bitcoinj-core:0.14.7'
-    implementation 'com.github.sambarboza:json-schema:-SNAPSHOT'
+    implementation 'co.nstant.in:cbor:0.8'
+    implementation 'org.dashj:dashj-core:0.14.4.4'
+    implementation 'org.everit.json:org.everit.json.schema:1.9.2'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
     testImplementation 'org.assertj:assertj-core:3.10.0'
-    testImplementation 'org.skyscreamer:jsonassert:1.5.0'
 }
 
 compileKotlin {
@@ -49,12 +49,21 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-test {
-    //useJUnitPlatform()
+task sourcesJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allSource
 }
 
-uploadArchives {
-    repositories {
-        mavenLocal()
+artifacts {
+    archives sourcesJar
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
     }
 }
+
+assemble.dependsOn(publishToMavenLocal)

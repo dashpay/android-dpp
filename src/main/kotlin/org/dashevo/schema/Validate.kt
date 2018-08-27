@@ -7,8 +7,8 @@ import org.dashevo.schema.model.Rules
 import org.dashevo.schema.util.JsonSchemaUtils
 import org.everit.json.schema.Schema
 import org.everit.json.schema.loader.SchemaLoader
-import org.json.JSONArray
-import org.json.JSONObject
+import org.jsonorg.JSONArray
+import org.jsonorg.JSONObject
 import java.io.File
 
 object Validate {
@@ -196,7 +196,7 @@ object Validate {
                         }
                         "http://json-schema.org/draft-07/schema#" -> {
                             File(org.dashevo.schema.Schema::class.java
-                                    .getResource("/schema-v7.json").path).readText().byteInputStream()
+                                    .getResource("/schema_v7.json").path).readText().byteInputStream()
                         } else -> {
                             throw(RuntimeException("Schema not Found"))
                         }

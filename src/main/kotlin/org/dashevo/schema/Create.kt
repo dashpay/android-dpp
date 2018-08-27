@@ -2,7 +2,7 @@ package org.dashevo.schema
 
 import org.dashevo.schema.Object.CREATE_OBJECT_ACTION
 import org.dashevo.schema.Object.OBJTYPE
-import org.json.JSONObject
+import org.jsonorg.JSONObject
 
 object Create {
 
@@ -67,7 +67,7 @@ object Create {
 
         Object.setID(dapContract)
 
-        return dapContract;
+        return dapContract
     }
 
     /**

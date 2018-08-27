@@ -2,7 +2,7 @@ package org.dashevo.schema
 
 import org.assertj.core.api.Assertions.assertThat
 import org.dashevo.schema.model.Rules
-import org.json.JSONObject
+import org.jsonorg.JSONObject
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

@@ -1,7 +1,7 @@
 package org.dashevo.schema
 
-import org.json.JSONArray
-import org.json.JSONObject
+import org.jsonorg.JSONArray
+import org.jsonorg.JSONObject
 
 object Definition {
 

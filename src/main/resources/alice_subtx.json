@@ -1,0 +1,72 @@
+{
+  "stpacket": {
+    "dapcontract": {
+      "dapname": "DashPay",
+      "dapschema": {
+        "$id": "http://dash.org/schemas/sys/dapschema",
+        "contact": {
+          "$id": "http://dash.org/schemas/sys/dapobject",
+          "allOf": [
+            {
+              "$ref": "http://dash.org/schemas/sys#/definitions/dapobjectbase"
+            }
+          ],
+          "properties": {
+            "hdextpubkey": {
+              "type": "string"
+            },
+            "pub": {
+              "type": "string"
+            },
+            "user": {
+              "$ref": "http://dash.org/schemas/sys#/definitions/relation"
+            }
+          },
+          "required": [
+            "hdextpubkey",
+            "user"
+          ]
+        },
+        "store": {
+          "_isrole": true,
+          "$id": "http://dash.org/schemas/sys/dapobject",
+          "allOf": [
+            {
+              "$ref": "http://dash.org/schemas/sys#/definitions/dapobjectbase"
+            }
+          ],
+          "properties": {
+            "storename": {
+              "type": "number"
+            }
+          }
+        },
+        "title": "DashPay",
+        "user": {
+          "_isrole": true,
+          "$id": "http://dash.org/schemas/sys/dapobject",
+          "allOf": [
+            {
+              "$ref": "http://dash.org/schemas/sys#/definitions/dapobjectbase"
+            }
+          ],
+          "properties": {
+            "aboutme": {
+              "type": "string"
+            },
+            "avatar": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "dapver": 1,
+      "idx": 0,
+      "meta": {
+        "id": "6956e14d31027247629580a593233dc490b26ae11a35eafd13695d7d6af1cd95"
+      },
+      "pver": 1
+    },
+    "pver": 1
+  }
+}
