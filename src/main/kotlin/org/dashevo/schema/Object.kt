@@ -25,7 +25,7 @@ object Object {
     const val BUID = "buid"
     const val SCHEMA_ID = "\$id"
 
-    const val CREATE_OBJECT_ACTION = 1
+    const val CREATE_OBJECT_ACTION = 0
     const val UPDATE_OBJECT_ACTION = 2
     const val REMOVE_OBJECT_ACTION = 3
 
