@@ -1,21 +1,29 @@
-package org.dashevo.schema.util
+/**
+ * Copyright (c) 2018-present, Dash Core Team
+ *
+ * This source code is licensed under the MIT license found in the
+ * COPYING file in the root directory of this source tree.
+ */
+
+package org.dashevo.dpp.util
 
 import co.nstant.`in`.cbor.CborBuilder
 import co.nstant.`in`.cbor.CborEncoder
 import co.nstant.`in`.cbor.builder.AbstractBuilder
 import co.nstant.`in`.cbor.builder.ArrayBuilder
 import co.nstant.`in`.cbor.builder.MapBuilder
+import org.bitcoinj.core.ECKey
 import org.bitcoinj.core.Sha256Hash
-import org.jsonorg.JSONArray
-import org.jsonorg.JSONObject
+import org.bitcoinj.params.TestNet3Params
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.util.*
+import kotlin.collections.ArrayList
 
 object HashUtils {
 
-    fun encode(obj: JSONObject): ByteArray {
+    fun encode(obj: Map<String, Any>): ByteArray {
         val baos = ByteArrayOutputStream()
         val cborBuilder = CborBuilder()
         val mapBuilder = writeJSONObject(obj, cborBuilder.addMap(), baos)
@@ -29,41 +37,53 @@ object HashUtils {
      * @param obj {object} Schema object instance
      * @returns {*|string}
      */
-    fun toHash(obj: JSONObject): String {
+    fun toHash(obj: Map<String, Any>): ByteArray {
         val byteArray = encode(obj)
-        return Sha256Hash.wrapReversed(Sha256Hash.hashTwice(byteArray)).toString()
+        return toHash(byteArray)
     }
 
-    private fun writeJSONObject(obj: JSONObject, mapBuilder: MapBuilder<CborBuilder>,
+    fun toHash(byteArray: ByteArray): ByteArray {
+        return Sha256Hash.hashTwice(byteArray)
+    }
+
+    fun decode(payload: ByteArray): Map<String, Any> {
+        TODO()
+    }
+
+    private fun writeJSONObject(obj: Map<String, Any>, mapBuilder: MapBuilder<CborBuilder>,
                                 baos: ByteArrayOutputStream,
                                 innerMapBuilder: AbstractBuilder<*>? = null): CborBuilder {
 
         val sortedKeys = ArrayList<String>()
-        sortedKeys.addAll(obj.keySet())
+        sortedKeys.addAll(obj.keys)
         sortedKeys.sortWith(Comparator{ a, b ->
             ByteBuffer.wrap(a.toByteArray()).short.compareTo(ByteBuffer.wrap(b.toByteArray()).short)
         })
 
         sortedKeys.forEach { key ->
             val value = obj.get(key)
-            if (value is JSONObject) {
+            if (value is Map<*, *>) {
                 if (innerMapBuilder != null && innerMapBuilder is MapBuilder<*>) {
-                    writeJSONObject(obj.getJSONObject(key), mapBuilder, baos, innerMapBuilder.putMap(key))
+                    writeJSONObject(obj.get(key) as Map<String, Any>, mapBuilder, baos, innerMapBuilder.putMap(key))
                 } else {
-                    writeJSONObject(obj.getJSONObject(key), mapBuilder, baos, mapBuilder.putMap(key))
+                    writeJSONObject(obj.get(key) as Map<String, Any>, mapBuilder, baos, mapBuilder.putMap(key))
                 }
             } else {
                 val builder: AbstractBuilder<*> = innerMapBuilder ?: mapBuilder
-                if (value is JSONArray) {
+                if (value is List<*>) {
                     if (builder is MapBuilder<*>) {
                         addJSONArray(value, mapBuilder, baos, builder.putArray(key))
                     } else if (builder is ArrayBuilder<*>) {
                         addJSONArray(value, mapBuilder, baos, builder.addArray())
                     }
                 } else if (builder is MapBuilder<*>){
-                    addValueToMapBuilder(builder, key, value)
+                    if (value != null) {
+                        addValueToMapBuilder(builder, key, value)
+                    }
                 } else if (builder is ArrayBuilder<*>) {
-                    addValueToArrayBuilder(value, builder)
+                    if (value != null) {
+                        addValueToArrayBuilder(value, builder)
+                    }
                 }
             }
         }
@@ -71,14 +91,14 @@ object HashUtils {
         return mapBuilder.end()
     }
 
-    private fun addJSONArray(value: JSONArray, mapBuilder: MapBuilder<CborBuilder>, baos: ByteArrayOutputStream, arrayBuilder: ArrayBuilder<*>) {
-        val count = value.length()
+    private fun addJSONArray(value: List<*>, mapBuilder: MapBuilder<CborBuilder>, baos: ByteArrayOutputStream, arrayBuilder: ArrayBuilder<*>) {
+        val count = value.size
         for (i in 0 until count) {
             val item = value[i]
-            if (item is JSONObject) {
-                writeJSONObject(item, mapBuilder, baos, arrayBuilder.addMap())
+            if (item is Map<*, *>) {
+                writeJSONObject(item as Map<String, Any>, mapBuilder, baos, arrayBuilder.addMap())
             } else {
-                addValueToArrayBuilder(item, arrayBuilder)
+                addValueToArrayBuilder(item!!, arrayBuilder)
             }
         }
     }
@@ -93,6 +113,7 @@ object HashUtils {
             is Float -> mapBuilder.put(key, value)
             is Long -> mapBuilder.put(key, value)
             is Double -> mapBuilder.put(key, value)
+            is ByteArray -> mapBuilder.put(key, value)
             else -> mapBuilder.put(key, value.toString()) //?
         }
     }
@@ -107,16 +128,51 @@ object HashUtils {
             is Float -> arrayBuilder.add(value)
             is Long -> arrayBuilder.add(value)
             is Double -> arrayBuilder.add(value)
+            is ByteArray -> arrayBuilder.add(value)
             else -> arrayBuilder.add(value.toString()) //?
         }
     }
 
-    fun toHash(objList: List<JSONObject>): String {
+    fun toHash(objList: List<Map<String, Any>>): ByteArray {
         val bos = ByteArrayOutputStream()
         objList.forEach {
             bos.write(Sha256Hash.wrap(toHash(it)).bytes)
         }
-        return Sha256Hash.hashTwice(bos.toByteArray()).toString()
+        return toHash(bos.toByteArray())
+    }
+
+    fun getMerkleTree(hashes: List<ByteArray>): List<ByteArray> {
+        val tree = arrayListOf<ByteArray>()
+        tree.addAll(hashes.map { it.clone() })
+
+        var j = 0
+        var size = hashes.size
+        while (size > 1) {
+            size = Math.floor((size + 1).toDouble() / 2).toInt()
+
+            var i = 0
+            while (i < size) {
+                i += 2
+                val i2 = Math.min(i + 1, size - 1)
+                val a = tree[j + i]
+                val b = tree[j + i2]
+                val buf = a + b
+                tree.add(toHash(buf))
+            }
+
+            j += size
+        }
+
+        return tree
+    }
+
+    fun getMerkleRoot(merkleTree: List<ByteArray>): ByteArray {
+        return merkleTree.last().clone()
+    }
+
+    fun createScopeId(): String {
+        val privKey = ECKey()
+        return privKey.toAddress(TestNet3Params()).toString()
     }
 
 }
