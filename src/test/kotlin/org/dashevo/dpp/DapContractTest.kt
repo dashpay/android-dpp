@@ -1,7 +1,6 @@
-package org.dashevo.schema
+package org.dashevo.dpp
 
-import org.assertj.core.api.Assertions.assertThat
-import org.jsonorg.JSONObject
+import org.json.JSONObject
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -17,19 +16,8 @@ class DapContractTest : BaseTest() {
     inner class DapContractSchema {
 
         @Test
-        @DisplayName("Valid DapContract Schema")
-        fun validDapContractSchema() {
-            val valid = Compile.compileDapSchema(contactsDap)
-            assertThat(valid.valid).isTrue()
-        }
-
-        @Test
         @DisplayName("Validate DapContract Container")
         fun validateDapContractContainer() {
-            dapContract.getJSONObject("dapcontract").put("dapschema", contactsDap)
-
-            val valid = Validate.validateDapContract(dapContract)
-            assertThat(valid.valid).isTrue()
         }
 
     }

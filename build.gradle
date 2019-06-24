@@ -3,7 +3,7 @@ apply plugin: 'kotlin'
 
 buildscript {
     ext.kotlin_version = '1.2.71'
-    ext.dashj_version = '0.15-SNAPSHOT'
+    ext.dashj_version = '0.16-SNAPSHOT'
     repositories {
         jcenter()
         mavenCentral()
@@ -37,7 +37,6 @@ dependencies {
 
     implementation 'co.nstant.in:cbor:0.8'
     implementation "org.dashj:dashj-core:$dashj_version"
-    implementation 'org.everit.json:org.everit.json.schema:1.9.2'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
