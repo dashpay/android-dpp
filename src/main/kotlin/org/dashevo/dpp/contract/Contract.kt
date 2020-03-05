@@ -5,10 +5,11 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp
+package org.dashevo.dpp.contract
 
 import org.bitcoinj.core.Base58
 import org.dashevo.dpp.errors.InvalidDocumentTypeError
+import org.dashevo.dpp.toHexString
 import org.dashevo.dpp.util.HashUtils
 
 class Contract(var name: String = "", var documents: MutableMap<String, Any>) {

@@ -7,6 +7,7 @@
 
 package org.dashevo.dpp
 
+import org.dashevo.dpp.contract.Contract
 import org.dashevo.dpp.util.HashUtils
 import org.json.JSONObject
 

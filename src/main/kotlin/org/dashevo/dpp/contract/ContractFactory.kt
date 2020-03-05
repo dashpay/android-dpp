@@ -5,7 +5,7 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp
+package org.dashevo.dpp.contract
 
 class ContractFactory {
 
