@@ -12,6 +12,7 @@ import co.nstant.`in`.cbor.CborEncoder
 import co.nstant.`in`.cbor.builder.AbstractBuilder
 import co.nstant.`in`.cbor.builder.ArrayBuilder
 import co.nstant.`in`.cbor.builder.MapBuilder
+import org.bitcoinj.core.Address
 import org.bitcoinj.core.ECKey
 import org.bitcoinj.core.Sha256Hash
 import org.bitcoinj.params.TestNet3Params
@@ -170,9 +171,9 @@ object HashUtils {
         return merkleTree.last().clone()
     }
 
+    @Deprecated ("use Entropy.generate()", ReplaceWith("Entropy.generate()"))
     fun createScopeId(): String {
-        val privKey = ECKey()
-        return privKey.toAddress(TestNet3Params()).toString()
+        return Entropy.generate()
     }
 
 }
