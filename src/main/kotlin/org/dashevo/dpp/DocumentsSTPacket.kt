@@ -7,6 +7,7 @@
 
 package org.dashevo.dpp
 
+import org.dashevo.dpp.document.Document
 import org.dashevo.dpp.util.HashUtils
 
 class DocumentsSTPacket(contractId: String, val documents: List<Document>) : STPacket(contractId) {

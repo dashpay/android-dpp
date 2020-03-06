@@ -5,7 +5,7 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp
+package org.dashevo.dpp.document
 
 import org.dashevo.dpp.errors.InvalidDocumentTypeError
 import org.dashevo.dpp.util.HashUtils

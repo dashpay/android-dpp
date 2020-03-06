@@ -5,7 +5,7 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp
+package org.dashevo.dpp.document
 
 import org.bitcoinj.core.Base58
 import org.dashevo.dpp.util.HashUtils

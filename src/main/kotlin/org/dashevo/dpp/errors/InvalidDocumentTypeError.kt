@@ -7,7 +7,7 @@
 
 package org.dashevo.dpp.errors
 
-import org.dashevo.dpp.Contract
+import org.dashevo.dpp.contract.Contract
 
 class InvalidDocumentTypeError(contract: Contract, type: String)
     : IllegalStateException("Contract ${contract.name} doesn't contain type $type")
