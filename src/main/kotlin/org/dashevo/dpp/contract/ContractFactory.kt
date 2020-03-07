@@ -11,7 +11,7 @@ class ContractFactory {
 
     fun create(rawDocument: MutableMap<String, Any>): Contract {
 
-        val contract = Contract(rawDocument.get("name") as String,
+        val contract = Contract(rawDocument.get("contractId") as String,
                 rawDocument.get("documents") as MutableMap<String, Any>)
 
         if (rawDocument.containsKey("\$schema")) {
@@ -19,7 +19,7 @@ class ContractFactory {
         }
 
         if (rawDocument.containsKey("version")) {
-            contract.version = rawDocument.get("version") as Double
+            contract.version = rawDocument.get("version") as Int
         }
 
         if (rawDocument.containsKey("definitions")) {

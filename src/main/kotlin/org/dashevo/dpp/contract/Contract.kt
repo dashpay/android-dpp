@@ -7,55 +7,45 @@
 
 package org.dashevo.dpp.contract
 
-import org.bitcoinj.core.Base58
+import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.errors.InvalidDocumentTypeError
-import org.dashevo.dpp.toHexString
-import org.dashevo.dpp.util.HashUtils
 
-class Contract(var name: String = "", var documents: MutableMap<String, Any>) {
+class Contract(var contractId: String = "", var documents: MutableMap<String, Any>) : BaseObject() {
 
     companion object DEFAULTS {
-        const val VERSION = 1.0
-        const val SCHEMA = "https://schema.dash.org/dpp-0-4-0/meta/contract"
-        const val SCHEMA_ID = "contract"
+        const val VERSION = 1
+        const val SCHEMA = "https://schema.dash.org/dpp-0-4-0/meta/data-contract"
+        const val SCHEMA_ID = "dataContract"
     }
 
     var id: String = ""
        get() {
            if (field.isEmpty()) {
-               field = Base58.encode(this.serialize())
+               field = contractId
            }
            return field
        }
-    var version: Double = VERSION
+    var version: Int = VERSION
     var schema: String = SCHEMA
     var definitions = mapOf<String, Any>()
 
-    fun toJSON(): Map<String, Any> {
+    override fun toJSON(): Map<String, Any> {
         val json = hashMapOf<String, Any>()
 
-        json.put("\$schema", this.schema)
-        json.put("\$name", this.name)
-        json.put("\$version", this.version)
-        json.put("\$documents", this.documents)
+        json["\$schema"] = this.schema
+        json["contractId"] = this.contractId
+        json["version"] = this.version
+        json["documents"] = this.documents
 
         if (!this.definitions.isEmpty()) {
-            json.put("definitions", this.definitions)
+            json["definitions"] = this.definitions
         }
 
         return json
     }
 
-    fun serialize(): ByteArray {
-        return HashUtils.encode(this.toJSON())
-    }
-
-    fun hash(): String {
-        return HashUtils.toHash(this.serialize()).toHexString()
-    }
-
     fun setDocumentSchema(type: String, schema: Map<String, Any>) {
-        this.documents.put(type, schema)
+        this.documents[type] = schema
     }
 
     fun getJsonSchemaId(): String {
@@ -70,7 +60,7 @@ class Contract(var name: String = "", var documents: MutableMap<String, Any>) {
 
     fun getDocumentSchema(type: String): Map<String, Any>{
         checkContainsDocumentType(type)
-        return this.documents.get(type) as Map<String, Any>
+        return this.documents[type] as Map<String, Any>
     }
 
     fun getDocumentSchemaRef(type: String): Map<String, String> {
