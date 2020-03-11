@@ -21,8 +21,9 @@ class Document(rawDocument: MutableMap<String, Any>) : BaseObject() {
         DELETE(4);
 
         companion object {
+            private val values = values()
             fun getByCode(code: Int): Action {
-                return Action.values().filter { it.ordinal == code }[0]
+                return values.filter { it.ordinal == code }[0]
             }
         }
     }
