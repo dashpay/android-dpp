@@ -12,10 +12,8 @@ import co.nstant.`in`.cbor.CborEncoder
 import co.nstant.`in`.cbor.builder.AbstractBuilder
 import co.nstant.`in`.cbor.builder.ArrayBuilder
 import co.nstant.`in`.cbor.builder.MapBuilder
-import org.bitcoinj.core.Address
-import org.bitcoinj.core.ECKey
+import com.google.common.io.BaseEncoding
 import org.bitcoinj.core.Sha256Hash
-import org.bitcoinj.params.TestNet3Params
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import java.nio.ByteBuffer
@@ -45,6 +43,14 @@ object HashUtils {
 
     fun toHash(byteArray: ByteArray): ByteArray {
         return Sha256Hash.hashTwice(byteArray)
+    }
+
+    fun toSha256Hash(byteArray: ByteArray): Sha256Hash {
+        return Sha256Hash.wrap(byteArray)
+    }
+
+    fun fromBase64(base64: String): ByteArray {
+        return BaseEncoding.base64().omitPadding().decode(base64)
     }
 
     fun decode(payload: ByteArray): Map<String, Any> {
