@@ -1,0 +1,18 @@
+{
+  id: "4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp",
+  type: 1,
+  publicKeys: [
+    {
+      id: 1,
+      type: 1,
+      data: 'AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di',
+      isEnabled: true,
+    },
+    {
+      id: 2,
+      type: 1,
+      data: 'A8AK95PYMVX5VQKzOhcVQRCUbc9pyg3RiL7jttEMDU+L',
+      isEnabled: true,
+    },
+  ],
+}
