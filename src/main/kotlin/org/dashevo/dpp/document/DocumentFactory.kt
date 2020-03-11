@@ -7,15 +7,16 @@
 
 package org.dashevo.dpp.document
 
+import org.dashevo.dpp.Factory
 import org.dashevo.dpp.contract.Contract
 import org.dashevo.dpp.errors.InvalidDocumentTypeError
 import org.dashevo.dpp.util.Entropy
 import org.dashevo.dpp.util.HashUtils
 
-class DocumentFactory(val userId: String, val contract: Contract) {
+class DocumentFactory() : Factory() {
 
-    fun create(type: String, data: Map<String, Any> = mapOf()) : Document {
-        if (!this.contract.isDocumentDefined(type)) {
+    fun create(contract: Contract, userId: String, type: String, data: Map<String, Any> = mapOf()) : Document {
+        if (!contract.isDocumentDefined(type)) {
             throw InvalidDocumentTypeError(contract, type)
         }
 
@@ -45,7 +46,4 @@ class DocumentFactory(val userId: String, val contract: Contract) {
         val rawDocument = HashUtils.decode(payload).toMutableMap()
         return createFromObject(rawDocument, options)
     }
-
-    inner class Options(skipValidation: Boolean = false)
-
 }

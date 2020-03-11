@@ -7,15 +7,19 @@
 
 package org.dashevo.dpp.contract
 
-class ContractFactory {
+import org.dashevo.dpp.Factory
 
-    fun create(rawDocument: MutableMap<String, Any>): Contract {
+class ContractFactory : Factory() {
 
-        val contract = Contract(rawDocument.get("contractId") as String,
-                rawDocument.get("documents") as MutableMap<String, Any>)
+    fun createDataContract(rawDataContract: MutableMap<String, Any>): Contract {
 
-        if (rawDocument.containsKey("\$schema")) {
-            contract.schema = rawDocument.get("\$schema") as String
+        val contractId = if (rawDataContract.containsKey("contractId")) rawDataContract["contractId"] as String else ""
+
+        val contract = Contract(contractId,
+                rawDataContract["documents"] as MutableMap<String, Any>)
+
+        if (rawDataContract.containsKey("\$schema")) {
+            contract.schema = rawDataContract["\$schema"] as String
         }
 
         if (rawDocument.containsKey("version")) {
