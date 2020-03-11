@@ -7,6 +7,7 @@
 
 package org.dashevo.dpp
 
+import com.google.common.io.BaseEncoding
 import org.json.JSONObject
 
 fun JSONObject.append(jsonObject: JSONObject): JSONObject {
@@ -20,5 +21,9 @@ fun ByteArray.toHexString(): String {
     return this.joinToString("") {
         java.lang.String.format("%02x", it)
     }
+}
+
+fun ByteArray.toBase64(): String {
+    return BaseEncoding.base64().omitPadding().encode(this)
 }
 
