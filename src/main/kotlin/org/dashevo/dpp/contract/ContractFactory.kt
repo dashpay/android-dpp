@@ -8,6 +8,8 @@
 package org.dashevo.dpp.contract
 
 import org.dashevo.dpp.Factory
+import org.dashevo.dpp.document.Document
+import org.dashevo.dpp.util.HashUtils
 
 class ContractFactory : Factory() {
 
@@ -22,15 +24,31 @@ class ContractFactory : Factory() {
             contract.schema = rawDataContract["\$schema"] as String
         }
 
-        if (rawDocument.containsKey("version")) {
-            contract.version = rawDocument.get("version") as Int
+        if (rawDataContract.containsKey("version")) {
+            contract.version = rawDataContract["version"] as Int
         }
 
-        if (rawDocument.containsKey("definitions")) {
-            contract.definitions = rawDocument.get("definitions") as MutableMap<String, Any>
+        if (rawDataContract.containsKey("definitions")) {
+            contract.definitions = rawDataContract["definitions"] as MutableMap<String, Any>
         }
 
         return contract
+    }
+
+    fun create(contractId: String, documents: MutableMap<String, Any>): Contract {
+        val rawContract = HashMap<String, Any>(2)
+        rawContract["contractId"] = contractId
+        rawContract["documents"] = documents
+        return createDataContract(rawContract)
+    }
+
+    fun createFromObject(rawContract: MutableMap<String, Any>, options: Options = Options()): Contract {
+        return createDataContract(rawContract)
+    }
+
+    fun createFromSerialized(payload: ByteArray, options: Options = Options()): Contract {
+        val rawDocument = HashUtils.decode(payload).toMutableMap()
+        return createFromObject(rawDocument, options)
     }
 
 }
