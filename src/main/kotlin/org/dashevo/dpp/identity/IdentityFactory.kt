@@ -8,6 +8,9 @@
 package org.dashevo.dpp.identity
 
 import org.dashevo.dpp.Factory
+import org.dashevo.dpp.errors.IdentityAlreadyExistsError
+import org.dashevo.dpp.identity.errors.WrongStateTransitionTypeError
+import org.dashevo.dpp.statetransition.StateTransition
 import org.dashevo.dpp.util.HashUtils
 
 class IdentityFactory() : Factory() {
@@ -23,5 +26,33 @@ class IdentityFactory() : Factory() {
     fun createFromSerialized(payload: ByteArray, options: Options = Options()): Identity {
         val rawIdentity = HashUtils.decode(payload).toMutableMap()
         return createFromObject(rawIdentity, options)
+    }
+
+    fun applyCreateStateTransition(stateTransition: IdentityStateTransition) : Identity {
+        return applyIdentityStateTransition(stateTransition, null)
+    }
+
+    fun applyStateTransition(stateTransition: IdentityStateTransition, identity: Identity?) : Identity {
+        return applyIdentityStateTransition(stateTransition, identity)
+    }
+
+    fun applyIdentityStateTransition(stateTransition: IdentityStateTransition, identity: Identity?) : Identity {
+        // noinspection JSRedundantSwitchStatement
+        when (stateTransition.type) {
+            StateTransition.Types.IDENTITY_CREATE -> {
+                val identityCreateTransition = stateTransition as IdentityCreateTransition
+                if (identity != null) {
+                    throw IdentityAlreadyExistsError (stateTransition)
+                }
+
+                val newIdentity = Identity(identityCreateTransition.identityId,
+                        identityCreateTransition.identityType!!, identityCreateTransition.publicKeys);
+
+                return newIdentity
+            }
+            else -> {
+                throw WrongStateTransitionTypeError(stateTransition);
+            }
+        }
     }
 }
