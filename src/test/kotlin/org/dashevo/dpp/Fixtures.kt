@@ -1,10 +1,14 @@
 package org.dashevo.dpp
 
+import org.bitcoinj.core.Sha256Hash
 import org.dashevo.dpp.contract.Contract
 import org.dashevo.dpp.contract.ContractFactory
 import org.dashevo.dpp.document.Document
 import org.dashevo.dpp.document.DocumentFactory
 import org.dashevo.dpp.identity.Identity
+import org.dashevo.dpp.identity.IdentityCreateTransition
+import org.dashevo.dpp.identity.IdentityPublicKey
+import org.dashevo.dpp.statetransition.StateTransition
 import org.dashevo.dpp.util.Entropy
 import org.dashevo.dpp.util.JsonUtils
 import org.dashevo.dpp.util.Utils
@@ -50,4 +54,18 @@ object Fixtures {
         return Identity(rawIdentity)
     }
 
+    fun getIdentityCreateSTFixture() : IdentityCreateTransition {
+        val rawStateTransition = HashMap<String, Any>()
+
+        rawStateTransition["protocolVersion"] = 0
+        rawStateTransition["type"] = StateTransition.Types.IDENTITY_CREATE
+        rawStateTransition["lockedOutPoint"] = ByteArray(36).toBase64()
+        rawStateTransition["identityType"] = Identity.IdentityType.USER
+
+        val publicKeysMap = ArrayList<Any>(1)
+        publicKeysMap.add(IdentityPublicKey(1, IdentityPublicKey.TYPES.ECDSA_SECP256K1, ByteArray(32).toBase64(), true).toJSON())
+        rawStateTransition["publicKeys"] = publicKeysMap
+
+        return IdentityCreateTransition(rawStateTransition)
+    }
 }

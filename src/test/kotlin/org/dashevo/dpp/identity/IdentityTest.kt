@@ -34,4 +34,15 @@ class IdentityTest {
         assertEquals(fixtureCreatedIdentity.findPublicKeyById(2), factoryCreatedIdentity.findPublicKeyById(2))
 
     }
+
+    @Test
+    fun applyStateTransition() {
+        val createTransition = Fixtures.getIdentityCreateSTFixture()
+
+        val factory =  IdentityFactory()
+
+        val identity = factory.applyCreateStateTransition(createTransition)
+
+        assertEquals("ylrObex3KikHd5h/13AW/P0yklpCyEOJt7X70cAmVOE", identity.id)
+    }
 }
