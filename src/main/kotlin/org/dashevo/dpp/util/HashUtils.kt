@@ -46,7 +46,7 @@ object HashUtils {
     }
 
     fun toSha256Hash(byteArray: ByteArray): Sha256Hash {
-        return Sha256Hash.wrap(byteArray)
+        return Sha256Hash.twiceOf(byteArray)
     }
 
     fun fromBase64(base64: String): ByteArray {
