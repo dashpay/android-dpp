@@ -50,4 +50,8 @@ class ContractFactory : Factory() {
         return createFromObject(rawDocument, options)
     }
 
+    fun createStateTransition(contract: Contract) : ContractStateTransition {
+        return ContractStateTransition(contract)
+    }
+
 }

@@ -7,6 +7,7 @@
 
 package org.dashevo.dpp.contract
 import org.dashevo.dpp.Fixtures
+import org.dashevo.dpp.identity.IdentityFactory
 import org.dashevo.dpp.util.JsonUtils
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -46,5 +47,16 @@ class ContractTest {
         val anotherFactoryCreatedContract = factory.create("9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX", map)
 
         assertEquals(fixtureCreatedContract.contractId, anotherFactoryCreatedContract.contractId)
+    }
+
+    @Test
+    fun applyStateTransition() {
+        val dataContract = Fixtures.getDataContractFixtures()
+        val stateTransition = ContractStateTransition(dataContract)
+
+        val factory = ContractFactory()
+        val result =  factory.createStateTransition(dataContract)
+
+        assertEquals(result.toJSON(), stateTransition.toJSON())
     }
 }
