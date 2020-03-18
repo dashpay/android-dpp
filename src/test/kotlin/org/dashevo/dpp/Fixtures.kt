@@ -32,12 +32,12 @@ object Fixtures {
     }
 
 
-    fun getDocumentsFixture() : Array<Document> {
+    fun getDocumentsFixture() : List<Document> {
         val dataContract = getDataContractFixtures()
 
         val factory = DocumentFactory()
 
-        return arrayOf(
+        return listOf(
                 factory.create(dataContract, userId, "niceDocument", JsonUtils.jsonTextToMap("{ name: 'Cutie' }")),
                 factory.create(dataContract, userId, "prettyDocument", JsonUtils.jsonTextToMap("{ lastName: 'Shiny' }")) ,
                 factory.create(dataContract, userId, "prettyDocument", JsonUtils.jsonTextToMap("{ lastName: 'Sweety' }")) ,

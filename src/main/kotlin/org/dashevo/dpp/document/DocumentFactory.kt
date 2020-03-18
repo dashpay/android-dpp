@@ -46,4 +46,8 @@ class DocumentFactory() : Factory() {
         val rawDocument = HashUtils.decode(payload).toMutableMap()
         return createFromObject(rawDocument, options)
     }
+
+    fun createStateTransition(documents: List<Document>) : DocumentsStateTransition {
+        return DocumentsStateTransition(documents)
+    }
 }

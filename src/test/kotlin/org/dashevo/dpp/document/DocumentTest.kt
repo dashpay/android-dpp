@@ -41,4 +41,11 @@ class DocumentTest {
         assertEquals(fixtureCreatedDocuments[0].data["name"], factoryCreatedDocument.data["name"])
 
     }
+
+    @Test
+    fun applyStateTransition() {
+        val documents = Fixtures.getDocumentsFixture()
+        val result = DocumentFactory().createStateTransition(documents)
+        assertEquals(result.documents, documents)
+    }
 }
