@@ -1,7 +1,10 @@
 package org.dashevo.dpp.identity
 
+import org.bitcoinj.core.ECKey
 import org.dashevo.dpp.Fixtures
+import org.dashevo.dpp.toBase64
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class IdentityTest {
@@ -44,5 +47,40 @@ class IdentityTest {
         val identity = factory.applyCreateStateTransition(createTransition)
 
         assertEquals("ylrObex3KikHd5h/13AW/P0yklpCyEOJt7X70cAmVOE", identity.id)
+    }
+
+    @Test
+    fun serializationAndSigningTest() {
+        val privateKey = ECKey()
+        val privateKeyBuffer = privateKey.privKeyBytes
+        val privateKeyHex = privateKey.privateKeyAsHex
+        val publicKey = privateKey.pubKey.toBase64()
+        val publicKeyId = 1;
+
+        val stateTransition = StateTransitionMock()
+
+        val identityPublicKey = IdentityPublicKey(publicKeyId, IdentityPublicKey.TYPES.ECDSA_SECP256K1, publicKey, true)
+
+        //TODO: This part of test fails because hashing with null values for data is not supported
+        //val serializedData = stateTransition.toJSON(false)
+        //val serializedDataSkip = stateTransition.serialize(true)
+        //val serializedData = stateTransition.serialize(false)
+
+        //val hash = stateTransition.hash()
+
+        //assertEquals("60fbcdd25bfd3581f476aa45341750fbd882a247e42cac2b9dcef89d862a97c4", hash)
+        //assertEquals("a4647479706501697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
+        //        serializedData.toHexString())
+
+        //should return public key ID
+        stateTransition.sign(identityPublicKey, privateKeyHex);
+
+        val keyId = stateTransition.signaturePublicKeyId;
+        assertEquals(publicKeyId, keyId)
+
+        val isValid = stateTransition.verifySignature(identityPublicKey);
+
+        assertTrue(isValid)
+
     }
 }
