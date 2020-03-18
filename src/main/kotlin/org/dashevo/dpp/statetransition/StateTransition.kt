@@ -55,12 +55,16 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
     fun sign(identityPublicKey: IdentityPublicKey, privateKey: String) {
         val data = serialize(true)
         val hash = HashUtils.toSha256Hash(data)
-        val privateKeyModel : ECKey
+        var privateKeyModel : ECKey
         val pubKeyBase: String
         when (identityPublicKey.type) {
             IdentityPublicKey.TYPES.ECDSA_SECP256K1 -> {
-                val dpk = DumpedPrivateKey.fromBase58(EvoNetParams.get(), privateKey)
-                privateKeyModel = dpk.key
+                try {
+                    val dpk = DumpedPrivateKey.fromBase58(EvoNetParams.get(), privateKey)
+                    privateKeyModel = dpk.key
+                } catch (_ : AddressFormatException) {
+                    privateKeyModel = ECKey.fromPrivate(Utils.HEX.decode(privateKey))
+                }
                 pubKeyBase = privateKeyModel.pubKey.toBase64()
                 if (pubKeyBase != identityPublicKey.data) {
                     throw InvalidSignaturePublicKeyError(identityPublicKey.data)
@@ -92,10 +96,13 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
 
         val publicKeyBuffer = HashUtils.fromBase64(publicKey.data)
         val publicKeyModel = ECKey.fromPublicOnly(publicKeyBuffer)
+        val publicKeyId = publicKeyModel.pubKeyHash
 
+        val sb = StringBuilder()
         return try {
-            HashSigner.verifyHash(hash, publicKeyBuffer, MasternodeSignature(signatureBuffer), StringBuilder())
+            HashSigner.verifyHash(hash, publicKeyId, MasternodeSignature(EvoNetParams.get(), signatureBuffer, 0), sb)
         } catch (e : Exception) {
+            System.out.println(sb.toString() + "\n" + e)
             false
         }
     }
