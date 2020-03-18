@@ -42,8 +42,8 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
         json["protocolVersion"] = protocolVersion
         json["type"] = type
         if(!skipSignature) {
-            json["signature"] = signature!!
-            json["signaturePublicKeyId"] = signaturePublicKeyId!!
+            json["signature"] = if (signature != null) signature!! else ""
+            json["signaturePublicKeyId"] = if (signaturePublicKeyId != null) signaturePublicKeyId!! else ""
         }
         return json
     }
