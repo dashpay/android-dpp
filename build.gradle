@@ -20,6 +20,7 @@ allprojects {
     repositories {
         jcenter()
         mavenLocal()
+        maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
     }
 }
 
@@ -37,8 +38,7 @@ dependencies {
 
     implementation 'co.nstant.in:cbor:0.8'
     implementation "org.dashj:dashj-core:$dashj_version"
-    implementation "com.fasterxml.jackson.core:jackson-core:2.5.3"
-    implementation "com.fasterxml.jackson.core:jackson-databind:2.5.3"
+    implementation 'org.json:json:20190722'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
