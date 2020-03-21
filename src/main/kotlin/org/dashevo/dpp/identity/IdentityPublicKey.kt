@@ -25,8 +25,11 @@ class IdentityPublicKey(var id: Int,
     }
 
     constructor(rawIdentityPublicKey: Map<String, Any>) : this(rawIdentityPublicKey["id"] as Int,
-            if (rawIdentityPublicKey["type"] is Int) TYPES.getByCode(rawIdentityPublicKey["type"] as Int) else rawIdentityPublicKey["type"] as TYPES, rawIdentityPublicKey["data"] as String,
-            rawIdentityPublicKey["isEnabled"] as Boolean)
+            if (rawIdentityPublicKey["type"] is Int) {
+                TYPES.getByCode(rawIdentityPublicKey["type"] as Int)
+            } else {
+                rawIdentityPublicKey["type"] as TYPES
+            }, rawIdentityPublicKey["data"] as String, rawIdentityPublicKey["isEnabled"] as Boolean)
 
 
     override fun toJSON(): Map<String, Any> {
