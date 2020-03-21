@@ -58,42 +58,27 @@ class Document(rawDocument: MutableMap<String, Any>) : BaseObject() {
         }
 
     init {
-        val data = HashMap<String, Any>(rawDocument)
+        val data = HashMap(rawDocument)
 
-        if (rawDocument.containsKey("\$type")) {
-            this.type = rawDocument["\$type"] as String
-            rawDocument.remove("\$type")
-        }
-        if (rawDocument.containsKey("\$contractId")) {
-            this.contractId = rawDocument["\$contractId"] as String
-            rawDocument.remove("\$contractId")
-        }
-        if (rawDocument.containsKey("\$userId")) {
-            this.userId = rawDocument["\$userId"] as String
-            rawDocument.remove("\$userId")
-        }
-        if (rawDocument.containsKey("\$entropy")) {
-            this.entropy = rawDocument["\$entropy"] as String
-            rawDocument.remove("\$entropy")
-        }
-        if (rawDocument.containsKey("\$rev")) {
-            this.rev = rawDocument["\$rev"] as Int
-            rawDocument.remove("\$rev")
-        }
+        this.type = rawDocument.remove("\$type") as String
+        this.contractId = rawDocument.remove("\$contractId") as String
+        this.userId = rawDocument.remove("\$userId") as String
+        this.entropy = rawDocument.remove("\$entropy") as String
+        this.rev = rawDocument.remove("\$rev") as Int
 
         this.data = data
     }
 
     override fun toJSON(): Map<String, Any> {
         val json = hashMapOf<String, Any>()
-        json.put("\$type", type)
-        json.put("\$userId", userId)
-        json.put("\$contractId", contractId)
-        json.put("\$entropy", contractId)
-        json.put("\$rev", rev)
+        json["\$type"] = type
+        json["\$userId"] = userId
+        json["\$contractId"] = contractId
+        json["\$entropy"] = contractId
+        json["\$rev"] = rev
 
         data.keys.iterator().forEach {
-            data.get(it)?.let { it1 -> json.put(it, it1) }
+            data[it]?.let { it1 -> json[it] = it1 }
         }
 
         return json
