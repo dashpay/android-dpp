@@ -14,7 +14,7 @@ import java.nio.charset.Charset
 
 class Document(rawDocument: MutableMap<String, Any>) : BaseObject() {
 
-    enum class Action (val action: Int) {
+    enum class Action (val value: Int) {
         CREATE(1),
         REPLACE(2),
         UPDATE(2), //Keeping for backward compatibility

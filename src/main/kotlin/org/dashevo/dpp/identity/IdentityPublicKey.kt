@@ -13,29 +13,28 @@ class IdentityPublicKey(var id: Int,
                         var data: String,
                         var isEnabled: Boolean) : BaseObject() {
 
-    enum class TYPES(val type: Int) {
+    enum class TYPES(val value: Int) {
         ECDSA_SECP256K1(1);
 
         companion object {
             private val values = values()
             fun getByCode(code: Int): TYPES {
-                return values.filter { it.type == code }[0]
+                return values.filter { it.value == code }[0]
             }
         }
     }
 
-    constructor(rawIdentityPublicKey: Map<String, Any>) : this(rawIdentityPublicKey["id"] as Int,
-            if (rawIdentityPublicKey["type"] is Int) {
-                TYPES.getByCode(rawIdentityPublicKey["type"] as Int)
-            } else {
-                rawIdentityPublicKey["type"] as TYPES
-            }, rawIdentityPublicKey["data"] as String, rawIdentityPublicKey["isEnabled"] as Boolean)
+    constructor(rawIdentityPublicKey: Map<String, Any>) :
+            this(rawIdentityPublicKey["id"] as Int,
+                    TYPES.getByCode(rawIdentityPublicKey["type"] as Int),
+                    rawIdentityPublicKey["data"] as String,
+                    rawIdentityPublicKey["isEnabled"] as Boolean)
 
 
     override fun toJSON(): Map<String, Any> {
         val json = hashMapOf<String, Any>()
         json["id"] = id
-        json["type"] = type
+        json["type"] = type.value
         json["data"] = data
         json["isEnabled"] = isEnabled
         return json

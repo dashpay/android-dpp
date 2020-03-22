@@ -21,14 +21,14 @@ class Identity(var id: String,
             IdentityType.getByCode(rawIdentity["type"] as Int),
             (rawIdentity["publicKeys"] as List<Any>).map { IdentityPublicKey(it as Map<String, Any>) })
 
-    enum class IdentityType (val type: Int) {
+    enum class IdentityType (val value: Int) {
         USER(1),
         APPLICATION(2);
 
         companion object {
             private val values = values()
             fun getByCode(code: Int): IdentityType {
-                return values.filter { it.type == code }[0]
+                return values.filter { it.value == code }[0]
             }
         }
     }
@@ -40,7 +40,7 @@ class Identity(var id: String,
     override fun toJSON(): Map<String, Any> {
         val json = hashMapOf<String, Any>()
         json["id"] = id
-        json["type"] = type
+        json["type"] = type.value
         json["publicKeys"] = publicKeys
 
         return json

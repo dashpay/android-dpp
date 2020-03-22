@@ -60,7 +60,7 @@ class IdentityTest {
         val json = HashMap<String, Any?>()
 
         json["protocolVersion"] = 0
-        json["type"] = StateTransition.Types.DATA_CONTRACT.type
+        json["type"] = StateTransition.Types.DATA_CONTRACT.value
         json["signature"] = null
         json["signaturePublicKeyId"] = null
 

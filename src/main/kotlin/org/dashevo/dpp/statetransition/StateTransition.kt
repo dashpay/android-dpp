@@ -22,7 +22,7 @@ import java.lang.Exception
 abstract class StateTransition(var signaturePublicKeyId: Int?,
                                var signature: String?, var type: Types, var protocolVersion: Int = 0) : BaseObject() {
 
-    enum class Types(val type: Int) {
+    enum class Types(val value: Int) {
         DATA_CONTRACT(1),
         DOCUMENTS(2),
         IDENTITY_CREATE(3),
@@ -40,7 +40,7 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
     open fun toJSON(skipSignature: Boolean): Map<String, Any?> {
         val json = hashMapOf<String, Any?>()
         json["protocolVersion"] = protocolVersion
-        json["type"] = type.type
+        json["type"] = type.value
         if(!skipSignature) {
             json["signature"] = signature
             json["signaturePublicKeyId"] = signaturePublicKeyId
