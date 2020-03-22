@@ -7,7 +7,6 @@
 package org.dashevo.dpp.document
 
 import org.dashevo.dpp.Fixtures
-import org.dashevo.dpp.util.JsonUtils
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

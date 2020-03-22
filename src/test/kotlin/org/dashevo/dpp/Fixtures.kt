@@ -9,9 +9,6 @@ import org.dashevo.dpp.identity.Identity
 import org.dashevo.dpp.identity.IdentityCreateTransition
 import org.dashevo.dpp.identity.IdentityPublicKey
 import org.dashevo.dpp.statetransition.StateTransition
-import org.dashevo.dpp.util.Entropy
-import org.dashevo.dpp.util.JsonUtils
-import org.dashevo.dpp.util.Utils
 import org.json.JSONObject
 import java.io.File
 
