@@ -33,17 +33,17 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
 
     constructor(type: Types, protocolVersion: Int = 0) : this(null, null, type, protocolVersion)
 
-    override fun toJSON(): Map<String, Any> {
+    override fun toJSON(): Map<String, Any?> {
         return toJSON(false)
     }
 
-    open fun toJSON(skipSignature: Boolean): Map<String, Any> {
-        val json = hashMapOf<String, Any>()
+    open fun toJSON(skipSignature: Boolean): Map<String, Any?> {
+        val json = hashMapOf<String, Any?>()
         json["protocolVersion"] = protocolVersion
-        json["type"] = type
+        json["type"] = type.type
         if(!skipSignature) {
-            json["signature"] = if (signature != null) signature!! else ""
-            json["signaturePublicKeyId"] = if (signaturePublicKeyId != null) signaturePublicKeyId!! else ""
+            json["signature"] = signature
+            json["signaturePublicKeyId"] = signaturePublicKeyId
         }
         return json
     }

@@ -1,11 +1,17 @@
 package org.dashevo.dpp.identity
 
+import co.nstant.`in`.cbor.CborBuilder
+import co.nstant.`in`.cbor.CborEncoder
 import org.bitcoinj.core.ECKey
 import org.dashevo.dpp.Fixtures
+import org.dashevo.dpp.statetransition.StateTransition
 import org.dashevo.dpp.toBase64
+import org.dashevo.dpp.toHexString
+import org.dashevo.dpp.util.HashUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import java.io.ByteArrayOutputStream
 
 class IdentityTest {
 
@@ -50,6 +56,31 @@ class IdentityTest {
     }
 
     @Test
+    fun nullTest() {
+        val json = HashMap<String, Any?>()
+
+        json["protocolVersion"] = 0
+        json["type"] = StateTransition.Types.DATA_CONTRACT.type
+        json["signature"] = null
+        json["signaturePublicKeyId"] = null
+
+        val json2 = HashMap<String, Any?>()
+
+        json2["protocolVersion"] = 0
+        json2["type"] = StateTransition.Types.DATA_CONTRACT
+
+        val bytes = HashUtils.encode(json)
+        val bytes2 = HashUtils.encode(json2)
+
+        println(bytes.toHexString())
+        println(bytes2.toHexString())
+        assertEquals("a4647479706501697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
+                bytes.toHexString())
+
+
+    }
+
+    @Test
     fun serializationAndSigningTest() {
         val privateKey = ECKey()
         val privateKeyBuffer = privateKey.privKeyBytes
@@ -61,21 +92,18 @@ class IdentityTest {
 
         val identityPublicKey = IdentityPublicKey(publicKeyId, IdentityPublicKey.TYPES.ECDSA_SECP256K1, publicKey, true)
 
-        //TODO: This part of test fails because hashing with null values for data is not supported
-        //val serializedData = stateTransition.toJSON(false)
-        //val serializedDataSkip = stateTransition.serialize(true)
-        //val serializedData = stateTransition.serialize(false)
+        val serializedDataBytes = stateTransition.serialize(false)
 
-        //val hash = stateTransition.hash()
+        val hash = stateTransition.hash()
 
-        //assertEquals("60fbcdd25bfd3581f476aa45341750fbd882a247e42cac2b9dcef89d862a97c4", hash)
-        //assertEquals("a4647479706501697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
-        //        serializedData.toHexString())
+        assertEquals("60fbcdd25bfd3581f476aa45341750fbd882a247e42cac2b9dcef89d862a97c4", hash)
+        assertEquals("a4647479706501697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
+                serializedDataBytes.toHexString())
 
         //should return public key ID
-        stateTransition.sign(identityPublicKey, privateKeyHex);
+        stateTransition.sign(identityPublicKey, privateKeyHex)
 
-        val keyId = stateTransition.signaturePublicKeyId;
+        val keyId = stateTransition.signaturePublicKeyId
         assertEquals(publicKeyId, keyId)
 
         val isValid = stateTransition.verifySignature(identityPublicKey);

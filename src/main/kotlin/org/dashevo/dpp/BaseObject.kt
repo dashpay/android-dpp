@@ -19,7 +19,7 @@ abstract class BaseObject {
      * Return plain JSON object
      *
      */
-    abstract fun toJSON(): Map<String, Any>
+    abstract fun toJSON(): Map<String, Any?>
 
     /**
      * Return serialized object
