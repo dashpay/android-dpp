@@ -31,7 +31,7 @@ class DocumentTest {
 
         val contract = Fixtures.getDataContractFixtures()
 
-        val factoryCreatedDocument = factory.create(contract, "4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", "niceDocument", JsonUtils.jsonTextToMap("{ name: 'Cutie' }"))
+        val factoryCreatedDocument = factory.create(contract, "4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", "niceDocument", JSONObject("{ name: 'Cutie' }").toMap())
         val fixtureCreatedDocuments = Fixtures.getDocumentsFixture()
 
         // compare the first document

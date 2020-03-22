@@ -30,14 +30,14 @@ class ContractTest {
 
         val json = File("src/test/resources/data/documentsforcontract.json").readText()//"{\r\n\"name\" : \"abc\" ,\r\n\"email id \" : [\"abc@gmail.com\",\"def@gmail.com\",\"ghi@gmail.com\"]\r\n}"
         val jsonObject = JSONObject(json)
-        val map = JsonUtils.jsonToMap(jsonObject)
+        val map = jsonObject.toMap()
 
         val rawContract = HashMap<String, Any>()
         rawContract["documents"] = map
         rawContract["contractId"] = "9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX"
         rawContract["\$schema"] = Contract.SCHEMA
         rawContract["version"] = Contract.VERSION
-        rawContract["definitions"] = JsonUtils.jsonToMap(JSONObject("{lastName: { type: 'string', }, }"))
+        rawContract["definitions"] = JSONObject("{lastName: { type: 'string', }, }").toMap()
 
         val factoryCreatedContract = factory.createDataContract(rawContract)
         val fixtureCreatedContract = Fixtures.getDataContractFixtures()

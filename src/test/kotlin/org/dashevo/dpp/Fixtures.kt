@@ -23,10 +23,10 @@ object Fixtures {
     fun getDataContractFixtures() : Contract {
         val json = File("src/test/resources/data/documentsforcontract.json").readText()//"{\r\n\"name\" : \"abc\" ,\r\n\"email id \" : [\"abc@gmail.com\",\"def@gmail.com\",\"ghi@gmail.com\"]\r\n}"
         val jsonObject = JSONObject(json)
-        val map = JsonUtils.jsonToMap(jsonObject)
+        val map = jsonObject.toMap()
         val dataContract = Contract(contractId, map)
 
-        dataContract.definitions = JsonUtils.jsonToMap(JSONObject("{lastName: { type: 'string', }, }"))
+        dataContract.definitions = JSONObject("{lastName: { type: 'string', }, }").toMap()
 
         return dataContract
     }
@@ -38,18 +38,18 @@ object Fixtures {
         val factory = DocumentFactory()
 
         return listOf(
-                factory.create(dataContract, userId, "niceDocument", JsonUtils.jsonTextToMap("{ name: 'Cutie' }")),
-                factory.create(dataContract, userId, "prettyDocument", JsonUtils.jsonTextToMap("{ lastName: 'Shiny' }")) ,
-                factory.create(dataContract, userId, "prettyDocument", JsonUtils.jsonTextToMap("{ lastName: 'Sweety' }")) ,
-                factory.create(dataContract, userId, "indexedDocument", JsonUtils.jsonTextToMap("{ firstName: 'William', lastName: 'Birkin' }")) ,
-                factory.create(dataContract, userId, "indexedDocument", JsonUtils.jsonTextToMap("{ firstName: 'Leon', lastName: 'Kennedy' }"))
+                factory.create(dataContract, userId, "niceDocument", JSONObject("{ name: 'Cutie' }").toMap()),
+                factory.create(dataContract, userId, "prettyDocument", JSONObject("{ lastName: 'Shiny' }").toMap()) ,
+                factory.create(dataContract, userId, "prettyDocument", JSONObject("{ lastName: 'Sweety' }").toMap()) ,
+                factory.create(dataContract, userId, "indexedDocument", JSONObject("{ firstName: 'William', lastName: 'Birkin' }").toMap()) ,
+                factory.create(dataContract, userId, "indexedDocument", JSONObject("{ firstName: 'Leon', lastName: 'Kennedy' }").toMap())
         )
     }
 
     fun getIdentityFixture(): Identity {
         val json = File("src/test/resources/data/identity.json").readText()
         val jsonObject = JSONObject(json)
-        val rawIdentity = JsonUtils.jsonToMap(jsonObject)
+        val rawIdentity = jsonObject.toMap()
 
         return Identity(rawIdentity)
     }
