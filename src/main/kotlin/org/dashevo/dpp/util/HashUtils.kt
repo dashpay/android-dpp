@@ -12,6 +12,9 @@ import co.nstant.`in`.cbor.CborEncoder
 import co.nstant.`in`.cbor.builder.AbstractBuilder
 import co.nstant.`in`.cbor.builder.ArrayBuilder
 import co.nstant.`in`.cbor.builder.MapBuilder
+import co.nstant.`in`.cbor.model.SimpleValue
+import co.nstant.`in`.cbor.model.SimpleValueType
+import co.nstant.`in`.cbor.model.UnicodeString
 import com.google.common.io.BaseEncoding
 import org.bitcoinj.core.Sha256Hash
 import java.io.ByteArrayOutputStream
@@ -22,7 +25,7 @@ import kotlin.collections.ArrayList
 
 object HashUtils {
 
-    fun encode(obj: Map<String, Any>): ByteArray {
+    fun encode(obj: Map<String, Any?>): ByteArray {
         val baos = ByteArrayOutputStream()
         val cborBuilder = CborBuilder()
         val mapBuilder = writeJSONObject(obj, cborBuilder.addMap(), baos)
@@ -57,7 +60,7 @@ object HashUtils {
         TODO()
     }
 
-    private fun writeJSONObject(obj: Map<String, Any>, mapBuilder: MapBuilder<CborBuilder>,
+    private fun writeJSONObject(obj: Map<String, Any?>, mapBuilder: MapBuilder<CborBuilder>,
                                 baos: ByteArrayOutputStream,
                                 innerMapBuilder: AbstractBuilder<*>? = null): CborBuilder {
 
@@ -71,9 +74,9 @@ object HashUtils {
             val value = obj.get(key)
             if (value is Map<*, *>) {
                 if (innerMapBuilder != null && innerMapBuilder is MapBuilder<*>) {
-                    writeJSONObject(obj.get(key) as Map<String, Any>, mapBuilder, baos, innerMapBuilder.putMap(key))
+                    writeJSONObject(obj.get(key) as Map<String, Any?>, mapBuilder, baos, innerMapBuilder.putMap(key))
                 } else {
-                    writeJSONObject(obj.get(key) as Map<String, Any>, mapBuilder, baos, mapBuilder.putMap(key))
+                    writeJSONObject(obj.get(key) as Map<String, Any?>, mapBuilder, baos, mapBuilder.putMap(key))
                 }
             } else {
                 val builder: AbstractBuilder<*> = innerMapBuilder ?: mapBuilder
@@ -83,14 +86,10 @@ object HashUtils {
                     } else if (builder is ArrayBuilder<*>) {
                         addJSONArray(value, mapBuilder, baos, builder.addArray())
                     }
-                } else if (builder is MapBuilder<*>){
-                    if (value != null) {
-                        addValueToMapBuilder(builder, key, value)
-                    }
+                } else if (builder is MapBuilder<*>) {
+                    addValueToMapBuilder(builder, key, value)
                 } else if (builder is ArrayBuilder<*>) {
-                    if (value != null) {
-                        addValueToArrayBuilder(value, builder)
-                    }
+                    addValueToArrayBuilder(value, builder)
                 }
             }
         }
@@ -103,14 +102,14 @@ object HashUtils {
         for (i in 0 until count) {
             val item = value[i]
             if (item is Map<*, *>) {
-                writeJSONObject(item as Map<String, Any>, mapBuilder, baos, arrayBuilder.addMap())
+                writeJSONObject(item as Map<String, Any?>, mapBuilder, baos, arrayBuilder.addMap())
             } else {
                 addValueToArrayBuilder(item!!, arrayBuilder)
             }
         }
     }
 
-    private fun addValueToMapBuilder(mapBuilder: MapBuilder<*>, key: String, value: Any) {
+    private fun addValueToMapBuilder(mapBuilder: MapBuilder<*>, key: String, value: Any?) {
         when (value) {
             is String -> mapBuilder.put(key, value)
             is Boolean -> mapBuilder.put(key, value)
@@ -121,11 +120,12 @@ object HashUtils {
             is Long -> mapBuilder.put(key, value)
             is Double -> mapBuilder.put(key, value)
             is ByteArray -> mapBuilder.put(key, value)
+            null -> mapBuilder.put(UnicodeString(key), SimpleValue(SimpleValueType.NULL))
             else -> mapBuilder.put(key, value.toString()) //?
         }
     }
 
-    private fun addValueToArrayBuilder(value: Any, arrayBuilder: ArrayBuilder<*>) {
+    private fun addValueToArrayBuilder(value: Any?, arrayBuilder: ArrayBuilder<*>) {
         when (value) {
             is String -> arrayBuilder.add(value)
             is Boolean -> arrayBuilder.add(value)
@@ -136,6 +136,7 @@ object HashUtils {
             is Long -> arrayBuilder.add(value)
             is Double -> arrayBuilder.add(value)
             is ByteArray -> arrayBuilder.add(value)
+            null -> arrayBuilder.add(SimpleValue(SimpleValueType.NULL))
             else -> arrayBuilder.add(value.toString()) //?
         }
     }
