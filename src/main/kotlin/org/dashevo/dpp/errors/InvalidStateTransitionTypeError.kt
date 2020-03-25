@@ -8,4 +8,4 @@ package org.dashevo.dpp.errors
 
 import java.lang.Exception
 
-class InvalidStateTransitionTypeError(val type: Int, rawStateTransition: Map<String, Any>) : Exception("Invalid State Transition Type: $type")
+class InvalidStateTransitionTypeError(val type: Int, rawStateTransition: Map<String, Any?>) : Exception("Invalid State Transition Type: $type")

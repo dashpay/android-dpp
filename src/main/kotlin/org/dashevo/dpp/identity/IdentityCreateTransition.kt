@@ -21,7 +21,7 @@ class IdentityCreateTransition(var identityType: Identity.IdentityType?,
         identityId = HashUtils.toHash(HashUtils.fromBase64(lockedOutPoint!!)).toBase64()
     }
 
-    constructor(rawStateTransition: MutableMap<String, Any>)
+    constructor(rawStateTransition: MutableMap<String, Any?>)
             : this(rawStateTransition["identityType"] as? Identity.IdentityType,
             rawStateTransition["lockedOutPoint"] as String,
             (rawStateTransition["publicKeys"] as List<Any>).map { entry -> IdentityPublicKey(entry as MutableMap<String, Any>) }, 0) {

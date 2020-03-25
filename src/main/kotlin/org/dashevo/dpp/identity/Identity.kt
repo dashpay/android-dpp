@@ -17,7 +17,7 @@ class Identity(var id: String,
         val MAX_RESERVED_TYPE = 32767
     }
 
-    constructor(rawIdentity: Map<String, Any>) : this(rawIdentity["id"] as String,
+    constructor(rawIdentity: Map<String, Any?>) : this(rawIdentity["id"] as String,
             IdentityType.getByCode(rawIdentity["type"] as Int),
             (rawIdentity["publicKeys"] as List<Any>).map { IdentityPublicKey(it as Map<String, Any>) })
 

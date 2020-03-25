@@ -52,7 +52,7 @@ object Fixtures {
     }
 
     fun getIdentityCreateSTFixture() : IdentityCreateTransition {
-        val rawStateTransition = HashMap<String, Any>()
+        val rawStateTransition = HashMap<String, Any?>()
 
         rawStateTransition["protocolVersion"] = 0
         rawStateTransition["type"] = StateTransition.Types.IDENTITY_CREATE

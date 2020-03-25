@@ -17,18 +17,18 @@ import org.dashevo.dpp.util.HashUtils
 
 class StateTransitionFactory() {
 
-    fun createStateTransition(rawStateTransition: MutableMap<String, Any>, options: Options = Options()): StateTransition {
+    fun createStateTransition(rawStateTransition: MutableMap<String, Any?>, options: Options = Options()): StateTransition {
         var stateTransition : StateTransition
         when (rawStateTransition["type"] as StateTransition.Types) {
             StateTransition.Types.DATA_CONTRACT -> {
-                val dataContract = ContractFactory().createDataContract(rawStateTransition["dataContract"] as MutableMap<String, Any>)
+                val dataContract = ContractFactory().createDataContract(rawStateTransition["dataContract"] as MutableMap<String, Any?>)
 
                 stateTransition = ContractStateTransition(dataContract);
             }
             StateTransition.Types.DOCUMENTS -> {
                 //this part will not work
                 val documents = (rawStateTransition["documents"] as Map<String, Any>).map { entry: Map.Entry<String, Any> ->
-                    val rawDocument = entry.key as MutableMap<String, Any>
+                    val rawDocument = entry.key as MutableMap<String, Any?>
                     val index = entry.value as String
                     val document = Document(rawDocument)
 
@@ -53,7 +53,7 @@ class StateTransitionFactory() {
         return stateTransition
     }
 
-    fun createFromObject(rawStateTransition: MutableMap<String, Any>, options: Options = Options()): StateTransition {
+    fun createFromObject(rawStateTransition: MutableMap<String, Any?>, options: Options = Options()): StateTransition {
         return createStateTransition(rawStateTransition)
     }
 

@@ -19,7 +19,7 @@ class IdentityFactory() : Factory() {
         return Identity(id, type, publicKeys)
     }
 
-    fun createFromObject(rawIdentity: MutableMap<String, Any>, options: Options = Options()): Identity {
+    fun createFromObject(rawIdentity: MutableMap<String, Any?>, options: Options = Options()): Identity {
         return Identity(rawIdentity)
     }
 

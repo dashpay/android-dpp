@@ -56,8 +56,8 @@ object HashUtils {
         return BaseEncoding.base64().omitPadding().decode(base64)
     }
 
-    fun decode(payload: ByteArray): Map<String, Any> {
-        TODO()
+    fun decode(payload: ByteArray): MutableMap<String, Any?> {
+        return decode2(payload)
     }
 
     private fun writeJSONObject(obj: Map<String, Any?>, mapBuilder: MapBuilder<CborBuilder>,

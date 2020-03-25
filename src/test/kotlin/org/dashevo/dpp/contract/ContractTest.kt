@@ -30,7 +30,7 @@ class ContractTest {
         val jsonObject = JSONObject(json)
         val map = jsonObject.toMap()
 
-        val rawContract = HashMap<String, Any>()
+        val rawContract = HashMap<String, Any?>()
         rawContract["documents"] = map
         rawContract["contractId"] = "9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX"
         rawContract["\$schema"] = Contract.SCHEMA

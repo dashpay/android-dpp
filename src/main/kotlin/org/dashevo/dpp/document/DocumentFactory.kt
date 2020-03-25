@@ -20,7 +20,7 @@ class DocumentFactory() : Factory() {
             throw InvalidDocumentTypeError(contract, type)
         }
 
-        val rawDocument = hashMapOf<String, Any>()
+        val rawDocument = hashMapOf<String, Any?>()
         rawDocument.put("\$type", type)
         rawDocument.put("\$contractId", contract.contractId)
         rawDocument.put("\$userId", userId)

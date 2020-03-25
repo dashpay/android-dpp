@@ -12,7 +12,7 @@ import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.util.HashUtils
 import java.nio.charset.Charset
 
-class Document(rawDocument: MutableMap<String, Any>) : BaseObject() {
+class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
 
     enum class Action (val value: Int) {
         CREATE(1),
@@ -48,7 +48,7 @@ class Document(rawDocument: MutableMap<String, Any>) : BaseObject() {
     lateinit var userId: String
     lateinit var entropy: String
     private var rev: Int = 0
-    var data: Map<String, Any>
+    var data: Map<String, Any?>
     var action: Action = Action.CREATE
         set(value) {
             if (Action.DELETE == value && this.data.keys.isNotEmpty()) {

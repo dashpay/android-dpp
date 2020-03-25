@@ -12,7 +12,7 @@ import org.dashevo.dpp.util.HashUtils
 
 class ContractFactory : Factory() {
 
-    fun createDataContract(rawDataContract: MutableMap<String, Any>): Contract {
+    fun createDataContract(rawDataContract: MutableMap<String, Any?>): Contract {
 
         val contractId = if (rawDataContract.containsKey("contractId")) rawDataContract["contractId"] as String else ""
 
@@ -34,14 +34,14 @@ class ContractFactory : Factory() {
         return contract
     }
 
-    fun create(contractId: String, documents: MutableMap<String, Any>): Contract {
-        val rawContract = HashMap<String, Any>(2)
+    fun create(contractId: String, documents: MutableMap<String, Any?>): Contract {
+        val rawContract = HashMap<String, Any?>(2)
         rawContract["contractId"] = contractId
         rawContract["documents"] = documents
         return createDataContract(rawContract)
     }
 
-    fun createFromObject(rawContract: MutableMap<String, Any>, options: Options = Options()): Contract {
+    fun createFromObject(rawContract: MutableMap<String, Any?>, options: Options = Options()): Contract {
         return createDataContract(rawContract)
     }
 
