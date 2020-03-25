@@ -38,7 +38,7 @@ class DocumentFactory() : Factory() {
         return document
     }
 
-    fun createFromObject(rawDocument: MutableMap<String, Any>, options: Options = Options()): Document {
+    fun createFromObject(rawDocument: MutableMap<String, Any?>, options: Options = Options()): Document {
         return Document(rawDocument)
     }
 
