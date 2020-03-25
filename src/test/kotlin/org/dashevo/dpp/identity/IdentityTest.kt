@@ -7,11 +7,10 @@ import org.dashevo.dpp.Fixtures
 import org.dashevo.dpp.statetransition.StateTransition
 import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.toHexString
-import org.dashevo.dpp.util.HashUtils
+import org.dashevo.dpp.util.Cbor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.io.ByteArrayOutputStream
 
 class IdentityTest {
 
@@ -69,8 +68,8 @@ class IdentityTest {
         json2["protocolVersion"] = 0
         json2["type"] = StateTransition.Types.DATA_CONTRACT
 
-        val bytes = HashUtils.encode(json)
-        val bytes2 = HashUtils.encode(json2)
+        val bytes = Cbor.encode(json)
+        val bytes2 = Cbor.encode(json2)
 
         println(bytes.toHexString())
         println(bytes2.toHexString())

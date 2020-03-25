@@ -6,6 +6,7 @@
  */
 package org.dashevo.dpp
 
+import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
 
 /**
@@ -26,7 +27,7 @@ abstract class BaseObject {
      *
      */
     fun serialize(): ByteArray {
-        return HashUtils.encode(this.toJSON())
+        return Cbor.encode(this.toJSON())
     }
 
     /**

@@ -8,7 +8,7 @@
 package org.dashevo.dpp.contract
 
 import org.dashevo.dpp.Factory
-import org.dashevo.dpp.util.HashUtils
+import org.dashevo.dpp.util.Cbor
 
 class ContractFactory : Factory() {
 
@@ -46,7 +46,7 @@ class ContractFactory : Factory() {
     }
 
     fun createFromSerialized(payload: ByteArray, options: Options = Options()): Contract {
-        val rawDocument = HashUtils.decode(payload).toMutableMap()
+        val rawDocument = Cbor.decode(payload).toMutableMap()
         return createFromObject(rawDocument, options)
     }
 

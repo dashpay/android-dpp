@@ -10,8 +10,8 @@ package org.dashevo.dpp.document
 import org.dashevo.dpp.Factory
 import org.dashevo.dpp.contract.Contract
 import org.dashevo.dpp.errors.InvalidDocumentTypeError
+import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.Entropy
-import org.dashevo.dpp.util.HashUtils
 
 class DocumentFactory() : Factory() {
 
@@ -43,7 +43,7 @@ class DocumentFactory() : Factory() {
     }
 
     fun createFromSerialized(payload: ByteArray, options: Options = Options()): Document {
-        val rawDocument = HashUtils.decode(payload).toMutableMap()
+        val rawDocument = Cbor.decode(payload).toMutableMap()
         return createFromObject(rawDocument, options)
     }
 

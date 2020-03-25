@@ -13,7 +13,7 @@ import org.dashevo.dpp.document.Document
 import org.dashevo.dpp.document.DocumentsStateTransition
 import org.dashevo.dpp.errors.InvalidStateTransitionTypeError
 import org.dashevo.dpp.identity.IdentityCreateTransition
-import org.dashevo.dpp.util.HashUtils
+import org.dashevo.dpp.util.Cbor
 
 class StateTransitionFactory() {
 
@@ -58,7 +58,7 @@ class StateTransitionFactory() {
     }
 
     fun createFromSerialized(payload: ByteArray, options: Options = Options()): StateTransition {
-        val rawStateTransition = HashUtils.decode(payload).toMutableMap()
+        val rawStateTransition = Cbor.decode(payload).toMutableMap()
         return createFromObject(rawStateTransition, options)
     }
 

@@ -11,7 +11,7 @@ import org.dashevo.dpp.Factory
 import org.dashevo.dpp.errors.IdentityAlreadyExistsError
 import org.dashevo.dpp.identity.errors.WrongStateTransitionTypeError
 import org.dashevo.dpp.statetransition.StateTransition
-import org.dashevo.dpp.util.HashUtils
+import org.dashevo.dpp.util.Cbor
 
 class IdentityFactory() : Factory() {
 
@@ -24,7 +24,7 @@ class IdentityFactory() : Factory() {
     }
 
     fun createFromSerialized(payload: ByteArray, options: Options = Options()): Identity {
-        val rawIdentity = HashUtils.decode(payload).toMutableMap()
+        val rawIdentity = Cbor.decode(payload).toMutableMap()
         return createFromObject(rawIdentity, options)
     }
 

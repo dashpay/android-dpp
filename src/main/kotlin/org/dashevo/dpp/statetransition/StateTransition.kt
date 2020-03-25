@@ -16,6 +16,7 @@ import org.dashevo.dpp.statetransition.errors.InvalidSignatureTypeError
 import org.dashevo.dpp.statetransition.errors.PublicKeyMismatchError
 import org.dashevo.dpp.statetransition.errors.StateTransitionIsNotSignedError
 import org.dashevo.dpp.toBase64
+import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
 import java.lang.Exception
 
@@ -56,7 +57,7 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
     }
 
     fun serialize(skipSignature: Boolean): ByteArray {
-        return HashUtils.encode(this.toJSON(skipSignature))
+        return Cbor.encode(this.toJSON(skipSignature))
     }
 
     fun sign(identityPublicKey: IdentityPublicKey, privateKey: String) {
