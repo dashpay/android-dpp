@@ -29,6 +29,13 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
         IDENTITY_TOPUP(4),
         IDENTITY_UPDATEKEY(5),
         IDENTITY_CLOSEACCOUNT(6);
+
+        companion object {
+            private val values = values()
+            fun getByCode(code: Int): Types {
+                return values.filter { it.value == code }[0]
+            }
+        }
     }
 
     constructor(type: Types, protocolVersion: Int = 0) : this(null, null, type, protocolVersion)
