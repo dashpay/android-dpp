@@ -19,7 +19,7 @@ class StateTransitionFactory() {
 
     fun createStateTransition(rawStateTransition: MutableMap<String, Any?>, options: Options = Options()): StateTransition {
         var stateTransition : StateTransition
-        when (rawStateTransition["type"] as StateTransition.Types) {
+        when (StateTransition.Types.getByCode(rawStateTransition["type"] as Int)) {
             StateTransition.Types.DATA_CONTRACT -> {
                 val dataContract = ContractFactory().createDataContract(rawStateTransition["dataContract"] as MutableMap<String, Any?>)
 
