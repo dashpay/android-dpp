@@ -8,13 +8,12 @@
 package org.dashevo.dpp.util
 
 import co.nstant.`in`.cbor.CborBuilder
+import co.nstant.`in`.cbor.CborDecoder
 import co.nstant.`in`.cbor.CborEncoder
 import co.nstant.`in`.cbor.builder.AbstractBuilder
 import co.nstant.`in`.cbor.builder.ArrayBuilder
 import co.nstant.`in`.cbor.builder.MapBuilder
-import co.nstant.`in`.cbor.model.SimpleValue
-import co.nstant.`in`.cbor.model.SimpleValueType
-import co.nstant.`in`.cbor.model.UnicodeString
+import co.nstant.`in`.cbor.model.*
 import com.google.common.io.BaseEncoding
 import org.bitcoinj.core.Sha256Hash
 import java.io.ByteArrayOutputStream
@@ -57,7 +56,9 @@ object HashUtils {
     }
 
     fun decode(payload: ByteArray): MutableMap<String, Any?> {
-        return decode2(payload)
+        val dataItems = CborDecoder.decode(payload)
+
+        return readJSONObject(dataItems[0] as co.nstant.`in`.cbor.model.Map)
     }
 
     private fun writeJSONObject(obj: Map<String, Any?>, mapBuilder: MapBuilder<CborBuilder>,
@@ -74,9 +75,9 @@ object HashUtils {
             val value = obj.get(key)
             if (value is Map<*, *>) {
                 if (innerMapBuilder != null && innerMapBuilder is MapBuilder<*>) {
-                    writeJSONObject(obj.get(key) as Map<String, Any?>, mapBuilder, baos, innerMapBuilder.putMap(key))
+                    writeJSONObject(obj[key] as Map<String, Any?>, mapBuilder, baos, innerMapBuilder.putMap(key))
                 } else {
-                    writeJSONObject(obj.get(key) as Map<String, Any?>, mapBuilder, baos, mapBuilder.putMap(key))
+                    writeJSONObject(obj[key] as Map<String, Any?>, mapBuilder, baos, mapBuilder.putMap(key))
                 }
             } else {
                 val builder: AbstractBuilder<*> = innerMapBuilder ?: mapBuilder
@@ -138,6 +139,106 @@ object HashUtils {
             is ByteArray -> arrayBuilder.add(value)
             null -> arrayBuilder.add(SimpleValue(SimpleValueType.NULL))
             else -> arrayBuilder.add(value.toString()) //?
+        }
+    }
+
+    private fun readJSONObject(obj: co.nstant.`in`.cbor.model.Map): MutableMap<String, Any?> {
+
+        val resultMap = HashMap<String, Any?>()
+        val sortedKeys = ArrayList<DataItem>()
+        sortedKeys.addAll(obj.keys)
+        //sortedKeys.sortWith(Comparator{ a, b ->
+        //    ByteBuffer.wrap(a.toByteArray()).short.compareTo(ByteBuffer.wrap(b.toByteArray()).short)
+        //})
+
+        sortedKeys.forEach { key ->
+            val keyString = (key as UnicodeString).string
+            val value = obj[key]
+            if (value is co.nstant.`in`.cbor.model.Map) {
+                resultMap[keyString] = readJSONObject(obj[key] as co.nstant.`in`.cbor.model.Map)
+            } else {
+                if (value is co.nstant.`in`.cbor.model.Array) {
+                    resultMap[keyString] = readJSONArray(value as co.nstant.`in`.cbor.model.Array)
+                } else {
+                    if (value != null) {
+                        addValueFromCborMap(resultMap, keyString, value)
+                    }
+                //} else if (builder is ArrayBuilder<*>) {
+                //    readValueFromCborArray(value, builder)
+                }
+            }
+        }
+
+        return resultMap
+    }
+
+    private fun readJSONArray(value: co.nstant.`in`.cbor.model.Array) : List<Any?> {
+        val count = value.dataItems.size
+        val resultList = ArrayList<Any?>(count)
+        for (i in 0 until count) {
+            val item = value.dataItems[i]
+            if (item is co.nstant.`in`.cbor.model.Map) {
+                resultList.add(readJSONObject(item))
+            } else {
+                addValueFromCborArray(item, resultList)
+            }
+        }
+        return resultList
+    }
+
+    private fun addValueFromCborMap(map: HashMap<String, Any?>, key: String, value: DataItem) {
+        when (value) {
+            is UnicodeString -> map.put(key, value.string)
+            is co.nstant.`in`.cbor.model.Number -> {
+                if(value.value.toLong() < Int.MAX_VALUE)
+                    map.put(key, value.value.intValueExact())
+                else map[key] = value.value.longValueExact()
+            }
+            is HalfPrecisionFloat -> {
+                if(value.value.toLong() > Int.MIN_VALUE)
+                    map.put(key, value.value.toInt())
+                else map[key] = value.value.toLong()
+            }
+            is NegativeInteger -> map.put(key, value)
+            is DoublePrecisionFloat -> map.put(key, value.value)
+            is ByteString -> map.put(key, value.bytes)
+            is SimpleValue -> {
+                when (value.simpleValueType) {
+                    SimpleValueType.TRUE -> map[key] = true
+                    SimpleValueType.FALSE -> map[key] = false
+                    SimpleValueType.NULL -> map[key] = null
+                    else -> throw IllegalArgumentException("Unknown simple datatype")
+                }
+            }
+            else -> map.put(key, value.toString()) //?
+        }
+    }
+
+    private fun addValueFromCborArray(value: DataItem, array: ArrayList<Any?>) {
+        when (value) {
+            is UnicodeString -> array.add(value.string)
+            is co.nstant.`in`.cbor.model.Number -> {
+                if(value.value.toLong() < Int.MAX_VALUE)
+                    array.add(value.value.intValueExact())
+                else array.add(value.value.longValueExact())
+            }
+            is HalfPrecisionFloat -> {
+                if(value.value.toLong() > Int.MIN_VALUE)
+                    array.add(value.value.toInt())
+                else array.add(value.value.toLong())
+            }
+            is NegativeInteger -> array.add(value)
+            is DoublePrecisionFloat -> array.add(value.value)
+            is ByteString -> array.add(value.bytes)
+            is SimpleValue -> {
+                when (value.simpleValueType) {
+                    SimpleValueType.TRUE -> array.add(true)
+                    SimpleValueType.FALSE -> array.add(false)
+                    SimpleValueType.NULL -> array.add(null)
+                    else -> throw IllegalArgumentException("Unknown simple datatype")
+                }
+            }
+            else -> throw java.lang.IllegalArgumentException(value.toString()) //?
         }
     }
 
