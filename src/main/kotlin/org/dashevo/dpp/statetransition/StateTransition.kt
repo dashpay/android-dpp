@@ -21,7 +21,7 @@ import org.dashevo.dpp.util.HashUtils
 import java.lang.Exception
 
 abstract class StateTransition(var signaturePublicKeyId: Int?,
-                               var signature: String?, var type: Types, var protocolVersion: Int = 0) : BaseObject() {
+                               var signature: String?, val type: Types, var protocolVersion: Int = 0) : BaseObject() {
 
     enum class Types(val value: Int) {
         DATA_CONTRACT(1),
