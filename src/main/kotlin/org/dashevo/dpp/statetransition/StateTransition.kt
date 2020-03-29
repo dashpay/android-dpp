@@ -39,6 +39,13 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
         }
     }
 
+    constructor(rawStateTransition: MutableMap<String, Any?>) :
+            this(rawStateTransition["signaturePublicKeyId"] as Int,
+                    rawStateTransition["signature"] as String,
+                    Types.getByCode(rawStateTransition["type"] as Int),
+                    rawStateTransition["protocolVersion"] as Int)
+
+
     constructor(type: Types, protocolVersion: Int = 0) : this(null, null, type, protocolVersion)
 
     override fun toJSON(): Map<String, Any?> {
@@ -77,7 +84,6 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
                 if (pubKeyBase != identityPublicKey.data) {
                     throw InvalidSignaturePublicKeyError(identityPublicKey.data)
                 }
-                //does the data also include "\x18DarkCoin Message"?
                 signature = HashSigner.signHash(hash, privateKeyModel).toStringBase64()
             }
             else -> {
@@ -110,7 +116,6 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
         return try {
             HashSigner.verifyHash(hash, publicKeyId, MasternodeSignature(EvoNetParams.get(), signatureBuffer, 0), sb)
         } catch (e : Exception) {
-            System.out.println(sb.toString() + "\n" + e)
             false
         }
     }

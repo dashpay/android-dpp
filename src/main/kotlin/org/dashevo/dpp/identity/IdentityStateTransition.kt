@@ -8,12 +8,14 @@ package org.dashevo.dpp.identity
 
 import org.dashevo.dpp.statetransition.StateTransition
 
-abstract class IdentityStateTransition(signaturePublicKeyId: Int?,
+abstract class IdentityStateTransition : StateTransition {
+
+    constructor(signaturePublicKeyId: Int?,
                               signature: String?,
                               type: Types, protocolVersion: Int)
-    : StateTransition(signaturePublicKeyId, signature,
-        type, protocolVersion) {
+    : super (signaturePublicKeyId, signature, type, protocolVersion)
 
     constructor(type: Types, protocolVersion: Int = 0) : this(null, null, type, protocolVersion)
 
+    constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition)
 }
