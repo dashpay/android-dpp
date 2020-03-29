@@ -29,6 +29,17 @@ object Cbor {
         return readJSONObject(dataItems[0] as co.nstant.`in`.cbor.model.Map)
     }
 
+    fun encode(s: String): ByteArray {
+        val baos = ByteArrayOutputStream(s.length)
+        CborEncoder(baos).encode(UnicodeString(s))
+        return baos.toByteArray()
+    }
+
+    fun decodeString(bytes: ByteArray): String {
+        val decoded = CborDecoder.decode(bytes)
+        return decoded[0].toString()
+    }
+
     private fun writeJSONObject(obj: Map<String, Any?>, mapBuilder: MapBuilder<CborBuilder>,
                                 baos: ByteArrayOutputStream,
                                 innerMapBuilder: AbstractBuilder<*>? = null): CborBuilder {
