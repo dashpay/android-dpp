@@ -1,0 +1,118 @@
+{
+  "$schema": "https://schema.dash.org/dpp-0-4-0/meta/data-contract",
+  "version": 1,
+  "documents": {
+    "domain": {
+      "indices": [
+        {
+          "unique": true,
+          "properties": [
+            {
+              "nameHash": "asc"
+            }
+          ]
+        },
+        {
+          "properties": [
+            {
+              "normalizedParentDomainName": "asc"
+            },
+            {
+              "normalizedLabel": "asc"
+            }
+          ]
+        },
+        {
+          "properties": [
+            {
+              "records.dashIdentity": "asc"
+            }
+          ]
+        }
+      ],
+      "required": [
+        "nameHash",
+        "label",
+        "normalizedLabel",
+        "normalizedParentDomainName",
+        "preorderSalt",
+        "records"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "pattern": "^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])$",
+          "maxLength": 63,
+          "description": "Domain label. e.g. 'UseR'"
+        },
+        "records": {
+          "type": "object",
+          "properties": {
+            "dashIdentity": {
+              "type": "string",
+              "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
+              "maxLength": 44,
+              "minLength": 42,
+              "description": "base58 identity id string"
+            }
+          },
+          "minProperties": 1,
+          "additionalProperties": false
+        },
+        "nameHash": {
+          "type": "string",
+          "pattern": "^[A-Fa-f0-9]+$",
+          "maxLength": 68,
+          "minLength": 68,
+          "description": "Double sha-256 multihash of the full domain name in a form of a hex string"
+        },
+        "preorderSalt": {
+          "type": "string",
+          "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
+          "maxLength": 34,
+          "minLength": 25,
+          "description": "Domain pre-order salt. Currently randomly generated base58 address string."
+        },
+        "normalizedLabel": {
+          "type": "string",
+          "pattern": "^((?!-)[a-z0-9-]{0,62}[a-z0-9])$",
+          "maxLength": 63,
+          "description": "Domain label in a lower case. e.g. 'user'"
+        },
+        "normalizedParentDomainName": {
+          "type": "string",
+          "maxLength": 190,
+          "minLength": 0,
+          "description": "A full parent domain name in lower case. e.g. 'dash.org'"
+        }
+      },
+      "additionalProperties": false
+    },
+    "preorder": {
+      "indices": [
+        {
+          "unique": true,
+          "properties": [
+            {
+              "saltedDomainHash": "asc"
+            }
+          ]
+        }
+      ],
+      "required": [
+        "saltedDomainHash"
+      ],
+      "properties": {
+        "saltedDomainHash": {
+          "type": "string",
+          "pattern": "^[A-Fa-f0-9]+$",
+          "maxLength": 68,
+          "minLength": 68,
+          "description": "Double sha-256 multihash of the full domain name + salt in a form of a hex string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "contractId": "77w8Xqn25HwJhjodrHW133aXhjuTsTv9ozQaYpSHACE3"
+}

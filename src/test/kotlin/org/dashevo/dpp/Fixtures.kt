@@ -1,10 +1,10 @@
 package org.dashevo.dpp
 
-import org.bitcoinj.core.Sha256Hash
 import org.dashevo.dpp.contract.Contract
-import org.dashevo.dpp.contract.ContractFactory
+import org.dashevo.dpp.contract.ContractStateTransition
 import org.dashevo.dpp.document.Document
 import org.dashevo.dpp.document.DocumentFactory
+import org.dashevo.dpp.document.DocumentsStateTransition
 import org.dashevo.dpp.identity.Identity
 import org.dashevo.dpp.identity.IdentityCreateTransition
 import org.dashevo.dpp.identity.IdentityPublicKey
@@ -64,5 +64,28 @@ object Fixtures {
         rawStateTransition["publicKeys"] = publicKeysMap
 
         return IdentityCreateTransition(rawStateTransition)
+    }
+
+    fun getIdentityCreateSTSignedFixture() : IdentityCreateTransition {
+        val json = File("src/test/resources/data/identity-transition.json").readText()
+        val jsonObject = JSONObject(json)
+        val rawIdentity = jsonObject.toMap()
+
+        return IdentityCreateTransition(rawIdentity)
+    }
+
+    fun getDataContractSTSignedFixture() : ContractStateTransition {
+        val json = File("src/test/resources/data/datacontract-transition.json").readText()
+        val jsonObject = JSONObject(json)
+        val rawContractST = jsonObject.toMap()
+
+        return ContractStateTransition(rawContractST)
+    }
+
+    fun getDocumentsSTSignedFixture() : DocumentsStateTransition {
+        val jsonObject = JSONObject(File("src/test/resources/data/documents-transition.json").readText())
+        val rawDocumentST = jsonObject.toMap()
+
+        return DocumentsStateTransition(rawDocumentST)
     }
 }

@@ -1,0 +1,16 @@
+{
+  "protocolVersion": 0,
+  "type": 3,
+  "lockedOutPoint": "6NnSpFNGO9RmTl/joS9Bow64fE1YASEV+nv/4DnH0RsAAAAA",
+  "identityType": 1,
+  "publicKeys": [
+    {
+      "id": 1,
+      "type": 1,
+      "data": "A6AJAfRJyKuNoNvt33ygYfYh6OIYA8tF1s2BQcRA9RNg",
+      "isEnabled": true
+    }
+  ],
+  "signaturePublicKeyId": 1,
+  "signature": "IAN3MdbBZAU9Llpt8scGj11fAlJVOHj1Cfc/HAZrlE/Uf2IeD9nweGkUC3SULAnF1oIxfK7yndoOwLuvP8TLCwc="
+}

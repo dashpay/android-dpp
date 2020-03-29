@@ -1,0 +1,21 @@
+{
+  "protocolVersion": 0,
+  "type": 1,
+  "dataContract": {
+    "$schema": "https://schema.dash.org/dpp-0-4-0/meta/data-contract",
+    "contractId": "EzLBmQdQXYMaoeXWNaegK18iaaCDShitN3s14US3DunM",
+    "version": 1,
+    "documents": {
+      "note": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "signaturePublicKeyId": 1,
+  "signature": "H8INAUHtjfW3sL/Z7JQC+915QrVUb6eqpXzaB/21N3i2GOESqvrEVgUbAZNm0wh6BXFJScNKkQG6TLHknViWXWA=",
+}
