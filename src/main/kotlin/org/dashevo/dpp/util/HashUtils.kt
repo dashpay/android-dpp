@@ -7,29 +7,21 @@
 
 package org.dashevo.dpp.util
 
-import co.nstant.`in`.cbor.CborBuilder
-import co.nstant.`in`.cbor.CborDecoder
-import co.nstant.`in`.cbor.CborEncoder
-import co.nstant.`in`.cbor.builder.AbstractBuilder
-import co.nstant.`in`.cbor.builder.ArrayBuilder
-import co.nstant.`in`.cbor.builder.MapBuilder
-import co.nstant.`in`.cbor.model.*
 import com.google.common.io.BaseEncoding
 import org.bitcoinj.core.Sha256Hash
 import java.io.ByteArrayOutputStream
-import java.math.BigInteger
-import java.nio.ByteBuffer
-import java.util.*
-import kotlin.collections.ArrayList
 
 object HashUtils {
+
+    private val BASE64 = BaseEncoding.base64()
+    private val HEX = BaseEncoding.base16().lowerCase()
 
     /**
      * Return a double SHA256 hash of a Schema object instance
      * @param obj {object} Schema object instance
      * @returns {*|string}
      */
-    fun toHash(obj: Map<String, Any>): ByteArray {
+    private fun toHash(obj: Map<String, Any>): ByteArray {
         val byteArray = Cbor.encode(obj)
         return toHash(byteArray)
     }
@@ -43,9 +35,12 @@ object HashUtils {
     }
 
     fun fromBase64(base64: String): ByteArray {
-        return BaseEncoding.base64().omitPadding().decode(base64)
+        return BASE64.decode(base64)
     }
 
+    fun fromHex(base64: String): ByteArray {
+        return HEX.decode(base64)
+    }
 
     fun toHash(objList: List<Map<String, Any>>): ByteArray {
         val bos = ByteArrayOutputStream()
