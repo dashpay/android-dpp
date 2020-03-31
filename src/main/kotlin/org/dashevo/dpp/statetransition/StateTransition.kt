@@ -40,8 +40,8 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
     }
 
     constructor(rawStateTransition: MutableMap<String, Any?>) :
-            this(rawStateTransition["signaturePublicKeyId"] as Int,
-                    rawStateTransition["signature"] as String,
+            this(rawStateTransition["signaturePublicKeyId"] as? Int,
+                    rawStateTransition["signature"] as? String,
                     Types.getByCode(rawStateTransition["type"] as Int),
                     rawStateTransition["protocolVersion"] as Int)
 
@@ -78,7 +78,7 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
                     val dpk = DumpedPrivateKey.fromBase58(EvoNetParams.get(), privateKey)
                     privateKeyModel = dpk.key
                 } catch (_ : AddressFormatException) {
-                    privateKeyModel = ECKey.fromPrivate(Utils.HEX.decode(privateKey))
+                    privateKeyModel = ECKey.fromPrivate(HashUtils.fromHex(privateKey))
                 }
                 pubKeyBase = privateKeyModel.pubKey.toBase64()
                 if (pubKeyBase != identityPublicKey.data) {
