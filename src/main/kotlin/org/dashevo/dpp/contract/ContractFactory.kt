@@ -17,7 +17,7 @@ class ContractFactory : Factory() {
         val contractId = if (rawDataContract.containsKey("contractId")) rawDataContract["contractId"] as String else ""
 
         val contract = Contract(contractId,
-                rawDataContract["documents"] as MutableMap<String, Any>)
+                rawDataContract["documents"] as MutableMap<String, Any?>)
 
         if (rawDataContract.containsKey("\$schema")) {
             contract.schema = rawDataContract["\$schema"] as String
