@@ -23,6 +23,16 @@ object Cbor {
         return baos.toByteArray()
     }
 
+    fun encode(obj: List<Any>): ByteArray {
+        val baos = ByteArrayOutputStream()
+        val cborBuilder = CborBuilder()
+        val mapBuilder = writeJSONArray(obj, cborBuilder.addArray(), baos)
+        mapBuilder.build()
+        CborEncoder(baos).encode(cborBuilder.build())
+        return baos.toByteArray()
+    }
+
+
     fun decode(payload: ByteArray): MutableMap<String, Any?> {
         val dataItems = CborDecoder.decode(payload)
 
@@ -75,6 +85,48 @@ object Cbor {
         }
 
         return mapBuilder.end()
+    }
+
+    private fun writeJSONArray(obj: List<Any?>, mapBuilder: ArrayBuilder<CborBuilder>,
+                                baos: ByteArrayOutputStream,
+                                innerMapBuilder: AbstractBuilder<*>? = null): CborBuilder {
+
+        obj.forEach { value ->
+            if (value is Map<*, *>) {
+                /*if (innerMapBuilder != null && innerMapBuilder is MapBuilder<*>) {
+                    writeJSONObject(value as Map<String, Any?>, mapBuilder, baos, null)
+                } else {
+                    writeJSONObject(value as Map<String, Any?>, mapBuilder, baos, null)
+                }*/
+            } else {
+                val builder: AbstractBuilder<*> = innerMapBuilder ?: mapBuilder
+                if (value is List<*>) {
+                    if (builder is MapBuilder<*>) {
+                        //addJSONArray(value, mapBuilder, baos, builder.putArray(key))
+                    } else if (builder is ArrayBuilder<*>) {
+                        addJSONArray2(value, null, baos, builder.addArray())
+                    }
+                } /*else if (builder is MapBuilder<*>) {
+                    addValueToMapBuilder(builder, key, value)
+                } */else if (builder is ArrayBuilder<*>) {
+                    addValueToArrayBuilder(value, builder)
+                }
+            }
+        }
+
+        return mapBuilder.end()
+    }
+
+    private fun addJSONArray2(value: List<*>, mapBuilder: MapBuilder<CborBuilder>?, baos: ByteArrayOutputStream, arrayBuilder: ArrayBuilder<*>) {
+        val count = value.size
+        for (i in 0 until count) {
+            val item = value[i]
+            if (item is Map<*, *>) {
+                writeJSONObject(item as Map<String, Any?>, mapBuilder!!, baos, arrayBuilder.addMap())
+            } else {
+                addValueToArrayBuilder(item!!, arrayBuilder)
+            }
+        }
     }
 
     private fun addJSONArray(value: List<*>, mapBuilder: MapBuilder<CborBuilder>, baos: ByteArrayOutputStream, arrayBuilder: ArrayBuilder<*>) {
