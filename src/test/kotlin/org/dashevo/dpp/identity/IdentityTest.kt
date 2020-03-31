@@ -1,16 +1,16 @@
 package org.dashevo.dpp.identity
 
-import co.nstant.`in`.cbor.CborBuilder
-import co.nstant.`in`.cbor.CborEncoder
 import org.bitcoinj.core.ECKey
 import org.dashevo.dpp.Fixtures
 import org.dashevo.dpp.statetransition.StateTransition
+import org.dashevo.dpp.statetransition.errors.PublicKeyMismatchError
 import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.toHexString
 import org.dashevo.dpp.util.Cbor
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.dashevo.dpp.util.HashUtils
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 
 class IdentityTest {
 
@@ -109,5 +109,22 @@ class IdentityTest {
 
         assertTrue(isValid)
 
+
+        // trigger a failure to verify
+        val incorrectKey = ECKey()
+        val incorrectPublicKey = incorrectKey.pubKey.toBase64()
+        val incorrectIdentityKey = IdentityPublicKey(publicKeyId, IdentityPublicKey.TYPES.ECDSA_SECP256K1, incorrectPublicKey, true)
+
+        assertFalse(stateTransition.verifySignature(incorrectIdentityKey))
+
+        incorrectIdentityKey.id = 8
+        assertThrows(PublicKeyMismatchError::class.java, Executable {stateTransition.verifySignature(incorrectIdentityKey) })
+    }
+
+    @Test
+    fun verifySignedIdentityTest() {
+        val identitySTBytes = HashUtils.fromHex("a7647479706503697369676e6174757265785851523979496d674d4942304446517061486b696247314248476f716b5130695064637a5a48343452394f6d625a486e6b77664c424e467638696a6e62466e4238313239476a466779624a316b4c5133636a674e6b6432562b6a7075626c69634b65797381a4626964006464617461782c416e68306b5335646a706e4c4570314e446366494b464e447759484579436376695855735a62614d36797955647479706501696973456e61626c6564f56c6964656e7469747954797065016e6c6f636b65644f7574506f696e747830654c66354a4d365a6d433137795646676d4534346f72462b694c715974566739517941525a575843646a3042414141416f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b6579496400")
+        val identityST = IdentityCreateTransition(Cbor.decode(identitySTBytes))
+        identityST.verifySignature(identityST.publicKeys[0])
     }
 }
