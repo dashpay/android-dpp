@@ -51,13 +51,21 @@ object Fixtures {
         return Identity(rawIdentity)
     }
 
+    fun getIdentityForSignaturesFixture(): Identity {
+        val json = File("src/test/resources/data/identity-for-signatures.json").readText()
+        val jsonObject = JSONObject(json)
+        val rawIdentity = jsonObject.toMap()
+
+        return Identity(rawIdentity)
+    }
+
     fun getIdentityCreateSTFixture() : IdentityCreateTransition {
         val rawStateTransition = HashMap<String, Any?>()
 
         rawStateTransition["protocolVersion"] = 0
-        rawStateTransition["type"] = StateTransition.Types.IDENTITY_CREATE
+        rawStateTransition["type"] = StateTransition.Types.IDENTITY_CREATE.value
         rawStateTransition["lockedOutPoint"] = ByteArray(36).toBase64()
-        rawStateTransition["identityType"] = Identity.IdentityType.USER
+        rawStateTransition["identityType"] = Identity.IdentityType.USER.value
 
         val publicKeysMap = ArrayList<Any>(1)
         publicKeysMap.add(IdentityPublicKey(1, IdentityPublicKey.TYPES.ECDSA_SECP256K1, ByteArray(32).toBase64(), true).toJSON())

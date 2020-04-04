@@ -1,0 +1,13 @@
+{
+  id: "At44pvrZXLwjbJp415E2kjav49goGosRF3SB1WW1QJoG",
+  type: 1,
+  publicKeys:
+  [
+    {
+      id: 1,
+      type: 1,
+      data: 'A6AJAfRJyKuNoNvt33ygYfYh6OIYA8tF1s2BQcRA9RNg',
+      isEnabled: true
+    }
+  ]
+}

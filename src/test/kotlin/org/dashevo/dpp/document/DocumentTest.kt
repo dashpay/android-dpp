@@ -8,9 +8,9 @@ package org.dashevo.dpp.document
 
 import org.dashevo.dpp.Fixtures
 import org.json.JSONObject
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.io.File
 
 class DocumentTest {
 
@@ -46,5 +46,14 @@ class DocumentTest {
         val documents = Fixtures.getDocumentsFixture()
         val result = DocumentFactory().createStateTransition(documents)
         assertEquals(result.documents, documents)
+    }
+
+    @Test
+    fun verifySignedDocumentsSTTest() {
+        val documentST = Fixtures.getDocumentsSTSignedFixture()
+        val identityST = Fixtures.getIdentityCreateSTSignedFixture()
+        val identity = Fixtures.getIdentityForSignaturesFixture()
+        Assertions.assertTrue(documentST.verifySignature(identityST.publicKeys[0]))
+        Assertions.assertTrue(documentST.verifySignature(identity.publicKeys[0]))
     }
 }
