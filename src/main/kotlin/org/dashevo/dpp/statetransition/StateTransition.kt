@@ -16,6 +16,7 @@ import org.dashevo.dpp.statetransition.errors.InvalidSignatureTypeError
 import org.dashevo.dpp.statetransition.errors.PublicKeyMismatchError
 import org.dashevo.dpp.statetransition.errors.StateTransitionIsNotSignedError
 import org.dashevo.dpp.toBase64
+import org.dashevo.dpp.toBase64Padded
 import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
 import java.lang.Exception
@@ -84,7 +85,7 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
                 if (pubKeyBase != identityPublicKey.data) {
                     throw InvalidSignaturePublicKeyError(identityPublicKey.data)
                 }
-                signature = HashSigner.signHash(hash, privateKeyModel).toStringBase64()
+                signature = privateKeyModel.signHash(hash).toBase64Padded()
             }
             else -> {
                 throw InvalidSignatureTypeError(identityPublicKey.type)
@@ -114,7 +115,8 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
 
         val sb = StringBuilder()
         return try {
-            HashSigner.verifyHash(hash, publicKeyId, MasternodeSignature(EvoNetParams.get(), signatureBuffer, 0), sb)
+            val pubkeyFromSig = ECKey.signedMessageToKey(hash, signatureBuffer)
+            pubkeyFromSig.pubKey.contentEquals(publicKeyBuffer)
         } catch (e : Exception) {
             false
         }
