@@ -39,7 +39,7 @@ class IdentityTest {
 
         assertEquals(fixtureCreatedIdentity.id, factoryCreatedIdentity.id)
         assertEquals(fixtureCreatedIdentity.publicKeys[0].data, factoryCreatedIdentity.publicKeys[0].data)
-        assertEquals(fixtureCreatedIdentity.findPublicKeyById(2), factoryCreatedIdentity.findPublicKeyById(2))
+        assertEquals(fixtureCreatedIdentity.getPublicKeyById(2), factoryCreatedIdentity.getPublicKeyById(2))
 
     }
 

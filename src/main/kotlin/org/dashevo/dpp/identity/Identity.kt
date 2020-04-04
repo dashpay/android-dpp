@@ -33,7 +33,7 @@ class Identity(var id: String,
         }
     }
 
-    fun findPublicKeyById(keyId: Int) : IdentityPublicKey? {
+    fun getPublicKeyById(keyId: Int) : IdentityPublicKey? {
         return publicKeys.find { it.id == keyId }
     }
 
