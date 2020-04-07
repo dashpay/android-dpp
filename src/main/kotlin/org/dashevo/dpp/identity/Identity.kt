@@ -22,6 +22,7 @@ class Identity(var id: String,
             (rawIdentity["publicKeys"] as List<Any>).map { IdentityPublicKey(it as Map<String, Any>) })
 
     enum class IdentityType (val value: Int) {
+        UNKNOWN(0),
         USER(1),
         APPLICATION(2);
 
