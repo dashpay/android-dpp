@@ -19,6 +19,10 @@ class Entropy {
             return Address.fromKey(TestNet3Params.get(), privateKey).toString()
         }
 
+        fun generateBytes() : ByteArray {
+            return ECKey().pubKeyHash
+        }
+
         fun validate(address : String) : Boolean {
             return try {
                 Address.fromBase58(TestNet3Params.get(), address)
