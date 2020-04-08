@@ -93,22 +93,18 @@ object Cbor {
 
         obj.forEach { value ->
             if (value is Map<*, *>) {
-                /*if (innerMapBuilder != null && innerMapBuilder is MapBuilder<*>) {
-                    writeJSONObject(value as Map<String, Any?>, mapBuilder, baos, null)
-                } else {
-                    writeJSONObject(value as Map<String, Any?>, mapBuilder, baos, null)
-                }*/
+                throw IllegalArgumentException("List contains a map")
             } else {
                 val builder: AbstractBuilder<*> = innerMapBuilder ?: mapBuilder
                 if (value is List<*>) {
                     if (builder is MapBuilder<*>) {
-                        //addJSONArray(value, mapBuilder, baos, builder.putArray(key))
+                        throw IllegalArgumentException("List contains a map")
                     } else if (builder is ArrayBuilder<*>) {
                         addJSONArray2(value, null, baos, builder.addArray())
                     }
-                } /*else if (builder is MapBuilder<*>) {
-                    addValueToMapBuilder(builder, key, value)
-                } */else if (builder is ArrayBuilder<*>) {
+                } else if (builder is MapBuilder<*>) {
+                    throw IllegalArgumentException("List contains a map")
+                } else if (builder is ArrayBuilder<*>) {
                     addValueToArrayBuilder(value, builder)
                 }
             }
