@@ -55,5 +55,8 @@ class DocumentTest {
         val identity = Fixtures.getIdentityForSignaturesFixture()
         Assertions.assertTrue(documentST.verifySignature(identityST.publicKeys[0]))
         Assertions.assertTrue(documentST.verifySignature(identity.publicKeys[0]))
+
+        val documentSTTwo = Fixtures.getDocumentsSTSignedFixtureTwo()
+        assertEquals(documentST.documents[0].toJSON(), documentSTTwo.documents[0].toJSON())
     }
 }

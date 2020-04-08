@@ -9,6 +9,7 @@ import org.dashevo.dpp.identity.Identity
 import org.dashevo.dpp.identity.IdentityCreateTransition
 import org.dashevo.dpp.identity.IdentityPublicKey
 import org.dashevo.dpp.statetransition.StateTransition
+import org.dashevo.dpp.statetransition.StateTransitionFactory
 import org.json.JSONObject
 import java.io.File
 
@@ -74,6 +75,14 @@ object Fixtures {
         return IdentityCreateTransition(rawStateTransition)
     }
 
+    fun getIdentityCreateSTSignedFixtureTwo() : IdentityCreateTransition {
+        val json = File("src/test/resources/data/identity-transition.json").readText()
+        val jsonObject = JSONObject(json)
+        val rawIdentity = jsonObject.toMap()
+
+        return StateTransitionFactory().createFromObject(rawIdentity) as IdentityCreateTransition
+    }
+
     fun getIdentityCreateSTSignedFixture() : IdentityCreateTransition {
         val json = File("src/test/resources/data/identity-transition.json").readText()
         val jsonObject = JSONObject(json)
@@ -90,10 +99,24 @@ object Fixtures {
         return ContractStateTransition(rawContractST)
     }
 
+    fun getDataContractSTSignedFixtureTwo() : ContractStateTransition {
+        val json = File("src/test/resources/data/datacontract-transition.json").readText()
+        val jsonObject = JSONObject(json)
+        val rawContractST = jsonObject.toMap()
+
+        return StateTransitionFactory().createStateTransition(rawContractST) as ContractStateTransition
+    }
+
     fun getDocumentsSTSignedFixture() : DocumentsStateTransition {
         val jsonObject = JSONObject(File("src/test/resources/data/documents-transition.json").readText())
         val rawDocumentST = jsonObject.toMap()
 
         return DocumentsStateTransition(rawDocumentST)
+    }
+
+    fun getDocumentsSTSignedFixtureTwo() : DocumentsStateTransition {
+        val jsonObject = JSONObject(File("src/test/resources/data/documents-transition.json").readText())
+        val rawDocumentST = jsonObject.toMap()
+        return StateTransitionFactory().createStateTransition(rawDocumentST) as DocumentsStateTransition
     }
 }

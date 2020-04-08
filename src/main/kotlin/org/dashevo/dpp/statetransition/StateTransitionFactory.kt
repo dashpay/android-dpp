@@ -27,13 +27,13 @@ class StateTransitionFactory() {
             }
             StateTransition.Types.DOCUMENTS -> {
                 //this part will not work
-                val documents = (rawStateTransition["documents"] as Map<String, Any>).map { entry: Map.Entry<String, Any> ->
-                    val rawDocument = entry.key as MutableMap<String, Any?>
-                    val index = entry.value as String
+                var index: Int = 0
+                val actions = rawStateTransition["actions"] as List<Any>
+                val documents = (rawStateTransition["documents"] as List<Any>).map {
+                    val rawDocument = it as MutableMap<String, Any?>
                     val document = Document(rawDocument)
-
-                    document.action = (rawStateTransition["actions"] as MutableMap<String, Any>)[index] as Document.Action
-
+                    document.action = Document.Action.getByCode(actions[index] as Int)
+                    ++index
                     document
                 }
 

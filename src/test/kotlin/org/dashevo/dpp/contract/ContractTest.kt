@@ -103,11 +103,22 @@ class ContractTest {
     }
 
     @Test
+    fun verifyLoadingContractFromFile() {
+        val dataContractST = Fixtures.getDataContractSTSignedFixture()
+        val dataContractSTTwo = Fixtures.getDataContractSTSignedFixtureTwo();
+        assertEquals("EzLBmQdQXYMaoeXWNaegK18iaaCDShitN3s14US3DunM", dataContractST.contract.contractId)
+        assertEquals(dataContractST.toJSON(), dataContractSTTwo.toJSON())
+    }
+
+    @Test
     fun verifySignedDataContractSTTest() {
         val dataContractST = Fixtures.getDataContractSTSignedFixture()
         val identityST = Fixtures.getIdentityCreateSTSignedFixture()
         var identity = Fixtures.getIdentityForSignaturesFixture()
 
         assertTrue(dataContractST.verifySignature(identity.publicKeys[0]))
+
+        val dataContractSTTwo = Fixtures.getDataContractSTSignedFixtureTwo();
+        assertEquals(dataContractST.toJSON(), dataContractSTTwo.toJSON())
     }
 }

@@ -122,6 +122,14 @@ class IdentityTest {
     }
 
     @Test
+    fun verifyLoadingIdentitySTFromFileTest() {
+        val identityST = Fixtures.getIdentityCreateSTSignedFixture()
+        val identitySTTwo = Fixtures.getIdentityCreateSTSignedFixtureTwo()
+        assertEquals("A6AJAfRJyKuNoNvt33ygYfYh6OIYA8tF1s2BQcRA9RNg", identityST.publicKeys[0].data)
+        assertEquals(identityST.toJSON(), identitySTTwo.toJSON())
+    }
+
+    @Test
     fun verifySignedIdentityTest() {
         val identityBytes = HashUtils.fromHex("a3626964782c417434347076725a584c776a624a7034313545326b6a61763439676f476f73524633534231575731514a6f476474797065016a7075626c69634b65797381a4626964016464617461782c4136414a4166524a794b754e6f4e76743333796759665968364f495941387446317332425163524139524e67647479706501696973456e61626c6564f5")
         val identity = Identity(Cbor.decode(identityBytes))
