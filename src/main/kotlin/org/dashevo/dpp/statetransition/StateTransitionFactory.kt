@@ -26,7 +26,6 @@ class StateTransitionFactory() {
                 stateTransition = ContractStateTransition(dataContract);
             }
             StateTransition.Types.DOCUMENTS -> {
-                //this part will not work
                 var index: Int = 0
                 val actions = rawStateTransition["actions"] as List<Any>
                 val documents = (rawStateTransition["documents"] as List<Any>).map {

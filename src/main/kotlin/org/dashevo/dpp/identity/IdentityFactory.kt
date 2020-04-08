@@ -37,7 +37,6 @@ class IdentityFactory() : Factory() {
     }
 
     fun applyIdentityStateTransition(stateTransition: IdentityStateTransition, identity: Identity?) : Identity {
-        // noinspection JSRedundantSwitchStatement
         when (stateTransition.type) {
             StateTransition.Types.IDENTITY_CREATE -> {
                 val identityCreateTransition = stateTransition as IdentityCreateTransition
