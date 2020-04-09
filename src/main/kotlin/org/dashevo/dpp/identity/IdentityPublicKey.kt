@@ -14,7 +14,8 @@ class IdentityPublicKey(var id: Int,
                         var isEnabled: Boolean) : BaseObject() {
 
     enum class TYPES(val value: Int) {
-        ECDSA_SECP256K1(1);
+        ECDSA_SECP256K1(1),
+        BLS(2);
 
         companion object {
             private val values = values()
