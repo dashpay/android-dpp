@@ -26,13 +26,11 @@ class StateTransitionFactory() {
                 stateTransition = ContractStateTransition(dataContract);
             }
             StateTransition.Types.DOCUMENTS -> {
-                var index: Int = 0
                 val actions = rawStateTransition["actions"] as List<Any>
-                val documents = (rawStateTransition["documents"] as List<Any>).map {
-                    val rawDocument = it as MutableMap<String, Any?>
+                val documents = (rawStateTransition["documents"] as List<Any>).mapIndexed { index, any ->
+                    val rawDocument = any as MutableMap<String, Any?>
                     val document = Document(rawDocument)
                     document.action = Document.Action.getByCode(actions[index] as Int)
-                    ++index
                     document
                 }
 
@@ -61,6 +59,6 @@ class StateTransitionFactory() {
         return createFromObject(rawStateTransition, options)
     }
 
-    inner class Options(val skipValidation: Boolean = false)
+    class Options(val skipValidation: Boolean = false)
 
 }
