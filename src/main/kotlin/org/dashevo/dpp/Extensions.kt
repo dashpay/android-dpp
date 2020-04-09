@@ -17,13 +17,30 @@ fun JSONObject.append(jsonObject: JSONObject): JSONObject {
     return this
 }
 
+/**
+ *
+ * @receiver ByteArray
+ * @return String The HEX or Base16 representation of this
+ */
 fun ByteArray.toHexString(): String {
     return this.joinToString("") {
         java.lang.String.format("%02x", it)
     }
 }
 
+/**
+ *
+ * @receiver ByteArray
+ * @return String The Base64 represenation of this
+ */
 fun ByteArray.toBase64(): String {
     return BaseEncoding.base64().omitPadding().encode(this)
 }
 
+/**
+ * @receiver ByteArray
+ * @return String The Base64 representation with padding of this
+ */
+fun ByteArray.toBase64Padded(): String {
+    return BaseEncoding.base64().encode(this)
+}
