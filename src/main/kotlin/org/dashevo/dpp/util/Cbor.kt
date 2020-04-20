@@ -8,6 +8,7 @@ import co.nstant.`in`.cbor.builder.ArrayBuilder
 import co.nstant.`in`.cbor.builder.MapBuilder
 import co.nstant.`in`.cbor.model.*
 import java.io.ByteArrayOutputStream
+import java.lang.IllegalStateException
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.util.HashMap
@@ -100,7 +101,7 @@ object Cbor {
                     if (builder is MapBuilder<*>) {
                         throw IllegalArgumentException("List contains a map")
                     } else if (builder is ArrayBuilder<*>) {
-                        addJSONArray2(value, null, baos, builder.addArray())
+                        addJSONArrayInArray(value, null, baos, builder.addArray())
                     }
                 } else if (builder is MapBuilder<*>) {
                     throw IllegalArgumentException("List contains a map")
@@ -113,12 +114,55 @@ object Cbor {
         return mapBuilder.end()
     }
 
-    private fun addJSONArray2(value: List<*>, mapBuilder: MapBuilder<CborBuilder>?, baos: ByteArrayOutputStream, arrayBuilder: ArrayBuilder<*>) {
+    /**
+     * Writes an array into an array.  This method does not allow maps to be in arrays
+     * @param obj List<Any?>
+     * @param mapBuilder ArrayBuilder<*>
+     * @param baos ByteArrayOutputStream
+     * @param innerMapBuilder AbstractBuilder<*>?
+     * @return ArrayBuilder<*>
+     */
+    private fun writeJSONArrayInArray(obj: List<Any?>, mapBuilder: ArrayBuilder<*>,
+                                      baos: ByteArrayOutputStream,
+                                      innerMapBuilder: AbstractBuilder<*>? = null): ArrayBuilder<*> {
+
+        obj.forEach { value ->
+            if (value is Map<*, *>) {
+                throw IllegalArgumentException("List contains a map")
+            } else {
+                val builder: AbstractBuilder<*> = innerMapBuilder ?: mapBuilder
+                if (value is List<*>) {
+                    if (builder is MapBuilder<*>) {
+                        throw IllegalArgumentException("List contains a map")
+                    } else if (builder is ArrayBuilder<*>) {
+                        addJSONArrayInArray(value, null, baos, builder.addArray())
+                    }
+                } else if (builder is MapBuilder<*>) {
+                    throw IllegalArgumentException("List contains a map")
+                } else if (builder is ArrayBuilder<*>) {
+                    addValueToArrayBuilder(value, builder)
+                }
+            }
+        }
+
+        return mapBuilder
+    }
+
+    /**
+     * Adds a JSON array inside a JSON array only.  This does not allow maps to be in arrays
+     * @param value List<*> The array to be added
+     * @param mapBuilder MapBuilder<CborBuilder>?
+     * @param baos ByteArrayOutputStream
+     * @param arrayBuilder ArrayBuilder<*> The array will be added to this builder
+     */
+    private fun addJSONArrayInArray(value: List<*>, mapBuilder: MapBuilder<CborBuilder>?, baos: ByteArrayOutputStream, arrayBuilder: ArrayBuilder<*>) {
         val count = value.size
         for (i in 0 until count) {
             val item = value[i]
             if (item is Map<*, *>) {
-                writeJSONObject(item as Map<String, Any?>, mapBuilder!!, baos, arrayBuilder.addMap())
+                throw IllegalStateException("List contains a map")
+            } else if (item is List<*>) {
+                writeJSONArrayInArray(item, arrayBuilder.addArray(), baos, null)
             } else {
                 addValueToArrayBuilder(item!!, arrayBuilder)
             }
