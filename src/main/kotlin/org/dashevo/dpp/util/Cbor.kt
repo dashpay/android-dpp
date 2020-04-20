@@ -257,8 +257,8 @@ object Cbor {
             is UnicodeString -> map.put(key, value.string)
             is co.nstant.`in`.cbor.model.Number -> {
                 if(value.value.toLong() < Int.MAX_VALUE)
-                    map.put(key, value.value.intValueExact())
-                else map[key] = value.value.longValueExact()
+                    map.put(key, value.value.toInt())
+                else map[key] = value.value.toLong()
             }
             is HalfPrecisionFloat -> {
                 if(value.value.toLong() > Int.MIN_VALUE)
