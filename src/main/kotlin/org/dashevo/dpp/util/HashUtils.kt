@@ -8,6 +8,7 @@
 package org.dashevo.dpp.util
 
 import com.google.common.io.BaseEncoding
+import org.bitcoinj.core.Base58
 import org.bitcoinj.core.Sha256Hash
 import java.io.ByteArrayOutputStream
 
@@ -38,8 +39,28 @@ object HashUtils {
         return BASE64.decode(base64)
     }
 
-    fun fromHex(base64: String): ByteArray {
-        return HEX.decode(base64)
+    fun fromHex(base16: String): ByteArray {
+        return HEX.decode(base16)
+    }
+
+    /**
+     * Gets a byte array from a string by decoding from one of the
+     * following formats: Base58, Base64, hex
+     */
+    fun byteArrayFromString(string: String): ByteArray {
+        return try {
+            Base58.decode(string)
+        } catch (e: Exception) {
+            try {
+                fromHex(string)
+            } catch (e: Exception) {
+                try {
+                    fromBase64(string)
+                } catch (e: Exception) {
+                    throw IllegalArgumentException("string is not base58, base64 or hex: $string")
+                }
+            }
+        }
     }
 
     fun toHash(objList: List<Map<String, Any>>): ByteArray {
