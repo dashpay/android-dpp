@@ -6,7 +6,9 @@
  */
 package org.dashevo.dpp.identity
 
+import org.bitcoinj.core.ECKey
 import org.dashevo.dpp.BaseObject
+import org.dashevo.dpp.util.HashUtils
 
 class IdentityPublicKey(var id: Int,
                         var type: TYPES,
@@ -48,5 +50,9 @@ class IdentityPublicKey(var id: Int,
                 other.type == type &&
                 other.data == data &&
                 other.isEnabled == isEnabled
+    }
+
+    fun getKey(): ECKey {
+        return ECKey.fromPublicOnly(HashUtils.byteArrayFromString(data))
     }
 }
