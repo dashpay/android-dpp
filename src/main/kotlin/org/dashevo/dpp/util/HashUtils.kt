@@ -11,6 +11,7 @@ import com.google.common.io.BaseEncoding
 import org.bitcoinj.core.Base58
 import org.bitcoinj.core.Sha256Hash
 import java.io.ByteArrayOutputStream
+import java.nio.charset.Charset
 
 object HashUtils {
 
@@ -105,4 +106,22 @@ object HashUtils {
         return Entropy.generate()
     }
 
+    fun generateDocumentId(dataContractId: String, ownerId: String, type: String, entropy: String) : String {
+        val utf8charset = Charset.forName("UTF-8")
+        val stream = ByteArrayOutputStream()
+        stream.write(Base58.decode(dataContractId))
+        stream.write(Base58.decode(ownerId))
+        stream.write(type.toByteArray(utf8charset))
+        stream.write(Base58.decode(entropy))
+        val scopeHash = toHash(stream.toByteArray())
+        return Base58.encode(scopeHash)
+    }
+
+    fun generateDataContractId(ownerId: String, entropy: String) : String {
+        val stream = ByteArrayOutputStream()
+        stream.write(Base58.decode(ownerId))
+        stream.write(Base58.decode(entropy))
+        val scopeHash = toHash(stream.toByteArray())
+        return Base58.encode(scopeHash)
+    }
 }
