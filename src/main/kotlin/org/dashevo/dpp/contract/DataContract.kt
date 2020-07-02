@@ -10,7 +10,7 @@ package org.dashevo.dpp.contract
 import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.errors.InvalidDocumentTypeError
 
-class Contract(var contractId: String = "", var documents: MutableMap<String, Any?>) : BaseObject() {
+class DataContract(var contractId: String = "", var documents: MutableMap<String, Any?>) : BaseObject() {
 
     companion object DEFAULTS {
         const val VERSION = 1

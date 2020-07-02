@@ -1,6 +1,6 @@
 package org.dashevo.dpp
 
-import org.dashevo.dpp.contract.Contract
+import org.dashevo.dpp.contract.DataContract
 import org.dashevo.dpp.document.Document
 import org.dashevo.dpp.identity.Identity
 
@@ -13,7 +13,7 @@ interface DataProvider {
      * Fetch Data Contract by ID
      *
      */
-    fun fetchDataContract(contractId: String): Contract?
+    fun fetchDataContract(contractId: String): DataContract?
 
     /**
      * Fetch Documents by Data Contract ID and type

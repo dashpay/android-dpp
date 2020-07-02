@@ -8,21 +8,21 @@
 package org.dashevo.dpp.document
 
 import org.dashevo.dpp.Factory
-import org.dashevo.dpp.contract.Contract
+import org.dashevo.dpp.contract.DataContract
 import org.dashevo.dpp.errors.InvalidDocumentTypeError
 import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.Entropy
 
 class DocumentFactory() : Factory() {
 
-    fun create(contract: Contract, userId: String, type: String, data: Map<String, Any> = mapOf()) : Document {
-        if (!contract.isDocumentDefined(type)) {
-            throw InvalidDocumentTypeError(contract, type)
+    fun create(dataContract: DataContract, userId: String, type: String, data: Map<String, Any> = mapOf()) : Document {
+        if (!dataContract.isDocumentDefined(type)) {
+            throw InvalidDocumentTypeError(dataContract, type)
         }
 
         val rawDocument = hashMapOf<String, Any?>()
         rawDocument.put("\$type", type)
-        rawDocument.put("\$contractId", contract.contractId)
+        rawDocument.put("\$contractId", dataContract.contractId)
         rawDocument.put("\$userId", userId)
         rawDocument.put("\$entropy", Entropy.generate())
         rawDocument.put("\$rev", Document.REVISION)

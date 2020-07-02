@@ -12,11 +12,10 @@ import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.File
 
-class ContractTest {
+class DataContractTest {
 
     companion object {
         val factory = ContractFactory()
@@ -26,7 +25,7 @@ class ContractTest {
     fun testContract() {
         var contract = Fixtures.getDataContractFixtures()
 
-        assertEquals(Contract.SCHEMA, contract.schema)
+        assertEquals(DataContract.SCHEMA, contract.schema)
         assertEquals(3, contract.documents.size)
         assertEquals("9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX", contract.id)
     }
@@ -42,8 +41,8 @@ class ContractTest {
         val rawContract = HashMap<String, Any?>()
         rawContract["documents"] = map
         rawContract["contractId"] = "9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX"
-        rawContract["\$schema"] = Contract.SCHEMA
-        rawContract["version"] = Contract.VERSION
+        rawContract["\$schema"] = DataContract.SCHEMA
+        rawContract["version"] = DataContract.VERSION
         rawContract["definitions"] = JSONObject("{lastName: { type: 'string', }, }").toMap()
 
         val factoryCreatedContract = factory.createDataContract(rawContract)
@@ -98,7 +97,7 @@ class ContractTest {
         val jsonObject = JSONObject(jsonDashPay)
         val rawContract = jsonObject.toMap()
 
-        val contractFromJson = Contract(rawContract)
+        val contractFromJson = DataContract(rawContract)
         assertEquals(contract.toJSON(), contractFromJson.toJSON())
     }
 
@@ -106,7 +105,7 @@ class ContractTest {
     fun verifyLoadingContractFromFile() {
         val dataContractST = Fixtures.getDataContractSTSignedFixture()
         val dataContractSTTwo = Fixtures.getDataContractSTSignedFixtureTwo();
-        assertEquals("EzLBmQdQXYMaoeXWNaegK18iaaCDShitN3s14US3DunM", dataContractST.contract.contractId)
+        assertEquals("EzLBmQdQXYMaoeXWNaegK18iaaCDShitN3s14US3DunM", dataContractST.dataContract.contractId)
         assertEquals(dataContractST.toJSON(), dataContractSTTwo.toJSON())
     }
 

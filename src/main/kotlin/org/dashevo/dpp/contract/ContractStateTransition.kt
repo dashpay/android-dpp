@@ -4,19 +4,19 @@ import org.dashevo.dpp.statetransition.StateTransition
 
 class ContractStateTransition : StateTransition {
 
-    var contract: Contract
+    var dataContract: DataContract
 
-    constructor(contract: Contract) : super(Types.DATA_CONTRACT) {
-        this.contract = contract
+    constructor(dataContract: DataContract) : super(Types.DATA_CONTRACT) {
+        this.dataContract = dataContract
     }
 
     constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
-        contract = Contract(rawStateTransition["dataContract"] as MutableMap<String, Any?>)
+        dataContract = DataContract(rawStateTransition["dataContract"] as MutableMap<String, Any?>)
     }
 
     override fun toJSON(skipSignature: Boolean): Map<String, Any> {
         var json = super.toJSON(skipSignature) as MutableMap<String, Any>
-        json["dataContract"] = contract.toJSON()
+        json["dataContract"] = dataContract.toJSON()
         return json
     }
 }

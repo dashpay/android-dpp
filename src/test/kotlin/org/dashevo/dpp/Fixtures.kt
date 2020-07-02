@@ -1,6 +1,6 @@
 package org.dashevo.dpp
 
-import org.dashevo.dpp.contract.Contract
+import org.dashevo.dpp.contract.DataContract
 import org.dashevo.dpp.contract.ContractStateTransition
 import org.dashevo.dpp.document.Document
 import org.dashevo.dpp.document.DocumentFactory
@@ -18,11 +18,11 @@ object Fixtures {
     val userId = "4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp"
     val contractId = "9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX"
 
-    fun getDataContractFixtures() : Contract {
+    fun getDataContractFixtures() : DataContract {
         val json = File("src/test/resources/data/documentsforcontract.json").readText()//"{\r\n\"name\" : \"abc\" ,\r\n\"email id \" : [\"abc@gmail.com\",\"def@gmail.com\",\"ghi@gmail.com\"]\r\n}"
         val jsonObject = JSONObject(json)
         val map = jsonObject.toMap()
-        val dataContract = Contract(contractId, map)
+        val dataContract = DataContract(contractId, map)
 
         dataContract.definitions = JSONObject("{lastName: { type: 'string', }, }").toMap()
 
