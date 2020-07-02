@@ -8,6 +8,7 @@
 package org.dashevo.dpp
 
 import com.google.common.io.BaseEncoding
+import org.bitcoinj.core.Base58
 import org.json.JSONObject
 
 fun JSONObject.append(jsonObject: JSONObject): JSONObject {
@@ -31,7 +32,7 @@ fun ByteArray.toHexString(): String {
 /**
  *
  * @receiver ByteArray
- * @return String The Base64 represenation of this
+ * @return String The Base64 representation of this
  */
 fun ByteArray.toBase64(): String {
     return BaseEncoding.base64().omitPadding().encode(this)
@@ -43,4 +44,13 @@ fun ByteArray.toBase64(): String {
  */
 fun ByteArray.toBase64Padded(): String {
     return BaseEncoding.base64().encode(this)
+}
+
+/**
+ *
+ * @receiver ByteArray
+ * @return String The Base64 representation of this
+ */
+fun ByteArray.toBase58(): String {
+    return Base58.encode(this)
 }
