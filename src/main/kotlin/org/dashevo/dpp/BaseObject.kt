@@ -35,6 +35,10 @@ abstract class BaseObject {
      *
      */
     fun hash(): String {
-        return HashUtils.toHash(this.serialize()).toHexString()
+        return hashAsByteArray().toHexString()
+    }
+
+    open fun hashAsByteArray(): ByteArray {
+        return HashUtils.toHash(this.serialize())
     }
 }
