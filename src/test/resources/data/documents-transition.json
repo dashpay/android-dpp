@@ -1,18 +1,18 @@
 {
   "protocolVersion": 0,
-  "type": 2,
-  "actions": [
-    1
-  ],
-  "documents": [
-    {
-      "$type": "note",
-      "$contractId": "EzLBmQdQXYMaoeXWNaegK18iaaCDShitN3s14US3DunM",
-      "$userId": "At44pvrZXLwjbJp415E2kjav49goGosRF3SB1WW1QJoG",
-      "$entropy": "ydQUKu7QxqPxt4tytY7dtKM7uKPGzWG9Az",
-      "$rev": 1,
-      "message": "Tutorial Test @ Thu, 26 Mar 2020 20:19:49 GMT"
-    }
+  "type": 1,
+  "ownerId": "3eHkM3mWjutxbc3EQwnVQHyymDgbZfK4EhZRectK11jV",
+  "transitions": [
+      {
+        "$type": "note",
+        "$dataContractId": "EzLBmQdQXYMaoeXWNaegK18iaaCDShitN3s14US3DunM",
+        "$id": "Zp44pvrZXLwjbJp415E2kjav49goGosRF3SB1WW1QJoG",
+        "ownerId": "At44pvrZXLwjbJp415E2kjav49goGosRF3SB1WW1QJoG",
+        "$entropy": "ydQUKu7QxqPxt4tytY7dtKM7uKPGzWG9Az",
+        "$rev": 1,
+        "message": "Tutorial Test @ Thu, 26 Mar 2020 20:19:49 GMT",
+        "$action": 0
+      }
   ],
   "signaturePublicKeyId": 1,
   "signature": "IFue3isoXSuYd0Ky8LvYjOMExwq69XaXPvi+IE+YT0sSD6N22P75xWZNFqO8RkZRqtmO7+EwyMX7NVETcD2HTmw=",

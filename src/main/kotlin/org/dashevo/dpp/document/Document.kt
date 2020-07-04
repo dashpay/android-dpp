@@ -10,6 +10,7 @@ package org.dashevo.dpp.document
 import org.bitcoinj.core.Base58
 import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.util.HashUtils
+import java.io.ByteArrayOutputStream
 import java.nio.charset.Charset
 
 class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
@@ -34,20 +35,12 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
         val SYSTEM_PREFIX = '$'
     }
 
-    var id: String = ""
-       get() {
-           if (field.isEmpty()) {
-               val utf8charset = Charset.forName("UTF-8")
-               val scopeHash = HashUtils.toHash((contractId + userId + type + entropy).toByteArray(utf8charset))
-               field = Base58.encode(scopeHash)
-           }
-           return field
-       }
-    lateinit var type: String
-    lateinit var contractId: String
-    lateinit var userId: String
+    var id: String
+    var type: String
+    var dataContractId: String
+    var ownerId: String
     lateinit var entropy: String
-    private var rev: Int = 0
+    var revision: Int = 0
     var data: Map<String, Any?>
     var action: Action = Action.CREATE
         set(value) {
@@ -60,22 +53,22 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
     init {
         val data = HashMap(rawDocument)
 
-        this.type = rawDocument.remove("\$type") as String
-        this.contractId = rawDocument.remove("\$contractId") as String
-        this.userId = rawDocument.remove("\$userId") as String
-        this.entropy = rawDocument.remove("\$entropy") as String
-        this.rev = rawDocument.remove("\$rev") as Int
+        this.id = data.remove("\$id") as String
+        this.type = data.remove("\$type") as String
+        this.dataContractId = data.remove("\$dataContractId") as String
+        this.ownerId = data.remove("\$ownerId") as String
+        this.revision = data.remove("\$revision") as Int
 
         this.data = data
     }
 
     override fun toJSON(): Map<String, Any> {
         val json = hashMapOf<String, Any>()
+        json["\$id"] = id
         json["\$type"] = type
-        json["\$userId"] = userId
-        json["\$contractId"] = contractId
-        json["\$entropy"] = contractId
-        json["\$rev"] = rev
+        json["\$dataContractId"] = dataContractId
+        json["\$ownerId"] = ownerId
+        json["\$revision"] = revision
 
         data.keys.iterator().forEach {
             data[it]?.let { it1 -> json[it] = it1 }
@@ -84,5 +77,12 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
         return json
     }
 
+    fun get(path: String): Any {
+        TODO("get field specified by path")
+    }
+
+    fun set(path: String, value: Any) {
+        TODO("set field specified by path to the value")
+    }
 }
 

@@ -7,7 +7,9 @@
 package org.dashevo.dpp.identity
 
 import org.bitcoinj.core.ECKey
+import org.bitcoinj.core.Utils
 import org.dashevo.dpp.BaseObject
+import org.dashevo.dpp.identity.errors.EmptyPublicKeyDataException
 import org.dashevo.dpp.util.HashUtils
 
 class IdentityPublicKey(var id: Int,
@@ -16,8 +18,8 @@ class IdentityPublicKey(var id: Int,
                         var isEnabled: Boolean) : BaseObject() {
 
     enum class TYPES(val value: Int) {
-        ECDSA_SECP256K1(1),
-        BLS(2);
+        ECDSA_SECP256K1(0),
+        BLS(1);
 
         companion object {
             private val values = values()
@@ -52,7 +54,20 @@ class IdentityPublicKey(var id: Int,
                 other.isEnabled == isEnabled
     }
 
+    override fun hashCode(): Int {
+        val hash = hashAsByteArray()
+        return Utils.readUint32(hash, 0).toInt()
+    }
+
     fun getKey(): ECKey {
         return ECKey.fromPublicOnly(HashUtils.byteArrayFromString(data))
     }
+
+    override fun hashAsByteArray(): ByteArray {
+        if(data.isEmpty()) {
+            throw EmptyPublicKeyDataException()
+        }
+        return super.hashAsByteArray()
+    }
+
 }

@@ -21,16 +21,18 @@ import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
 import java.lang.Exception
 
-abstract class StateTransition(var signaturePublicKeyId: Int?,
-                               var signature: String?, val type: Types, var protocolVersion: Int = 0) : BaseObject() {
+abstract class StateTransition(var signature: String?,
+                               val type: Types,
+                               var protocolVersion: Int = CURRENT_PROTOCOL_VERSION)
+    : BaseObject() {
 
     enum class Types(val value: Int) {
-        DATA_CONTRACT(1),
-        DOCUMENTS(2),
-        IDENTITY_CREATE(3),
-        IDENTITY_TOPUP(4),
-        IDENTITY_UPDATEKEY(5),
-        IDENTITY_CLOSEACCOUNT(6);
+        DATA_CONTRACT_CREATE(0),
+        DOCUMENTS_BATCH(1),
+        IDENTITY_CREATE(2),
+        IDENTITY_TOP_UP(3),
+        IDENTITY_UPDATEKEY(4),
+        IDENTITY_CLOSEACCOUNT(5);
 
         companion object {
             private val values = values()
@@ -40,14 +42,18 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
         }
     }
 
+    companion object {
+        const val PRICE_PER_BYTE = 1L
+        const val CURRENT_PROTOCOL_VERSION = 0
+    }
+
     constructor(rawStateTransition: MutableMap<String, Any?>) :
-            this(rawStateTransition["signaturePublicKeyId"] as? Int,
-                    rawStateTransition["signature"] as? String,
+            this(rawStateTransition["signature"] as? String,
                     Types.getByCode(rawStateTransition["type"] as Int),
                     rawStateTransition["protocolVersion"] as Int)
 
 
-    constructor(type: Types, protocolVersion: Int = 0) : this(null, null, type, protocolVersion)
+    constructor(type: Types, protocolVersion: Int = 0) : this(null, type, protocolVersion)
 
     override fun toJSON(): Map<String, Any?> {
         return toJSON(false)
@@ -57,9 +63,8 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
         val json = hashMapOf<String, Any?>()
         json["protocolVersion"] = protocolVersion
         json["type"] = type.value
-        if(!skipSignature) {
+        if (!skipSignature) {
             json["signature"] = signature
-            json["signaturePublicKeyId"] = signaturePublicKeyId
         }
         return json
     }
@@ -68,17 +73,17 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
         return Cbor.encode(this.toJSON(skipSignature))
     }
 
-    fun sign(identityPublicKey: IdentityPublicKey, privateKey: String) {
+    /*fun sign(identityPublicKey: IdentityPublicKey, privateKey: String) {
         val data = serialize(true)
         val hash = HashUtils.toSha256Hash(data)
-        var privateKeyModel : ECKey
+        var privateKeyModel: ECKey
         val pubKeyBase: String
         when (identityPublicKey.type) {
             IdentityPublicKey.TYPES.ECDSA_SECP256K1 -> {
                 try {
                     val dpk = DumpedPrivateKey.fromBase58(EvoNetParams.get(), privateKey)
                     privateKeyModel = dpk.key
-                } catch (_ : AddressFormatException) {
+                } catch (_: AddressFormatException) {
                     privateKeyModel = ECKey.fromPrivate(HashUtils.fromHex(privateKey))
                 }
                 pubKeyBase = privateKeyModel.pubKey.toBase64()
@@ -92,10 +97,16 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
             }
         }
         signaturePublicKeyId = identityPublicKey.id
+    }*/
+
+    fun signByPrivateKey(privateKey: ECKey) {
+        val data = serialize(true)
+        val hash = HashUtils.toSha256Hash(data)
+
+        signature = privateKey.signHash(hash).toBase64Padded()
     }
 
-
-    fun verifySignature(publicKey: IdentityPublicKey): Boolean {
+    /*fun verifySignature(publicKey: IdentityPublicKey): Boolean {
         if (signature == null) {
             throw StateTransitionIsNotSignedError(this);
         }
@@ -117,8 +128,31 @@ abstract class StateTransition(var signaturePublicKeyId: Int?,
         return try {
             val pubkeyFromSig = ECKey.signedMessageToKey(hash, signatureBuffer)
             pubkeyFromSig.pubKey.contentEquals(publicKeyBuffer)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             false
         }
+    }*/
+
+    fun verifySignatureByPublicKey(publicKey: ECKey): Boolean {
+        if (signature == null) {
+            throw StateTransitionIsNotSignedError(this);
+        }
+
+        val signatureBuffer = HashUtils.fromBase64(signature!!);
+
+        val data = serialize(true)
+        val hash = HashUtils.toSha256Hash(data)
+
+        return try {
+            val pubkeyFromSig = ECKey.signedMessageToKey(hash, signatureBuffer)
+            pubkeyFromSig.pubKey.contentEquals(publicKey.pubKey)
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    fun calculateFee(): Long {
+        val serializedStateTransition = serialize(skipSignature = true);
+        return serializedStateTransition.size * PRICE_PER_BYTE;
     }
 }

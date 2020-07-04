@@ -7,6 +7,7 @@
 
 package org.dashevo.dpp.identity
 
+import org.bitcoinj.core.TransactionOutPoint
 import org.dashevo.dpp.Factory
 import org.dashevo.dpp.errors.IdentityAlreadyExistsError
 import org.dashevo.dpp.identity.errors.WrongStateTransitionTypeError
@@ -15,8 +16,13 @@ import org.dashevo.dpp.util.Cbor
 
 class IdentityFactory() : Factory() {
 
-    fun create(id: String, type: Identity.IdentityType, publicKeys: List<IdentityPublicKey>) : Identity {
-        return Identity(id, type, publicKeys)
+    fun create(lockedOutPoint: TransactionOutPoint, publicKeys: List<IdentityPublicKey>) : Identity {
+        val id = lockedOutPoint.hash.toStringBase58()
+        return Identity(id, publicKeys)
+    }
+
+    fun create(id: String, publicKeys: List<IdentityPublicKey>) : Identity {
+        return Identity(id, publicKeys)
     }
 
     fun createFromObject(rawIdentity: MutableMap<String, Any?>, options: Options = Options()): Identity {
@@ -28,30 +34,36 @@ class IdentityFactory() : Factory() {
         return createFromObject(rawIdentity, options)
     }
 
-    fun applyCreateStateTransition(stateTransition: IdentityStateTransition) : Identity {
-        return applyIdentityStateTransition(stateTransition, null)
+    fun createIdentityCreateTransition(identity: Identity): IdentityCreateTransition {
+        val lockedOutpoint = identity.lockedOutpoint!!.toStringBase64()
+
+        return  IdentityCreateTransition(lockedOutpoint, identity.publicKeys)
     }
 
-    fun applyStateTransition(stateTransition: IdentityStateTransition, identity: Identity?) : Identity {
-        return applyIdentityStateTransition(stateTransition, identity)
+    fun createIdentityCreateTransition(lockedOutpoint: String, identityPublicKeys: List<IdentityPublicKey>): IdentityCreateTransition {
+
+        return  IdentityCreateTransition(lockedOutpoint, identityPublicKeys)
     }
 
-    fun applyIdentityStateTransition(stateTransition: IdentityStateTransition, identity: Identity?) : Identity {
-        when (stateTransition.type) {
-            StateTransition.Types.IDENTITY_CREATE -> {
-                val identityCreateTransition = stateTransition as IdentityCreateTransition
-                if (identity != null) {
-                    throw IdentityAlreadyExistsError (stateTransition)
-                }
+    fun createIdentityTopupTransition(identityId: String, lockedOutpoint: TransactionOutPoint): IdentityTopupTransition {
+        val lockedOutpoint = lockedOutpoint.toStringBase64()
 
-                val newIdentity = Identity(identityCreateTransition.identityId,
-                        identityCreateTransition.identityType!!, identityCreateTransition.publicKeys);
+        return  IdentityTopupTransition(identityId, lockedOutpoint)
+    }
 
-                return newIdentity
-            }
-            else -> {
-                throw WrongStateTransitionTypeError(stateTransition);
-            }
-        }
+    fun applyIdentityCreateStateTransition(stateTransition: IdentityStateTransition) : Identity {
+
+        val identityCreateTransition = stateTransition as IdentityCreateTransition
+
+        val newIdentity = Identity(identityCreateTransition.identityId,
+                0,
+                identityCreateTransition.publicKeys)
+
+        //store identity
+
+        //
+
+        return newIdentity
+
     }
 }

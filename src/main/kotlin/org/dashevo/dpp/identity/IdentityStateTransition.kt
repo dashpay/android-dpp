@@ -6,9 +6,9 @@
  */
 package org.dashevo.dpp.identity
 
-import org.dashevo.dpp.statetransition.StateTransition
+import org.dashevo.dpp.statetransition.StateTransitionIdentitySigned
 
-abstract class IdentityStateTransition : StateTransition {
+abstract class IdentityStateTransition : StateTransitionIdentitySigned {
 
     constructor(signaturePublicKeyId: Int?,
                               signature: String?,

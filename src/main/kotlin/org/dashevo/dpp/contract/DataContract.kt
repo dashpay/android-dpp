@@ -9,50 +9,62 @@ package org.dashevo.dpp.contract
 
 import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.errors.InvalidDocumentTypeError
+import java.lang.instrument.ClassDefinition
 
-class DataContract(var contractId: String = "", var documents: MutableMap<String, Any?>) : BaseObject() {
+class DataContract(var id: String,
+                   var ownerId: String,
+                   var schema: String,
+                   var documents: MutableMap<String, Any?>,
+                   var definitions: MutableMap<String, Any?> = hashMapOf()) : BaseObject() {
 
     companion object DEFAULTS {
-        const val VERSION = 1
         const val SCHEMA = "https://schema.dash.org/dpp-0-4-0/meta/data-contract"
-        const val SCHEMA_ID = "dataContract"
     }
 
-    constructor(rawContract: MutableMap<String, Any?>) : this(rawContract["contractId"] as String,
-            rawContract["documents"] as MutableMap<String, Any?>)
+    var entropy: String? = null
 
-    var id: String = ""
-       get() {
-           if (field.isEmpty()) {
-               field = contractId
-           }
-           return field
-       }
-    var version: Int = VERSION
-    var schema: String = SCHEMA
-    var definitions = mapOf<String, Any>()
+    constructor(rawContract: MutableMap<String, Any?>) : this(rawContract["\$id"] as String,
+            rawContract["ownerId"] as String,
+            rawContract["\$schema"] as String,
+            rawContract["documents"] as MutableMap<String, Any?>,
+            if (rawContract.containsKey("definitions"))
+                rawContract["definitions"] as MutableMap<String, Any?>
+            else
+                hashMapOf()
+    )
 
     override fun toJSON(): Map<String, Any> {
         val json = hashMapOf<String, Any>()
-
+        json["\$id"] = this.id
         json["\$schema"] = this.schema
-        json["contractId"] = this.contractId
-        json["version"] = this.version
+        json["ownerId"] = this.ownerId
         json["documents"] = this.documents
 
-        if (!this.definitions.isEmpty()) {
+        if (this.definitions.isNotEmpty()) {
             json["definitions"] = this.definitions
         }
 
         return json
     }
 
-    fun setDocumentSchema(type: String, schema: Map<String, Any>) {
+    fun setDocumentSchema(type: String, schema: Map<String, Any?>) = apply {
         this.documents[type] = schema
     }
 
     fun getJsonSchemaId(): String {
-        return SCHEMA_ID
+        return id
+    }
+
+    fun setJsonSchemaId(id: String) = apply {
+        this.id = id
+    }
+
+    fun getJsonMetaSchema(): String {
+        return schema
+    }
+
+    fun setJsonMetaSchema(schema: String) = apply {
+        this.schema = schema
     }
 
     private fun checkContainsDocumentType(type: String) {
@@ -74,5 +86,4 @@ class DataContract(var contractId: String = "", var documents: MutableMap<String
     fun isDocumentDefined(type: String): Boolean {
         return this.documents.contains(type)
     }
-
 }

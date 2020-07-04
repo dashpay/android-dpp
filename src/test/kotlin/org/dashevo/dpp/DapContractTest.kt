@@ -9,7 +9,7 @@ import java.io.File
 @DisplayName("DAP Contract Tests")
 class DapContractTest : BaseTest() {
 
-    private val dapContract = JSONObject(File("src/test/resources/data/dapcontract.json").readText())
+    private val dapContract = JSONObject(File("src/test/resources/data/datacontract.json").readText())
 
     @Nested
     @DisplayName("DapContract Schema")

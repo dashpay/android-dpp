@@ -1,12 +1,13 @@
 package org.dashevo.dpp.contract
 
 import org.dashevo.dpp.statetransition.StateTransition
+import org.dashevo.dpp.statetransition.StateTransitionIdentitySigned
 
-class ContractStateTransition : StateTransition {
+class ContractStateTransition : StateTransitionIdentitySigned {
 
     var dataContract: DataContract
 
-    constructor(dataContract: DataContract) : super(Types.DATA_CONTRACT) {
+    constructor(dataContract: DataContract) : super(Types.DATA_CONTRACT_CREATE) {
         this.dataContract = dataContract
     }
 

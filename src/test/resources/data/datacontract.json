@@ -1,0 +1,16 @@
+{
+  id: 'ARQGUnPH3YMK8FZuqwUjnTWEF6Zu4Cf3sT6e1Ruu1RXk',
+  ownerId: 'Gb9YEHMYxcMiSnBhtBQQmttmAoqN1asi6HKQxRR7YdXA',
+  schema: 'https://schema.dash.org/dpp-0-4-0/meta/data-contract',
+  documents: {
+    note: {
+      properties: {
+        message: {
+          type: 'string'
+        }
+      },
+      additionalProperties: false
+    }
+  },
+  definitions: undefined
+}

@@ -7,44 +7,42 @@
 
 package org.dashevo.dpp.identity
 
+import com.google.common.base.Preconditions
+import org.bitcoinj.core.TransactionOutPoint
 import org.dashevo.dpp.BaseObject
 
 class Identity(var id: String,
-               var type: IdentityType,
+               var balance: Long,
                var publicKeys: List<IdentityPublicKey>) : BaseObject() {
 
-    companion object {
-        val MAX_RESERVED_TYPE = 32767
-    }
+    var lockedOutpoint: TransactionOutPoint? = null
 
     constructor(rawIdentity: Map<String, Any?>) : this(rawIdentity["id"] as String,
-            IdentityType.getByCode(rawIdentity["type"] as Int),
+            rawIdentity["balance"].toString().toLong(),
             (rawIdentity["publicKeys"] as List<Any>).map { IdentityPublicKey(it as Map<String, Any>) })
 
-    enum class IdentityType (val value: Int) {
-        UNKNOWN(0),
-        USER(1),
-        APPLICATION(2);
-
-        companion object {
-            private val values = values()
-            fun getByCode(code: Int): IdentityType {
-                return values.filter { it.value == code }[0]
-            }
-        }
-    }
+    constructor(id: String, publicKeys: List<IdentityPublicKey>) : this(id, 0, publicKeys)
 
     fun getPublicKeyById(keyId: Int) : IdentityPublicKey? {
+        Preconditions.checkArgument(keyId >= 0, "keyId ($keyId) must be >= 0")
         return publicKeys.find { it.id == keyId }
     }
 
     override fun toJSON(): Map<String, Any> {
-        val json = hashMapOf<String, Any>()
-        json["id"] = id
-        json["type"] = type.value
-        json["publicKeys"] = publicKeys
-
-        return json
+        return mapOf(
+            "id" to id,
+            "publicKeys" to publicKeys,
+            "balance" to balance
+        )
     }
 
+    fun increaseBalance(amount: Long): Long {
+        balance += amount
+        return balance
+    }
+
+    fun decreaseBalance(amount: Long): Long {
+        balance -= amount
+        return balance
+    }
 }

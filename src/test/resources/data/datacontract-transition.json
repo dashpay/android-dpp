@@ -1,9 +1,10 @@
 {
   "protocolVersion": 0,
-  "type": 1,
+  "type": 0,
   "dataContract": {
     "$schema": "https://schema.dash.org/dpp-0-4-0/meta/data-contract",
-    "contractId": "EzLBmQdQXYMaoeXWNaegK18iaaCDShitN3s14US3DunM",
+    "$id": "EzLBmQdQXYMaoeXWNaegK18iaaCDShitN3s14US3DunM",
+    "ownerId": "3eHkM3mWjutxbc3EQwnVQHyymDgbZfK4EhZRectK11jV",
     "version": 1,
     "documents": {
       "note": {

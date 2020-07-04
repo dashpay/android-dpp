@@ -19,4 +19,5 @@ object Utils {
         val randomHash = Sha256Hash.of(randomBytes)
         return randomHash.toStringBase58()
     }
+
 }

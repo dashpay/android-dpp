@@ -6,41 +6,48 @@
  */
 package org.dashevo.dpp.identity
 
+import org.dashevo.dpp.toBase58
 import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.util.HashUtils
 
 class IdentityCreateTransition : IdentityStateTransition {
 
-    var identityType: Identity.IdentityType?
-    var lockedOutPoint: String?
-    var publicKeys: List<IdentityPublicKey>
-    var identityId: String
+    var identityId: String = "" // base58
+    var lockedOutPoint: String?  // base64
+        set(value) {
+            field = value
+            identityId = HashUtils.toHash(HashUtils.fromBase64(lockedOutPoint!!)).toBase58()
+        }
+    var publicKeys: MutableList<IdentityPublicKey>
 
-
-    constructor(identityType: Identity.IdentityType?,
-                 lockedOutPoint: String?,
+    constructor(lockedOutPoint: String?,
                  publicKeys: List<IdentityPublicKey>,
                  protocolVersion: Int = 0)
     : super(Types.IDENTITY_CREATE, protocolVersion) {
-        this.identityType = identityType
         this.lockedOutPoint = lockedOutPoint
-        this.publicKeys = publicKeys
-        identityId = HashUtils.toHash(HashUtils.fromBase64(lockedOutPoint!!)).toBase64()
+        this.publicKeys = publicKeys.toMutableList()
     }
 
     constructor(rawStateTransition: MutableMap<String, Any?>)
             : super(rawStateTransition) {
-        identityType = Identity.IdentityType.getByCode(rawStateTransition["identityType"] as Int)
         lockedOutPoint = rawStateTransition["lockedOutPoint"] as String
-        publicKeys = (rawStateTransition["publicKeys"] as List<Any>).map { entry -> IdentityPublicKey(entry as MutableMap<String, Any>) }
+        publicKeys = (rawStateTransition["publicKeys"] as List<Any>).map { entry -> IdentityPublicKey(entry as MutableMap<String, Any>) }.toMutableList()
         identityId = HashUtils.toHash(HashUtils.fromBase64(lockedOutPoint!!)).toBase64()
     }
 
     override fun toJSON(skipSignature: Boolean): Map<String, Any> {
         var json = super.toJSON(skipSignature) as MutableMap<String, Any>
-        json["identityType"] = identityType!!.value
         json["lockedOutPoint"] = lockedOutPoint as String
         json["publicKeys"] = publicKeys.map { it.toJSON() }
+        json.remove("signaturePublicKeyId")
         return json
+    }
+
+    fun addPublicKeys(identityPublicKeys: List<IdentityPublicKey>) = apply {
+        publicKeys.addAll(identityPublicKeys)
+    }
+
+    fun getOwnerId() : String {
+        return identityId
     }
 }

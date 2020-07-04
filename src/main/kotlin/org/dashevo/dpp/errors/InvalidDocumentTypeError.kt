@@ -10,4 +10,4 @@ package org.dashevo.dpp.errors
 import org.dashevo.dpp.contract.DataContract
 
 class InvalidDocumentTypeError(dataContract: DataContract, type: String)
-    : IllegalStateException("Contract ${dataContract.contractId} doesn't contain type $type")
+    : IllegalStateException("Contract ${dataContract.id} doesn't contain type $type")

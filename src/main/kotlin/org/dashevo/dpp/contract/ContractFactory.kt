@@ -9,40 +9,28 @@ package org.dashevo.dpp.contract
 
 import org.dashevo.dpp.Factory
 import org.dashevo.dpp.util.Cbor
+import org.dashevo.dpp.util.Entropy
+import org.dashevo.dpp.util.HashUtils
 
 class ContractFactory : Factory() {
 
-    fun createDataContract(rawDataContract: MutableMap<String, Any?>): DataContract {
+    fun createDataContract(ownerId: String, rawDataContract: MutableMap<String, Any?>): DataContract {
 
-        val contractId = if (rawDataContract.containsKey("contractId")) rawDataContract["contractId"] as String else ""
+        val dataContractEntropy = Entropy.generate()
+        val dataContractId = HashUtils.generateDataContractId(ownerId, dataContractEntropy)
 
-        val contract = DataContract(contractId,
+        val dataContract = DataContract(dataContractId,
+                ownerId,
+                DataContract.SCHEMA,
                 rawDataContract["documents"] as MutableMap<String, Any?>)
 
-        if (rawDataContract.containsKey("\$schema")) {
-            contract.schema = rawDataContract["\$schema"] as String
-        }
+        dataContract.entropy = dataContractEntropy
 
-        if (rawDataContract.containsKey("version")) {
-            contract.version = rawDataContract["version"] as Int
-        }
-
-        if (rawDataContract.containsKey("definitions")) {
-            contract.definitions = rawDataContract["definitions"] as MutableMap<String, Any>
-        }
-
-        return contract
-    }
-
-    fun create(contractId: String, documents: MutableMap<String, Any?>): DataContract {
-        val rawContract = HashMap<String, Any?>(2)
-        rawContract["contractId"] = contractId
-        rawContract["documents"] = documents
-        return createDataContract(rawContract)
+        return dataContract
     }
 
     fun createFromObject(rawContract: MutableMap<String, Any?>, options: Options = Options()): DataContract {
-        return createDataContract(rawContract)
+        return DataContract(rawContract)
     }
 
     fun createFromSerialized(payload: ByteArray, options: Options = Options()): DataContract {

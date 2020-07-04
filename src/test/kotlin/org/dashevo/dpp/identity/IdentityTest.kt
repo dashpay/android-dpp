@@ -8,6 +8,7 @@ import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.toHexString
 import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
+import org.dashevo.dpp.util.HashUtilsTest
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
@@ -35,7 +36,7 @@ class IdentityTest {
         publicKeys.add(IdentityPublicKey(0, IdentityPublicKey.TYPES.ECDSA_SECP256K1, "AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di", true))
         publicKeys.add(IdentityPublicKey(2, IdentityPublicKey.TYPES.ECDSA_SECP256K1, "A8AK95PYMVX5VQKzOhcVQRCUbc9pyg3RiL7jttEMDU+L", true))
 
-        val factoryCreatedIdentity = factory.create("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", Identity.IdentityType.USER, publicKeys)
+        val factoryCreatedIdentity = factory.create("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", publicKeys)
 
         assertEquals(fixtureCreatedIdentity.id, factoryCreatedIdentity.id)
         assertEquals(fixtureCreatedIdentity.publicKeys[0].data, factoryCreatedIdentity.publicKeys[0].data)
@@ -49,9 +50,9 @@ class IdentityTest {
 
         val factory =  IdentityFactory()
 
-        val identity = factory.applyCreateStateTransition(createTransition)
+        //val identity = factory.applyIdentityCreateStateTransition(createTransition)
 
-        assertEquals("ylrObex3KikHd5h/13AW/P0yklpCyEOJt7X70cAmVOE", identity.id)
+        //assertEquals("ylrObex3KikHd5h/13AW/P0yklpCyEOJt7X70cAmVOE", identity.id)
     }
 
     @Test
@@ -59,24 +60,36 @@ class IdentityTest {
         val json = HashMap<String, Any?>()
 
         json["protocolVersion"] = 0
-        json["type"] = StateTransition.Types.DATA_CONTRACT.value
+        json["type"] = StateTransition.Types.DATA_CONTRACT_CREATE.value
         json["signature"] = null
         json["signaturePublicKeyId"] = null
 
         val json2 = HashMap<String, Any?>()
 
         json2["protocolVersion"] = 0
-        json2["type"] = StateTransition.Types.DATA_CONTRACT
+        json2["type"] = StateTransition.Types.DATA_CONTRACT_CREATE
 
         val bytes = Cbor.encode(json)
         val bytes2 = Cbor.encode(json2)
 
         println(bytes.toHexString())
         println(bytes2.toHexString())
-        assertEquals("a4647479706501697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
+        assertEquals("a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
                 bytes.toHexString())
 
 
+    }
+
+    @Test
+    fun validateIdentityCreateSTDataFactory() {
+        val privateKey = ECKey.fromPrivate(HashUtils.fromHex("af432c476f65211f45f48f1d42c9c0b497e56696aa1736b40544ef1a496af837"))
+
+        val stateTransition = IdentityCreateTransition("azW1UgBiB0CmdphN6of4DbT91t0Xv3/c3YUV4CnoV/kAAAAA",
+                listOf(IdentityPublicKey(0, IdentityPublicKey.TYPES.ECDSA_SECP256K1, "w8x/v8UvcQyUFJf9AYdsGJFx6iJ0WPUBr8s4opfWW0", true))
+                )
+        stateTransition.signByPrivateKey(privateKey)
+
+        assertTrue(stateTransition.verifySignatureByPublicKey(privateKey))
     }
 
     @Test
@@ -95,8 +108,8 @@ class IdentityTest {
 
         val hash = stateTransition.hash()
 
-        assertEquals("60fbcdd25bfd3581f476aa45341750fbd882a247e42cac2b9dcef89d862a97c4", hash)
-        assertEquals("a4647479706501697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
+        assertEquals("6b05d28bc9e9d7ceb53eeb42e243815359032c6b43d0657da27cfa7d1c9b63bf", hash)
+        assertEquals("a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
                 serializedDataBytes.toHexString())
 
         //should return public key ID
@@ -122,19 +135,9 @@ class IdentityTest {
     }
 
     @Test
-    fun verifyLoadingIdentitySTFromFileTest() {
-        val identityST = Fixtures.getIdentityCreateSTSignedFixture()
-        val identitySTTwo = Fixtures.getIdentityCreateSTSignedFixtureTwo()
-        assertEquals("A6AJAfRJyKuNoNvt33ygYfYh6OIYA8tF1s2BQcRA9RNg", identityST.publicKeys[0].data)
-        assertEquals(identityST.toJSON(), identitySTTwo.toJSON())
-    }
-
-    @Test
     fun verifySignedIdentityTest() {
-        val identityBytes = HashUtils.fromHex("a3626964782c417434347076725a584c776a624a7034313545326b6a61763439676f476f73524633534231575731514a6f476474797065016a7075626c69634b65797381a4626964016464617461782c4136414a4166524a794b754e6f4e76743333796759665968364f495941387446317332425163524139524e67647479706501696973456e61626c6564f5")
-        val identity = Identity(Cbor.decode(identityBytes))
         val identityST = Fixtures.getIdentityCreateSTSignedFixture()
-        assertTrue(identityST.verifySignature(identityST.publicKeys[0]))
-        assertEquals(identity.publicKeys[0], identityST.publicKeys[0])
+        assertEquals("A6AJAfRJyKuNoNvt33ygYfYh6OIYA8tF1s2BQcRA9RNg", identityST.publicKeys[0].data)
+        assertTrue(identityST.verifySignatureByPublicKey(ECKey.fromPublicOnly(HashUtils.byteArrayFromString(identityST.publicKeys[0].data))))
     }
 }
