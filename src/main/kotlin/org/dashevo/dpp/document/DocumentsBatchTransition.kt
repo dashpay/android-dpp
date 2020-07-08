@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2020-present, Dash Core Team
+ *
+ * This source code is licensed under the MIT license found in the
+ * COPYING file in the root directory of this source tree.
+ */
 package org.dashevo.dpp.document
 
 import org.dashevo.dpp.statetransition.StateTransition
@@ -9,15 +15,15 @@ class DocumentsBatchTransition : StateTransitionIdentitySigned {
     var ownerId: String
     var transitions: List<DocumentTransition>
 
-    constructor(ownerId: String, transitions: List<DocumentTransition>): super(StateTransition.Types.DOCUMENTS_BATCH) {
+    constructor(ownerId: String, transitions: List<DocumentTransition>) : super(StateTransition.Types.DOCUMENTS_BATCH) {
         this.ownerId = ownerId
         this.transitions = transitions
     }
 
-    constructor(rawStateTransition: MutableMap<String, Any?>): super(rawStateTransition) {
+    constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
         ownerId = rawStateTransition["ownerId"] as String
         transitions = (rawStateTransition["transitions"] as List<Any?>).map {
-            when(((it as Map<String, Any?>)["\$action"] as Int)) {
+            when (((it as Map<String, Any?>)["\$action"] as Int)) {
                 DocumentTransition.Action.CREATE.value -> DocumentCreateTransition(it as MutableMap<String, Any?>)
                 DocumentTransition.Action.REPLACE.value -> DocumentReplaceTransition(it as MutableMap<String, Any?>)
                 DocumentTransition.Action.DELETE.value -> DocumentReplaceTransition(it as MutableMap<String, Any?>)

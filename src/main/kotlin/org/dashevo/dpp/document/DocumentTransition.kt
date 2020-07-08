@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2020-present, Dash Core Team
+ *
+ * This source code is licensed under the MIT license found in the
+ * COPYING file in the root directory of this source tree.
+ */
 package org.dashevo.dpp.document
 
 abstract class DocumentTransition {
 
-    enum class Action (val value: Int) {
+    enum class Action(val value: Int) {
         CREATE(0),
         REPLACE(1),
         UPDATE(2),
@@ -13,10 +19,12 @@ abstract class DocumentTransition {
             fun getByCode(code: Int): Action {
                 return values.filter { it.ordinal == code }[0]
             }
+
             fun getByName(name: String): Action {
                 return values.filter { it.name.toLowerCase() == name }[0]
             }
-            fun getValidNames() : List<String> {
+
+            fun getValidNames(): List<String> {
                 return values.map { it.name.toLowerCase() }
             }
         }

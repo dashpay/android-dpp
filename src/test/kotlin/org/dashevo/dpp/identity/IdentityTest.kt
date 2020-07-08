@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2020-present, Dash Core Team
+ *
+ * This source code is licensed under the MIT license found in the
+ * COPYING file in the root directory of this source tree.
+ */
 package org.dashevo.dpp.identity
 
 import org.bitcoinj.core.ECKey
@@ -48,7 +54,7 @@ class IdentityTest {
     fun applyStateTransition() {
         val createTransition = Fixtures.getIdentityCreateSTFixture()
 
-        val factory =  IdentityFactory()
+        val factory = IdentityFactory()
 
         //val identity = factory.applyIdentityCreateStateTransition(createTransition)
 
@@ -86,7 +92,7 @@ class IdentityTest {
 
         val stateTransition = IdentityCreateTransition("azW1UgBiB0CmdphN6of4DbT91t0Xv3/c3YUV4CnoV/kAAAAA",
                 listOf(IdentityPublicKey(0, IdentityPublicKey.TYPES.ECDSA_SECP256K1, "w8x/v8UvcQyUFJf9AYdsGJFx6iJ0WPUBr8s4opfWW0", true))
-                )
+        )
         stateTransition.signByPrivateKey(privateKey)
 
         assertTrue(stateTransition.verifySignatureByPublicKey(privateKey))
@@ -131,7 +137,7 @@ class IdentityTest {
         assertFalse(stateTransition.verifySignature(incorrectIdentityKey))
 
         incorrectIdentityKey.id = 8
-        assertThrows(PublicKeyMismatchError::class.java, Executable {stateTransition.verifySignature(incorrectIdentityKey) })
+        assertThrows(PublicKeyMismatchError::class.java, Executable { stateTransition.verifySignature(incorrectIdentityKey) })
     }
 
     @Test
