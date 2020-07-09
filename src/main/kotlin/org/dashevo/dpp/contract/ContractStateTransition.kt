@@ -1,6 +1,5 @@
 package org.dashevo.dpp.contract
 
-import org.dashevo.dpp.statetransition.StateTransition
 import org.dashevo.dpp.statetransition.StateTransitionIdentitySigned
 
 class ContractStateTransition : StateTransitionIdentitySigned {
@@ -15,8 +14,8 @@ class ContractStateTransition : StateTransitionIdentitySigned {
         dataContract = DataContract(rawStateTransition["dataContract"] as MutableMap<String, Any?>)
     }
 
-    override fun toJSON(skipSignature: Boolean): Map<String, Any> {
-        var json = super.toJSON(skipSignature) as MutableMap<String, Any>
+    override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
+        var json = super.toJSON(skipSignature)
         json["dataContract"] = dataContract.toJSON()
         return json
     }

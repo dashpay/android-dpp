@@ -19,7 +19,7 @@ import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.Entropy
 import org.dashevo.dpp.util.HashUtils
 
-class DocumentFactory() : Factory() {
+class DocumentFactory : Factory() {
 
     fun create(dataContract: DataContract, ownerId: String, type: String, data: Map<String, Any> = mapOf()) : Document {
         if (!dataContract.isDocumentDefined(type)) {
@@ -70,7 +70,7 @@ class DocumentFactory() : Factory() {
         val filteredKeys = actionKeys.filter { allowedKeys.indexOf(it) == -1 }
 
         if (filteredKeys.isNotEmpty()) {
-            throw InvalidActionNameError(filteredKeys);
+            throw InvalidActionNameError(filteredKeys)
         }
 
         val documentsFlattened = ArrayList<Document>()
@@ -86,7 +86,7 @@ class DocumentFactory() : Factory() {
         // Check that documents are not mixed
         val aDocument = documentsFlattened[0]
 
-        val ownerId = aDocument.ownerId;
+        val ownerId = aDocument.ownerId
 
         var mismatches = 0
         documentsFlattened.forEach {
@@ -95,7 +95,7 @@ class DocumentFactory() : Factory() {
         }
 
         if (mismatches > 0) {
-            throw MismatchOwnerIdsError(documentsFlattened);
+            throw MismatchOwnerIdsError(documentsFlattened)
         }
 
         // Convert documents to action transitions
@@ -105,7 +105,7 @@ class DocumentFactory() : Factory() {
 
         val rawDocumentCreateTransitions = createDocuments.map {
             if (it.revision !== DocumentCreateTransition.INITIAL_REVISION) {
-                throw InvalidInitialRevisionError(it);
+                throw InvalidInitialRevisionError(it)
             }
 
             val rawTransition = hashMapOf<String, Any>()
@@ -158,6 +158,6 @@ class DocumentFactory() : Factory() {
                 "ownerId" to ownerId,
                 "transitions" to rawDocumentTransitions
         )
-        return DocumentsBatchTransition(rawBatchTransition);
+        return DocumentsBatchTransition(rawBatchTransition)
     }
 }

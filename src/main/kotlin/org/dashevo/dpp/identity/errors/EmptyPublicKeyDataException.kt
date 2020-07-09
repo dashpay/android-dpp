@@ -6,7 +6,4 @@
  */
 package org.dashevo.dpp.identity.errors
 
-import org.dashevo.dpp.statetransition.StateTransition
-import java.lang.Exception
-
-class EmptyPublicKeyDataException() : Exception("Public key data is not set")
+class EmptyPublicKeyDataException : Exception("Public key data is not set")

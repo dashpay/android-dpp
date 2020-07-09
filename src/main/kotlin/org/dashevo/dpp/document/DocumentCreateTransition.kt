@@ -13,7 +13,7 @@ open class DocumentCreateTransition : DocumentTransition {
         val INITIAL_REVISION = 1
     }
 
-    override val action = DocumentTransition.Action.CREATE
+    override val action = Action.CREATE
     var id: String
     var documentType: String
     var entropy: String

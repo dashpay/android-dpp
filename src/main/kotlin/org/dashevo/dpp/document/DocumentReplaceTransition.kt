@@ -8,7 +8,7 @@ package org.dashevo.dpp.document
 
 class DocumentReplaceTransition : DocumentCreateTransition {
 
-    override val action = DocumentTransition.Action.REPLACE
+    override val action = Action.REPLACE
     var revision: Int
 
     constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {

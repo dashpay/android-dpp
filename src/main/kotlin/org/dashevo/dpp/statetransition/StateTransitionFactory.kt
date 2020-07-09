@@ -9,14 +9,13 @@ package org.dashevo.dpp.statetransition
 
 import org.dashevo.dpp.contract.ContractFactory
 import org.dashevo.dpp.contract.ContractStateTransition
-import org.dashevo.dpp.document.Document
 import org.dashevo.dpp.document.DocumentsBatchTransition
 import org.dashevo.dpp.errors.InvalidStateTransitionTypeError
 import org.dashevo.dpp.identity.IdentityCreateTransition
 import org.dashevo.dpp.identity.IdentityTopupTransition
 import org.dashevo.dpp.util.Cbor
 
-class StateTransitionFactory() {
+class StateTransitionFactory {
 
     fun createStateTransition(rawStateTransition: MutableMap<String, Any?>, options: Options = Options()): StateTransition {
         var stateTransition: StateTransitionIdentitySigned
@@ -25,7 +24,7 @@ class StateTransitionFactory() {
                 val rawDataContract = rawStateTransition["dataContract"] as MutableMap<String, Any?>
                 val dataContract = ContractFactory().createDataContract(rawDataContract["ownerId"] as String, rawDataContract)
 
-                stateTransition = ContractStateTransition(dataContract);
+                stateTransition = ContractStateTransition(dataContract)
             }
             StateTransition.Types.DOCUMENTS_BATCH -> {
                 stateTransition = DocumentsBatchTransition(rawStateTransition)

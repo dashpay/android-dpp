@@ -8,14 +8,8 @@
 package org.dashevo.dpp.statetransition
 
 import org.bitcoinj.core.*
-import org.bitcoinj.params.EvoNetParams
 import org.dashevo.dpp.BaseObject
-import org.dashevo.dpp.identity.IdentityPublicKey
-import org.dashevo.dpp.statetransition.errors.InvalidSignaturePublicKeyError
-import org.dashevo.dpp.statetransition.errors.InvalidSignatureTypeError
-import org.dashevo.dpp.statetransition.errors.PublicKeyMismatchError
 import org.dashevo.dpp.statetransition.errors.StateTransitionIsNotSignedError
-import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.toBase64Padded
 import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
@@ -55,11 +49,11 @@ abstract class StateTransition(var signature: String?,
 
     constructor(type: Types, protocolVersion: Int = 0) : this(null, type, protocolVersion)
 
-    override fun toJSON(): Map<String, Any?> {
+    override fun toJSON(): MutableMap<String, Any?> {
         return toJSON(false)
     }
 
-    open fun toJSON(skipSignature: Boolean): Map<String, Any?> {
+    open fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
         val json = hashMapOf<String, Any?>()
         json["protocolVersion"] = protocolVersion
         json["type"] = type.value
@@ -135,10 +129,10 @@ abstract class StateTransition(var signature: String?,
 
     fun verifySignatureByPublicKey(publicKey: ECKey): Boolean {
         if (signature == null) {
-            throw StateTransitionIsNotSignedError(this);
+            throw StateTransitionIsNotSignedError(this)
         }
 
-        val signatureBuffer = HashUtils.fromBase64(signature!!);
+        val signatureBuffer = HashUtils.fromBase64(signature!!)
 
         val data = serialize(true)
         val hash = HashUtils.toSha256Hash(data)
@@ -152,7 +146,7 @@ abstract class StateTransition(var signature: String?,
     }
 
     fun calculateFee(): Long {
-        val serializedStateTransition = serialize(skipSignature = true);
-        return serializedStateTransition.size * PRICE_PER_BYTE;
+        val serializedStateTransition = serialize(skipSignature = true)
+        return serializedStateTransition.size * PRICE_PER_BYTE
     }
 }

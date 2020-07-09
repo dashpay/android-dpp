@@ -6,10 +6,6 @@
  */
 package org.dashevo.dpp.identity
 
-import org.dashevo.dpp.toBase58
-import org.dashevo.dpp.toBase64
-import org.dashevo.dpp.util.HashUtils
-
 class IdentityTopupTransition : IdentityStateTransition {
 
     var identityId: String = "" // base58
@@ -29,8 +25,8 @@ class IdentityTopupTransition : IdentityStateTransition {
         identityId = rawStateTransition["identityId"] as String
     }
 
-    override fun toJSON(skipSignature: Boolean): Map<String, Any> {
-        var json = super.toJSON(skipSignature) as MutableMap<String, Any>
+    override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
+        var json = super.toJSON(skipSignature)
         json["lockedOutPoint"] = lockedOutPoint
         json["identityId"] = identityId
         return json

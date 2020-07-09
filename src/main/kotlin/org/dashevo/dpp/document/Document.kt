@@ -7,11 +7,7 @@
 
 package org.dashevo.dpp.document
 
-import org.bitcoinj.core.Base58
 import org.dashevo.dpp.BaseObject
-import org.dashevo.dpp.util.HashUtils
-import java.io.ByteArrayOutputStream
-import java.nio.charset.Charset
 
 class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
 

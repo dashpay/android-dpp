@@ -9,7 +9,6 @@ package org.dashevo.dpp.contract
 
 import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.errors.InvalidDocumentTypeError
-import java.lang.instrument.ClassDefinition
 
 class DataContract(var id: String,
                    var ownerId: String,

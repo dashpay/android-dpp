@@ -15,7 +15,7 @@ class DocumentsBatchTransition : StateTransitionIdentitySigned {
     var ownerId: String
     var transitions: List<DocumentTransition>
 
-    constructor(ownerId: String, transitions: List<DocumentTransition>) : super(StateTransition.Types.DOCUMENTS_BATCH) {
+    constructor(ownerId: String, transitions: List<DocumentTransition>) : super(Types.DOCUMENTS_BATCH) {
         this.ownerId = ownerId
         this.transitions = transitions
     }
@@ -23,17 +23,17 @@ class DocumentsBatchTransition : StateTransitionIdentitySigned {
     constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
         ownerId = rawStateTransition["ownerId"] as String
         transitions = (rawStateTransition["transitions"] as List<Any?>).map {
-            when (((it as Map<String, Any?>)["\$action"] as Int)) {
-                DocumentTransition.Action.CREATE.value -> DocumentCreateTransition(it as MutableMap<String, Any?>)
-                DocumentTransition.Action.REPLACE.value -> DocumentReplaceTransition(it as MutableMap<String, Any?>)
-                DocumentTransition.Action.DELETE.value -> DocumentReplaceTransition(it as MutableMap<String, Any?>)
+            when (((it as MutableMap<String, Any?>)["\$action"] as Int)) {
+                DocumentTransition.Action.CREATE.value -> DocumentCreateTransition(it)
+                DocumentTransition.Action.REPLACE.value -> DocumentReplaceTransition(it)
+                DocumentTransition.Action.DELETE.value -> DocumentReplaceTransition(it)
                 else -> throw IllegalStateException("Invalid action")
             }
         }
     }
 
-    override fun toJSON(skipSignature: Boolean): Map<String, Any> {
-        var json = super.toJSON(skipSignature) as MutableMap<String, Any>
+    override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
+        var json = super.toJSON(skipSignature)
         json["ownerId"] = ownerId
         json["transitions"] = transitions.map { entry -> entry.toJSON() }
         return json

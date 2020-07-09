@@ -9,12 +9,9 @@ package org.dashevo.dpp.identity
 
 import org.bitcoinj.core.TransactionOutPoint
 import org.dashevo.dpp.Factory
-import org.dashevo.dpp.errors.IdentityAlreadyExistsError
-import org.dashevo.dpp.identity.errors.WrongStateTransitionTypeError
-import org.dashevo.dpp.statetransition.StateTransition
 import org.dashevo.dpp.util.Cbor
 
-class IdentityFactory() : Factory() {
+class IdentityFactory : Factory() {
 
     fun create(lockedOutPoint: TransactionOutPoint, publicKeys: List<IdentityPublicKey>) : Identity {
         val id = lockedOutPoint.hash.toStringBase58()
@@ -46,9 +43,9 @@ class IdentityFactory() : Factory() {
     }
 
     fun createIdentityTopupTransition(identityId: String, lockedOutpoint: TransactionOutPoint): IdentityTopupTransition {
-        val lockedOutpoint = lockedOutpoint.toStringBase64()
+        val lockedOutpointString = lockedOutpoint.toStringBase64()
 
-        return  IdentityTopupTransition(identityId, lockedOutpoint)
+        return  IdentityTopupTransition(identityId, lockedOutpointString)
     }
 
     fun applyIdentityCreateStateTransition(stateTransition: IdentityStateTransition) : Identity {

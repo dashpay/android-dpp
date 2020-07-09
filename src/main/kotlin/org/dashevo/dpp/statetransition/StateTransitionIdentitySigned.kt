@@ -9,17 +9,13 @@ package org.dashevo.dpp.statetransition
 
 import org.bitcoinj.core.*
 import org.bitcoinj.params.EvoNetParams
-import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.identity.IdentityPublicKey
 import org.dashevo.dpp.statetransition.errors.InvalidSignaturePublicKeyError
 import org.dashevo.dpp.statetransition.errors.InvalidSignatureTypeError
 import org.dashevo.dpp.statetransition.errors.PublicKeyMismatchError
 import org.dashevo.dpp.statetransition.errors.StateTransitionIsNotSignedError
 import org.dashevo.dpp.toBase64
-import org.dashevo.dpp.toBase64Padded
-import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
-import java.lang.Exception
 
 abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
                                              signature: String?,
@@ -38,8 +34,8 @@ abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
 
     constructor(type: Types, protocolVersion: Int = CURRENT_PROTOCOL_VERSION) : this(null, null, type, protocolVersion)
 
-    override fun toJSON(skipSignature: Boolean): Map<String, Any?> {
-        val json = super.toJSON(skipSignature) as HashMap<String, Any?>
+    override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
+        val json = super.toJSON(skipSignature)
         if (!skipSignature) {
             json["signaturePublicKeyId"] = signaturePublicKeyId
         }
@@ -48,8 +44,6 @@ abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
 
 
     fun sign(identityPublicKey: IdentityPublicKey, privateKey: String) {
-        val data = serialize(true)
-        val hash = HashUtils.toSha256Hash(data)
         var privateKeyModel: ECKey
         val pubKeyBase: String
         when (identityPublicKey.type) {
@@ -76,11 +70,11 @@ abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
 
     fun verifySignature(publicKey: IdentityPublicKey): Boolean {
         if (signature == null) {
-            throw StateTransitionIsNotSignedError(this);
+            throw StateTransitionIsNotSignedError(this)
         }
 
         if (signaturePublicKeyId != publicKey.id) {
-            throw PublicKeyMismatchError(publicKey);
+            throw PublicKeyMismatchError(publicKey)
         }
 
         val publicKeyBuffer = HashUtils.fromBase64(publicKey.data)

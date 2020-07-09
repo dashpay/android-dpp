@@ -9,4 +9,4 @@ package org.dashevo.dpp.statetransition.errors
 import org.dashevo.dpp.identity.IdentityPublicKey
 import java.lang.Exception
 
-class PublicKeyMismatchError (identityPublicKey: IdentityPublicKey) : Exception("Public key mismatch")
+class PublicKeyMismatchError (val identityPublicKey: IdentityPublicKey) : Exception("Public key mismatch")

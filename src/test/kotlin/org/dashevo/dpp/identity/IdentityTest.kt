@@ -14,7 +14,6 @@ import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.toHexString
 import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
-import org.dashevo.dpp.util.HashUtilsTest
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
@@ -104,7 +103,7 @@ class IdentityTest {
         val privateKeyBuffer = privateKey.privKeyBytes
         val privateKeyHex = privateKey.privateKeyAsHex
         val publicKey = privateKey.pubKey.toBase64()
-        val publicKeyId = 1;
+        val publicKeyId = 1
 
         val stateTransition = StateTransitionMock()
 
@@ -124,7 +123,7 @@ class IdentityTest {
         val keyId = stateTransition.signaturePublicKeyId
         assertEquals(publicKeyId, keyId)
 
-        val isValid = stateTransition.verifySignature(identityPublicKey);
+        val isValid = stateTransition.verifySignature(identityPublicKey)
 
         assertTrue(isValid)
 
