@@ -6,6 +6,10 @@
  */
 package org.dashevo.dpp.document
 
+import java.time.Instant
+import java.util.*
+import kotlin.collections.HashMap
+
 
 open class DocumentCreateTransition : DocumentTransition {
 
@@ -18,6 +22,8 @@ open class DocumentCreateTransition : DocumentTransition {
     var documentType: String
     var entropy: String
     var data: Map<String, Any?>
+    var createdAt: Date?
+    var updatedAt: Date?
 
     constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
         val data = HashMap(rawStateTransition)
@@ -27,6 +33,8 @@ open class DocumentCreateTransition : DocumentTransition {
         this.entropy = data.remove("\$entropy") as String
         data.remove("\$action")
         data.remove("\$dataContractId") as String
+        this.createdAt = data.remove("\$createdAt")?.let { Date.from(Instant.parse(it as String)) }
+        this.updatedAt = data.remove("\$updatedAt")?.let { Date.from(Instant.parse(it as String)) }
 
         this.data = data
     }
@@ -40,6 +48,9 @@ open class DocumentCreateTransition : DocumentTransition {
         data.keys.iterator().forEach {
             data[it]?.let { it1 -> json[it] = it1 }
         }
+
+        createdAt?.let { json["\$createdAt"] = it.toInstant().toString() }
+        updatedAt?.let { json["\$updatedAt"] = it.toInstant().toString() }
 
         return json
     }

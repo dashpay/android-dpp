@@ -8,28 +8,11 @@
 package org.dashevo.dpp.document
 
 import org.dashevo.dpp.BaseObject
+import java.time.Instant
+import java.util.*
+import kotlin.collections.HashMap
 
 class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
-
-    enum class Action (val value: Int) {
-        CREATE(1),
-        REPLACE(2),
-        UPDATE(2), //Keeping for backward compatibility
-        DELETE(4);
-
-        companion object {
-            private val values = values()
-            fun getByCode(code: Int): Action {
-                return values.filter { it.ordinal == code }[0]
-            }
-        }
-    }
-
-    companion object DEFAULTS {
-        const val REVISION = 1
-        val ACTION = Action.CREATE
-        val SYSTEM_PREFIX = '$'
-    }
 
     var id: String
     var type: String
@@ -38,13 +21,8 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
     lateinit var entropy: String
     var revision: Int = 0
     var data: Map<String, Any?>
-    var action: Action = Action.CREATE
-        set(value) {
-            if (Action.DELETE == value && this.data.keys.isNotEmpty()) {
-                throw IllegalStateException("Data is not allowed when deleting a document.")
-            }
-            field = value
-        }
+    var createdAt: Date?
+    var updatedAt: Date?
 
     init {
         val data = HashMap(rawDocument)
@@ -54,6 +32,8 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
         this.dataContractId = data.remove("\$dataContractId") as String
         this.ownerId = data.remove("\$ownerId") as String
         this.revision = data.remove("\$revision") as Int
+        this.createdAt = data.remove("\$createdAt")?.let { Date.from(Instant.parse(it as String)) }
+        this.updatedAt = data.remove("\$updatedAt")?.let { Date.from(Instant.parse(it as String)) }
 
         this.data = data
     }
@@ -69,6 +49,9 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
         data.keys.iterator().forEach {
             data[it]?.let { it1 -> json[it] = it1 }
         }
+
+        createdAt?.let { json["\$createdAt"] = it.toInstant().toString() }
+        updatedAt?.let { json["\$updatedAt"] = it.toInstant().toString() }
 
         return json
     }

@@ -18,7 +18,6 @@ class DocumentTest {
         val documents = Fixtures.getDocumentsFixture()
 
         assertEquals(5, documents.size)
-        assertEquals(Document.Action.CREATE, documents[0].action)
         assertEquals("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", documents[2].ownerId)
         assertEquals("3eHkM3mWjutxbc3EQwnVQHyymDgbZfK4EhZRectK11jV", documents[3].dataContractId)
     }

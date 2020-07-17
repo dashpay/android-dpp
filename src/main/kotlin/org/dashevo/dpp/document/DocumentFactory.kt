@@ -38,6 +38,7 @@ class DocumentFactory : Factory() {
         rawDocument["\$ownerId"] = ownerId
         rawDocument["\$revision"] = DocumentCreateTransition.INITIAL_REVISION
 
+
         val dataKeys = data.keys.iterator()
         while (dataKeys.hasNext()) {
             val key = dataKeys.next()
