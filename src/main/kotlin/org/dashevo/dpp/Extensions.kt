@@ -49,7 +49,7 @@ fun ByteArray.toBase64Padded(): String {
 /**
  *
  * @receiver ByteArray
- * @return String The Base64 representation of this
+ * @return String The Base58 representation of this
  */
 fun ByteArray.toBase58(): String {
     return Base58.encode(this)
