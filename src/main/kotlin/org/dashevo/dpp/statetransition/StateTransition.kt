@@ -67,65 +67,12 @@ abstract class StateTransition(var signature: String?,
         return Cbor.encode(this.toJSON(skipSignature))
     }
 
-    /*fun sign(identityPublicKey: IdentityPublicKey, privateKey: String) {
-        val data = serialize(true)
-        val hash = HashUtils.toSha256Hash(data)
-        var privateKeyModel: ECKey
-        val pubKeyBase: String
-        when (identityPublicKey.type) {
-            IdentityPublicKey.TYPES.ECDSA_SECP256K1 -> {
-                try {
-                    val dpk = DumpedPrivateKey.fromBase58(EvoNetParams.get(), privateKey)
-                    privateKeyModel = dpk.key
-                } catch (_: AddressFormatException) {
-                    privateKeyModel = ECKey.fromPrivate(HashUtils.fromHex(privateKey))
-                }
-                pubKeyBase = privateKeyModel.pubKey.toBase64()
-                if (pubKeyBase != identityPublicKey.data) {
-                    throw InvalidSignaturePublicKeyError(identityPublicKey.data)
-                }
-                signature = privateKeyModel.signHash(hash).toBase64Padded()
-            }
-            else -> {
-                throw InvalidSignatureTypeError(identityPublicKey.type)
-            }
-        }
-        signaturePublicKeyId = identityPublicKey.id
-    }*/
-
     fun signByPrivateKey(privateKey: ECKey) {
         val data = serialize(true)
         val hash = HashUtils.toSha256Hash(data)
 
         signature = privateKey.signHash(hash).toBase64Padded()
     }
-
-    /*fun verifySignature(publicKey: IdentityPublicKey): Boolean {
-        if (signature == null) {
-            throw StateTransitionIsNotSignedError(this);
-        }
-
-        if (signaturePublicKeyId != publicKey.id) {
-            throw PublicKeyMismatchError(publicKey);
-        }
-
-        val signatureBuffer = HashUtils.fromBase64(signature!!);
-
-        val data = serialize(true)
-        val hash = HashUtils.toSha256Hash(data)
-
-        val publicKeyBuffer = HashUtils.fromBase64(publicKey.data)
-        val publicKeyModel = ECKey.fromPublicOnly(publicKeyBuffer)
-        val publicKeyId = publicKeyModel.pubKeyHash
-
-        val sb = StringBuilder()
-        return try {
-            val pubkeyFromSig = ECKey.signedMessageToKey(hash, signatureBuffer)
-            pubkeyFromSig.pubKey.contentEquals(publicKeyBuffer)
-        } catch (e: Exception) {
-            false
-        }
-    }*/
 
     fun verifySignatureByPublicKey(publicKey: ECKey): Boolean {
         if (signature == null) {
