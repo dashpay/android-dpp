@@ -21,8 +21,8 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
     lateinit var entropy: String
     var revision: Int = 0
     var data: Map<String, Any?>
-    var createdAt: Date?
-    var updatedAt: Date?
+    var createdAt: Long?
+    var updatedAt: Long?
 
     init {
         val data = HashMap(rawDocument)
@@ -32,8 +32,8 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
         this.dataContractId = data.remove("\$dataContractId") as String
         this.ownerId = data.remove("\$ownerId") as String
         this.revision = data.remove("\$revision") as Int
-        this.createdAt = data.remove("\$createdAt")?.let { Date.from(Instant.parse(it as String)) }
-        this.updatedAt = data.remove("\$updatedAt")?.let { Date.from(Instant.parse(it as String)) }
+        this.createdAt = data.remove("\$createdAt")?.let { it as Long }
+        this.updatedAt = data.remove("\$updatedAt")?.let { it as Long }
 
         this.data = data
     }
@@ -50,8 +50,8 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
             data[it]?.let { it1 -> json[it] = it1 }
         }
 
-        createdAt?.let { json["\$createdAt"] = it.toInstant().toString() }
-        updatedAt?.let { json["\$updatedAt"] = it.toInstant().toString() }
+        createdAt?.let { json["\$createdAt"] = it }
+        updatedAt?.let { json["\$updatedAt"] = it }
 
         return json
     }

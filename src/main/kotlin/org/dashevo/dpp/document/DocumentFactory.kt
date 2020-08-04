@@ -115,6 +115,8 @@ class DocumentFactory : Factory() {
             rawTransition["\$type"] = it.type
             rawTransition["\$dataContractId"] = it.dataContractId
             rawTransition["\$entropy"] = it.entropy
+            if (it.createdAt != null)
+                rawTransition["\$createdAt"] = it.createdAt!!
 
             val dataKeys = it.data.keys.iterator()
             while (dataKeys.hasNext()) {
@@ -131,6 +133,8 @@ class DocumentFactory : Factory() {
             rawTransition["\$type"] = it.type
             rawTransition["\$dataContractId"] = it.dataContractId
             rawTransition["\$revision"] = it.revision + 1
+            if (it.updatedAt != null)
+                rawTransition["\$createdAt"] = it.updatedAt!!
 
             val dataKeys = it.data.keys.iterator()
             while (dataKeys.hasNext()) {

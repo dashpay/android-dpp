@@ -22,8 +22,8 @@ open class DocumentCreateTransition : DocumentTransition {
     var documentType: String
     var entropy: String
     var data: Map<String, Any?>
-    var createdAt: Date?
-    var updatedAt: Date?
+    var createdAt: Long?
+    var updatedAt: Long?
 
     constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
         val data = HashMap(rawStateTransition)
@@ -33,8 +33,8 @@ open class DocumentCreateTransition : DocumentTransition {
         this.entropy = data.remove("\$entropy") as String
         data.remove("\$action")
         data.remove("\$dataContractId") as String
-        this.createdAt = data.remove("\$createdAt")?.let { Date.from(Instant.parse(it as String)) }
-        this.updatedAt = data.remove("\$updatedAt")?.let { Date.from(Instant.parse(it as String)) }
+        this.createdAt = data.remove("\$createdAt")?.let { it as Long }
+        this.updatedAt = data.remove("\$updatedAt")?.let { it as Long }
 
         this.data = data
     }
@@ -49,8 +49,9 @@ open class DocumentCreateTransition : DocumentTransition {
             data[it]?.let { it1 -> json[it] = it1 }
         }
 
-        createdAt?.let { json["\$createdAt"] = it.toInstant().toString() }
-        updatedAt?.let { json["\$updatedAt"] = it.toInstant().toString() }
+        
+        createdAt?.let { json["\$createdAt"] = it }
+        updatedAt?.let { json["\$updatedAt"] = it }
 
         return json
     }
