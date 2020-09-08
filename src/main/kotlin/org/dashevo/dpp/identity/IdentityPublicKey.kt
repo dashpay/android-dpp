@@ -60,7 +60,7 @@ class IdentityPublicKey(var id: Int,
     }
 
     fun getKey(): ECKey {
-        return ECKey.fromPublicOnly(HashUtils.byteArrayFromString(data))
+        return ECKey.fromPublicOnly(HashUtils.fromBase64(data))
     }
 
     override fun hashAsByteArray(): ByteArray {
