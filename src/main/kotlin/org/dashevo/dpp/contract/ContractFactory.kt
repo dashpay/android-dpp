@@ -21,6 +21,7 @@ class ContractFactory : Factory() {
 
         val dataContract = DataContract(dataContractId,
                 ownerId,
+                DataContract.PROTOCOL_VERSION,
                 DataContract.SCHEMA,
                 rawDataContract["documents"] as MutableMap<String, Any?>)
 

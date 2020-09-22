@@ -27,6 +27,7 @@ object Fixtures {
         val dataContract = DataContract(
                 Sha256Hash.of("me".toByteArray()).toStringBase58(),
                 Sha256Hash.of("owner".toByteArray()).toStringBase58(),
+                DataContract.PROTOCOL_VERSION,
                 DataContract.SCHEMA,
                 map
         )

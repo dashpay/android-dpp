@@ -12,18 +12,23 @@ import org.dashevo.dpp.errors.InvalidDocumentTypeError
 
 class DataContract(var id: String,
                    var ownerId: String,
+                   val protocolVersion: Int,
                    var schema: String,
                    var documents: MutableMap<String, Any?>,
                    var definitions: MutableMap<String, Any?> = hashMapOf()) : BaseObject() {
 
     companion object DEFAULTS {
         const val SCHEMA = "https://schema.dash.org/dpp-0-4-0/meta/data-contract"
+        const val PROTOCOL_VERSION: Int = 0
     }
 
     var entropy: String? = null
 
     constructor(rawContract: MutableMap<String, Any?>) : this(rawContract["\$id"] as String,
             rawContract["ownerId"] as String,
+            if (rawContract.containsKey("protocolVersion"))
+                rawContract["protocolVersion"] as Int
+            else 0,
             rawContract["\$schema"] as String,
             rawContract["documents"] as MutableMap<String, Any?>,
             if (rawContract.containsKey("definitions"))
@@ -35,6 +40,7 @@ class DataContract(var id: String,
     override fun toJSON(): Map<String, Any> {
         val json = hashMapOf<String, Any>()
         json["\$id"] = this.id
+        json["protocolVersion"] = this.protocolVersion
         json["\$schema"] = this.schema
         json["ownerId"] = this.ownerId
         json["documents"] = this.documents
