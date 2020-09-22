@@ -1,90 +1,117 @@
 {
   "$schema": "https://schema.dash.org/dpp-0-4-0/meta/data-contract",
-  "ownerId": "5U7GNx3p62pU8xa1cpNDP3xLioogqqwneomEHKgbn7Xm",
+  "ownerId": "7JfcC52iCLGi9euXa7Ng3reKDjAqaoWZNjDvA2zEBCnk",
+  "protocolVersion": 0,
   "documents": {
     "preorder": {
       "indices": [{
         "properties": [{"saltedDomainHash": "asc"}],
         "unique": true
       }],
+      "$comment": "Preorder documents are immutable: modification and deletion are restricted",
       "additionalProperties": false,
       "required": ["saltedDomainHash"],
       "properties": {"saltedDomainHash": {
-        "pattern": "^[A-Fa-f0-9]+$",
-        "description": "Double sha-256 multihash of the full domain name + salt in a form of a hex string",
+        "pattern": "^([A-Za-z0-9+/])*$",
+        "description": "Double sha-256 of concatenated salt, `normalizedLabel` and `normalizedParentDomainName`. Salt should be 32 random bytes",
+        "contentEncoding": "base64",
         "type": "string",
-        "maxLength": 68,
-        "minLength": 68
+        "maxLength": 43,
+        "minLength": 43
       }}
     },
     "domain": {
       "indices": [
         {
-          "properties": [{"nameHash": "asc"}],
+          "properties": [
+            {"normalizedParentDomainName": "asc"},
+            {"normalizedLabel": "asc"}
+          ],
           "unique": true
         },
-        {"properties": [
-          {"normalizedParentDomainName": "asc"},
-          {"normalizedLabel": "asc"}
-        ]},
-        {"properties": [{"records.dashIdentity": "asc"}]}
+        {
+          "properties": [{"records.dashUniqueIdentityId": "asc"}],
+          "unique": true
+        }
       ],
+      "$comment": "In order to register domain you need to create a preorder. The preorder step is needed to prevent man-in-the-middle attacks. normalizedLabel + '.' + normalizedParentDomain must not be longer than 253 chars length as defined by RFC 1035. Domain documents are immutable: modification and deletion are restricted",
       "additionalProperties": false,
       "required": [
-        "nameHash",
         "label",
         "normalizedLabel",
         "normalizedParentDomainName",
         "preorderSalt",
-        "records"
+        "records",
+        "subdomainRules"
       ],
       "properties": {
         "preorderSalt": {
-          "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
-          "description": "Domain pre-order salt. Currently randomly generated base58 address string.",
+          "pattern": "^([A-Za-z0-9+/])*$",
+          "description": "Domain pre-order salt. 32 random bytes",
+          "contentEncoding": "base64",
           "type": "string",
-          "maxLength": 34,
-          "minLength": 25
+          "maxLength": 43,
+          "minLength": 43
         },
         "normalizedParentDomainName": {
-          "description": "A full parent domain name in lower case. e.g. 'dash.org'",
+          "pattern": "^$|^((?!-)[a-z0-9-\\.]{0,189}[a-z0-9])$",
+          "description": "A full parent domain name in lower case for case insensitive uniqueness validation. e.g. 'dash'",
+          "$comment": "Must be equal to existing domain or can be empty if you want to create a top level domain. Only the contract owner can create top level domains",
           "type": "string",
           "maxLength": 190,
           "minLength": 0
         },
         "label": {
           "pattern": "^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])$",
-          "description": "Domain label. e.g. 'UseR'",
+          "description": "Domain label. e.g. 'Bob'.",
           "type": "string",
-          "maxLength": 63
+          "maxLength": 63,
+          "minLength": 3
         },
         "normalizedLabel": {
           "pattern": "^((?!-)[a-z0-9-]{0,62}[a-z0-9])$",
-          "description": "Domain label in a lower case. e.g. 'user'",
+          "description": "Domain label in a lower case for case insensitive uniqueness validation. e.g. 'bob'",
+          "$comment": "This property will be deprecated due to case insensitive indices. Must be equal to label in lowercase",
           "type": "string",
           "maxLength": 63
         },
         "records": {
+          "$comment": "Constraint with max and min properties ensure that only one identity record is used either `dashUniqueIdentityId` or `dashAliasIdentityId`",
+          "maxProperties": 1,
           "additionalProperties": false,
           "type": "object",
-          "properties": {"dashIdentity": {
-            "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
-            "description": "base58 identity id string",
-            "type": "string",
-            "maxLength": 44,
-            "minLength": 42
-          }},
+          "properties": {
+            "dashAliasIdentityId": {
+              "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
+              "description": "Identity ID string should be used to create multiple alias names for Identity. base58 string",
+              "$comment": "Should be equal to the document owner",
+              "type": "string",
+              "maxLength": 44,
+              "minLength": 42
+            },
+            "dashUniqueIdentityId": {
+              "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
+              "description": "Identity ID string should be used to create a primary name for Identity. base58 string",
+              "$comment": "Should be equal to the document owner",
+              "type": "string",
+              "maxLength": 44,
+              "minLength": 42
+            }
+          },
           "minProperties": 1
         },
-        "nameHash": {
-          "pattern": "^[A-Fa-f0-9]+$",
-          "description": "Double sha-256 multihash of the full domain name in a form of a hex string",
-          "type": "string",
-          "maxLength": 68,
-          "minLength": 68
+        "subdomainRules": {
+          "description": "Subdomain rules allows to define rules for subdomains",
+          "additionalProperties": false,
+          "type": "object",
+          "required": ["allowSubdomains"],
+          "properties": {"allowSubdomains": {
+            "type": "boolean",
+            "description": "This option defines who can create subdomains"
+          }}
         }
       }
     }
   },
-  "$id": "7DVe2cDyZMf8sDjQ46XqDzbeGKncrmkD6L96QohLmLbg"
+  "$id": "566vcJkmebVCAb2Dkj2yVMSgGFcsshupnQqtsz1RFbcy"
 }

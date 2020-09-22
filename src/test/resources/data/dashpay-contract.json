@@ -1,99 +1,142 @@
 {
+  "$schema": "https://schema.dash.org/dpp-0-4-0/meta/data-contract",
+  "ownerId": "3m3by4gukG2gmPux3tCQ6vCMdBqg5Xu2L6uqVPAkAe12",
   "documents": {
-    "domain": {
+    "contactInfo": {
       "indices": [
         {
           "properties": [
-            { "nameHash": "asc" }
+            {"$ownerId": "asc"},
+            {"rootEncryptionKeyIndex": "asc"},
+            {"derivationEncryptionKeyIndex": "asc"}
           ],
           "unique": true
         },
-        {
-          "properties": [
-            { "normalizedParentDomainName": "asc" },
-            { "normalizedLabel": "asc" }
-          ]
-        },
-        {
-          "properties": [
-            { "records.dashIdentity": "asc" }
-          ]
-        }
+        {"properties": [
+          {"$ownerId": "asc"},
+          {"$updatedAt": "asc"}
+        ]}
+      ],
+      "additionalProperties": false,
+      "required": [
+        "$createdAt",
+        "$updatedAt",
+        "encToUserId",
+        "privateData",
+        "rootEncryptionKeyIndex",
+        "derivationEncryptionKeyIndex"
       ],
       "properties": {
-        "nameHash": {
+        "privateData": {
+          "pattern": "^([A-Za-z0-9+/])*$",
+          "description": "This is the encrypted values of aliasName + note + displayHidden encoded as an array in cbor",
+          "contentEncoding": "base64",
           "type": "string",
-          "minLength": 68,
-          "maxLength": 68,
-          "pattern": "^[0123456789abcdef]+$"
+          "maxLength": 2731,
+          "minLength": 64
         },
-        "label": {
+        "rootEncryptionKeyIndex": {"type": "integer"},
+        "encToUserId": {
+          "pattern": "^([A-Za-z0-9+/])*$",
+          "contentEncoding": "base64",
           "type": "string",
-          "pattern": "^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])$",
-          "minLength": 3,
-          "maxLength": 40,
+          "maxLength": 43,
+          "minLength": 43
         },
-        "normalizedLabel": {
-          "type": "string",
-          "pattern": "^((?!-)[a-z0-9-]{0,62}[a-z0-9])$",
-          "minLength": 3,
-          "maxLength": 40
-        },
-        "normalizedParentDomainName": {
-          "type": "string",
-          "minLength": 0,
-          "maxLength": 40
-        },
-        "preorderSalt": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 68
-        },
-        "records": {
-          "type": "object",
-          "properties": {
-            "dashIdentity": {
-              "type": "string",
-              "minLength": 42,
-              "maxLength": 44,
-              "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$"
-            }
-          },
-          "minProperties": 1,
-          "additionalProperties": false
-        }
-      },
-      "required": [
-        "nameHash",
-        "label",
-        "normalizedLabel",
-        "normalizedParentDomainName",
-        "preorderSalt",
-        "records"
-      ],
-      "additionalProperties": false
+        "derivationEncryptionKeyIndex": {"type": "integer"}
+      }
     },
-    "preorder": {
+    "contactRequest": {
       "indices": [
         {
           "properties": [
-            { "saltedDomainHash": "asc" }
+            {"$ownerId": "asc"},
+            {"toUserId": "asc"},
+            {"accountReference": "asc"}
           ],
           "unique": true
-        }
+        },
+        {"properties": [
+          {"$ownerId": "asc"},
+          {"toUserId": "asc"}
+        ]},
+        {"properties": [
+          {"toUserId": "asc"},
+          {"$createdAt": "asc"}
+        ]},
+        {"properties": [
+          {"$ownerId": "asc"},
+          {"$createdAt": "asc"}
+        ]}
+      ],
+      "additionalProperties": false,
+      "required": [
+        "$createdAt",
+        "toUserId",
+        "encryptedPublicKey",
+        "senderKeyIndex",
+        "recipientKeyIndex",
+        "accountReference"
       ],
       "properties": {
-        "saltedDomainHash": {
+        "encryptedPublicKey": {
+          "pattern": "^([A-Za-z0-9+/])*$",
+          "contentEncoding": "base64",
           "type": "string",
-          "minLength": 64,
-          "maxLength": 68,
-          "pattern": "^[0123456789abcdef]+$"
+          "maxLength": 128,
+          "minLength": 128
+        },
+        "senderKeyIndex": {"type": "integer"},
+        "recipientKeyIndex": {"type": "integer"},
+        "accountReference": {"type": "integer"},
+        "encryptedAccountLabel": {
+          "pattern": "^([A-Za-z0-9+/])*$",
+          "contentEncoding": "base64",
+          "type": "string",
+          "maxLength": 107,
+          "minLength": 64
+        },
+        "toUserId": {
+          "pattern": "^([A-Za-z0-9+/])*$",
+          "contentEncoding": "base64",
+          "type": "string",
+          "maxLength": 43,
+          "minLength": 43
         }
-      },
-      "required": [
-        "saltedDomainHash"
+      }
+    },
+    "profile": {
+      "indices": [
+        {
+          "properties": [{"$ownerId": "asc"}],
+          "unique": true
+        },
+        {"properties": [
+          {"$ownerId": "asc"},
+          {"$updatedAt": "asc"}
+        ]}
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "$createdAt",
+        "$updatedAt"
+      ],
+      "properties": {
+        "avatarUrl": {
+          "format": "url",
+          "type": "string",
+          "maxLength": 2048
+        },
+        "displayName": {
+          "type": "string",
+          "maxLength": 20
+        },
+        "publicMessage": {
+          "type": "string",
+          "maxLength": 140
+        }
+      }
     }
-  }
+  },
+  "$id": "FZpu8tK7biyRdQfCdbsYt17gJmvLBycY8TJXQRocToph"
 }
