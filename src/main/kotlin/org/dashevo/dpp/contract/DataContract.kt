@@ -28,7 +28,7 @@ class DataContract(var id: String,
             rawContract["ownerId"] as String,
             if (rawContract.containsKey("protocolVersion"))
                 rawContract["protocolVersion"] as Int
-            else 0,
+            else PROTOCOL_VERSION,
             rawContract["\$schema"] as String,
             rawContract["documents"] as MutableMap<String, Any?>,
             if (rawContract.containsKey("definitions"))
