@@ -32,12 +32,12 @@ class DocumentFactory : Factory() {
         val id = HashUtils.generateDocumentId(dataContractId, ownerId, type, documentEntropy)
 
         val rawDocument = hashMapOf<String, Any?>()
+        rawDocument["\$protocolVersion"] = Document.PROTOCOL_VERSION
         rawDocument["\$id"] = id
         rawDocument["\$type"] = type
         rawDocument["\$dataContractId"] = dataContract.id
         rawDocument["\$ownerId"] = ownerId
         rawDocument["\$revision"] = DocumentCreateTransition.INITIAL_REVISION
-
 
         val dataKeys = data.keys.iterator()
         while (dataKeys.hasNext()) {
@@ -117,6 +117,8 @@ class DocumentFactory : Factory() {
             rawTransition["\$entropy"] = it.entropy
             if (it.createdAt != null)
                 rawTransition["\$createdAt"] = it.createdAt!!
+            if (it.updatedAt != null)
+                rawTransition["\$updatedAt"] = it.updatedAt!!
 
             val dataKeys = it.data.keys.iterator()
             while (dataKeys.hasNext()) {
@@ -134,7 +136,7 @@ class DocumentFactory : Factory() {
             rawTransition["\$dataContractId"] = it.dataContractId
             rawTransition["\$revision"] = it.revision + 1
             if (it.updatedAt != null)
-                rawTransition["\$createdAt"] = it.updatedAt!!
+                rawTransition["\$updatedAt"] = it.updatedAt!!
 
             val dataKeys = it.data.keys.iterator()
             while (dataKeys.hasNext()) {
@@ -159,6 +161,7 @@ class DocumentFactory : Factory() {
         rawDocumentTransitions.addAll(rawDocumentDeleteTransitions)
 
         val rawBatchTransition = hashMapOf<String, Any?> (
+                "\$protocolVersion" to Document.PROTOCOL_VERSION,
                 "type" to StateTransition.Types.DOCUMENTS_BATCH.value,
                 "ownerId" to ownerId,
                 "transitions" to rawDocumentTransitions

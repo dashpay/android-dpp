@@ -14,6 +14,10 @@ import kotlin.collections.HashMap
 
 class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
 
+    companion object {
+        const val PROTOCOL_VERSION = 0
+    }
+
     var id: String
     var type: String
     var dataContractId: String
@@ -23,6 +27,7 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
     var data: Map<String, Any?>
     var createdAt: Long?
     var updatedAt: Long?
+    var protocolVersion: Int
 
     init {
         val data = HashMap(rawDocument)
@@ -34,17 +39,20 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
         this.revision = data.remove("\$revision") as Int
         this.createdAt = data.remove("\$createdAt")?.let { it as Long }
         this.updatedAt = data.remove("\$updatedAt")?.let { it as Long }
+        this.protocolVersion = data.remove("\$protocolVersion") as Int
 
         this.data = data
     }
 
     override fun toJSON(): Map<String, Any> {
-        val json = hashMapOf<String, Any>()
-        json["\$id"] = id
-        json["\$type"] = type
-        json["\$dataContractId"] = dataContractId
-        json["\$ownerId"] = ownerId
-        json["\$revision"] = revision
+        val json = hashMapOf(
+            "\$protocolVersion" to protocolVersion,
+            "\$id" to id,
+            "\$type" to type,
+            "\$dataContractId" to dataContractId,
+            "\$ownerId" to ownerId,
+            "\$revision" to revision
+        )
 
         data.keys.iterator().forEach {
             data[it]?.let { it1 -> json[it] = it1 }
