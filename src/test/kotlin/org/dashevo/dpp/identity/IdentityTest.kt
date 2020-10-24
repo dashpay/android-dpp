@@ -145,4 +145,15 @@ class IdentityTest {
         assertEquals("A6AJAfRJyKuNoNvt33ygYfYh6OIYA8tF1s2BQcRA9RNg", identityST.publicKeys[0].data)
         assertTrue(identityST.verifySignatureByPublicKey(ECKey.fromPublicOnly(HashUtils.byteArrayFromString(identityST.publicKeys[0].data))))
     }
+
+    @Test
+    fun identityRoundTrip() {
+        val fromFixture = Fixtures.getIdentityFixture()
+
+        val serialized = fromFixture.serialize()
+
+        val fromSerialized = IdentityFactory().createFromSerialized(serialized);
+
+        assertEquals(fromFixture.toJSON(), fromSerialized.toJSON())
+    }
 }

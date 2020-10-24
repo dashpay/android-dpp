@@ -31,7 +31,7 @@ class Identity(var id: String,
     override fun toJSON(): Map<String, Any> {
         return mapOf(
             "id" to id,
-            "publicKeys" to publicKeys,
+            "publicKeys" to publicKeys.map { it.toJSON() },
             "balance" to balance
         )
     }
