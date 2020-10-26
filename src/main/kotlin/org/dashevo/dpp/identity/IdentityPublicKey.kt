@@ -19,7 +19,7 @@ class IdentityPublicKey(var id: Int,
 
     enum class TYPES(val value: Int) {
         ECDSA_SECP256K1(0),
-        BLS(1);
+        BLS12_381(1);
 
         companion object {
             private val values = values()

@@ -60,6 +60,9 @@ abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
                 }
                 signByPrivateKey(privateKeyModel)
             }
+            IdentityPublicKey.TYPES.BLS12_381 -> {
+                throw InvalidSignatureTypeError(identityPublicKey.type)
+            }
             else -> {
                 throw InvalidSignatureTypeError(identityPublicKey.type)
             }
