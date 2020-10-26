@@ -13,13 +13,13 @@ import org.dashevo.dpp.util.Cbor
 
 class IdentityFactory : Factory() {
 
-    fun create(lockedOutPoint: TransactionOutPoint, publicKeys: List<IdentityPublicKey>) : Identity {
+    fun create(lockedOutPoint: TransactionOutPoint, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int) : Identity {
         val id = lockedOutPoint.hash.toStringBase58()
-        return Identity(id, publicKeys)
+        return Identity(id, publicKeys, revision, protocolVersion)
     }
 
-    fun create(id: String, publicKeys: List<IdentityPublicKey>) : Identity {
-        return Identity(id, publicKeys)
+    fun create(id: String, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int) : Identity {
+        return Identity(id, publicKeys, revision, protocolVersion)
     }
 
     fun createFromObject(rawIdentity: MutableMap<String, Any?>, options: Options = Options()): Identity {
@@ -54,7 +54,7 @@ class IdentityFactory : Factory() {
 
         val newIdentity = Identity(identityCreateTransition.identityId,
                 0,
-                identityCreateTransition.publicKeys)
+                identityCreateTransition.publicKeys, 0, Identity.PROTOCOL_VERSION)
 
         //store identity
 

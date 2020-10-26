@@ -6,8 +6,9 @@
     {
       id: 1,
       type: 1,
-      data: 'A6AJAfRJyKuNoNvt33ygYfYh6OIYA8tF1s2BQcRA9RNg',
-      isEnabled: true
+      data: 'A6AJAfRJyKuNoNvt33ygYfYh6OIYA8tF1s2BQcRA9RNg'
     }
-  ]
+  ],
+  "revision": 0,
+  "protocolVersion": 0
 }

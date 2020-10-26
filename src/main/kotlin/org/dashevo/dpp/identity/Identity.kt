@@ -13,26 +13,37 @@ import org.dashevo.dpp.BaseObject
 
 class Identity(var id: String,
                var balance: Long,
-               var publicKeys: List<IdentityPublicKey>) : BaseObject() {
+               var publicKeys: List<IdentityPublicKey>,
+               val revision: Int,
+               val protocolVersion: Int) : BaseObject() {
+
+    companion object {
+        const val PROTOCOL_VERSION: Int = 0
+    }
 
     var lockedOutpoint: TransactionOutPoint? = null
 
     constructor(rawIdentity: Map<String, Any?>) : this(rawIdentity["id"] as String,
             rawIdentity["balance"].toString().toLong(),
-            (rawIdentity["publicKeys"] as List<Any>).map { IdentityPublicKey(it as Map<String, Any>) })
+            (rawIdentity["publicKeys"] as List<Any>).map { IdentityPublicKey(it as Map<String, Any>) },
+            rawIdentity["revision"] as Int,
+            rawIdentity["protocolVersion"] as Int)
 
-    constructor(id: String, publicKeys: List<IdentityPublicKey>) : this(id, 0, publicKeys)
+    constructor(id: String, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int)
+            : this(id, 0, publicKeys, revision, protocolVersion)
 
-    fun getPublicKeyById(keyId: Int) : IdentityPublicKey? {
+    fun getPublicKeyById(keyId: Int): IdentityPublicKey? {
         Preconditions.checkArgument(keyId >= 0, "keyId ($keyId) must be >= 0")
         return publicKeys.find { it.id == keyId }
     }
 
     override fun toJSON(): Map<String, Any> {
         return mapOf(
-            "id" to id,
-            "publicKeys" to publicKeys.map { it.toJSON() },
-            "balance" to balance
+                "protocolVersion" to protocolVersion,
+                "id" to id,
+                "publicKeys" to publicKeys.map { it.toJSON() },
+                "balance" to balance,
+                "revision" to revision
         )
     }
 

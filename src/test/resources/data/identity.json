@@ -6,13 +6,13 @@
       id: 1,
       type: 0,
       data: 'AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di',
-      isEnabled: true,
     },
     {
       id: 2,
       type: 0,
       data: 'A8AK95PYMVX5VQKzOhcVQRCUbc9pyg3RiL7jttEMDU+L',
-      isEnabled: true,
     },
   ],
+  "revision": 0,
+  "protocolVersion": 0
 }
