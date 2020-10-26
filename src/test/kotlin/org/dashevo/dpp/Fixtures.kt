@@ -96,7 +96,7 @@ object Fixtures {
         rawStateTransition["lockedOutPoint"] = ByteArray(36).toBase64()
 
         val publicKeysMap = ArrayList<Any>(1)
-        publicKeysMap.add(IdentityPublicKey(1, IdentityPublicKey.TYPES.ECDSA_SECP256K1, ByteArray(32).toBase64(), true).toJSON())
+        publicKeysMap.add(IdentityPublicKey(1, IdentityPublicKey.TYPES.ECDSA_SECP256K1, ByteArray(32).toBase64()).toJSON())
         rawStateTransition["publicKeys"] = publicKeysMap
 
         return IdentityCreateTransition(rawStateTransition)

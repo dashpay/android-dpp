@@ -14,8 +14,7 @@ import org.dashevo.dpp.util.HashUtils
 
 class IdentityPublicKey(var id: Int,
                         var type: TYPES,
-                        var data: String,
-                        var isEnabled: Boolean) : BaseObject() {
+                        var data: String) : BaseObject() {
 
     enum class TYPES(val value: Int) {
         ECDSA_SECP256K1(0),
@@ -32,8 +31,7 @@ class IdentityPublicKey(var id: Int,
     constructor(rawIdentityPublicKey: Map<String, Any>) :
             this(rawIdentityPublicKey["id"] as Int,
                     TYPES.getByCode(rawIdentityPublicKey["type"] as Int),
-                    rawIdentityPublicKey["data"] as String,
-                    rawIdentityPublicKey["isEnabled"] as Boolean)
+                    rawIdentityPublicKey["data"] as String)
 
 
     override fun toJSON(): Map<String, Any> {
@@ -41,7 +39,6 @@ class IdentityPublicKey(var id: Int,
         json["id"] = id
         json["type"] = type.value
         json["data"] = data
-        json["isEnabled"] = isEnabled
         return json
     }
 
@@ -50,8 +47,7 @@ class IdentityPublicKey(var id: Int,
             return false
         return other.id == id &&
                 other.type == type &&
-                other.data == data &&
-                other.isEnabled == isEnabled
+                other.data == data
     }
 
     override fun hashCode(): Int {
