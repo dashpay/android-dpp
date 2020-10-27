@@ -23,6 +23,12 @@ abstract class BaseObject {
     abstract fun toJSON(): Map<String, Any?>
 
     /**
+     * Return plain JSON object that encodes binary data as ByteArray
+     *
+     */
+    abstract fun toObject(): Map<String, Any?>
+
+    /**
      * Return serialized object
      *
      */
