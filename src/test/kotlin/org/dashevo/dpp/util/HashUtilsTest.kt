@@ -6,6 +6,7 @@
  */
 package org.dashevo.dpp.util
 
+import org.bitcoinj.core.Base58
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -14,7 +15,7 @@ class HashUtilsTest {
     @Test
     fun generateDataContractIdTest() {
         val ownerId = "23wdhodag"
-        val entropy = "5dz916pTe1"
+        val entropy = Base58.decode("5dz916pTe1")
 
         assertEquals("CnS7cz4z1qoPsNfEgpgyVnKdtH2u7bgzZXHLcCQt24US", HashUtils.generateDataContractId(ownerId, entropy))
     }
@@ -22,7 +23,7 @@ class HashUtilsTest {
     @Test
     fun generateDocumentIdTest() {
         val ownerId = "23wdhodag"
-        val entropy = "5dz916pTe1"
+        val entropy = Base58.decode("5dz916pTe1")
 
         assertEquals("CnS7cz4z1qoPsNfEgpgyVnKdtH2u7bgzZXHLcCQt24US", HashUtils.generateDataContractId(ownerId, entropy))
     }

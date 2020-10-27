@@ -101,26 +101,21 @@ object HashUtils {
         return merkleTree.last().clone()
     }
 
-    @Deprecated ("use Entropy.generate()", ReplaceWith("Entropy.generate()"))
-    fun createScopeId(): String {
-        return Entropy.generate()
-    }
-
-    fun generateDocumentId(dataContractId: String, ownerId: String, type: String, entropy: String) : String {
+    fun generateDocumentId(dataContractId: String, ownerId: String, type: String, entropy: ByteArray) : String {
         val utf8charset = Charset.forName("UTF-8")
         val stream = ByteArrayOutputStream()
         stream.write(Base58.decode(dataContractId))
         stream.write(Base58.decode(ownerId))
         stream.write(type.toByteArray(utf8charset))
-        stream.write(Base58.decode(entropy))
+        stream.write(entropy)
         val scopeHash = toHash(stream.toByteArray())
         return Base58.encode(scopeHash)
     }
 
-    fun generateDataContractId(ownerId: String, entropy: String) : String {
+    fun generateDataContractId(ownerId: String, entropy: ByteArray) : String {
         val stream = ByteArrayOutputStream()
         stream.write(Base58.decode(ownerId))
-        stream.write(Base58.decode(entropy))
+        stream.write(entropy)
         val scopeHash = toHash(stream.toByteArray())
         return Base58.encode(scopeHash)
     }

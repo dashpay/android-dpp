@@ -22,7 +22,7 @@ class DataContract(var id: String,
         const val PROTOCOL_VERSION: Int = 0
     }
 
-    var entropy: String? = null
+    var entropy: ByteArray? = null
 
     constructor(rawContract: MutableMap<String, Any?>) : this(rawContract["\$id"] as String,
             rawContract["ownerId"] as String,

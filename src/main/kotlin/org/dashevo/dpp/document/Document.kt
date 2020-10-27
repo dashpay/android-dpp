@@ -22,7 +22,7 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
     var type: String
     var dataContractId: String
     var ownerId: String
-    lateinit var entropy: String
+    lateinit var entropy: ByteArray
     var revision: Int = 0
     var data: Map<String, Any?>
     var createdAt: Long?

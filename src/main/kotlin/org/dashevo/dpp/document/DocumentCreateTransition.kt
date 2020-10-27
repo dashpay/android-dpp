@@ -6,8 +6,6 @@
  */
 package org.dashevo.dpp.document
 
-import java.time.Instant
-import java.util.*
 import kotlin.collections.HashMap
 
 
@@ -20,7 +18,7 @@ open class DocumentCreateTransition : DocumentTransition {
     override val action = Action.CREATE
     var id: String
     var documentType: String
-    var entropy: String
+    var entropy: ByteArray
     var data: Map<String, Any?>
     var createdAt: Long?
     var updatedAt: Long?
@@ -30,7 +28,7 @@ open class DocumentCreateTransition : DocumentTransition {
 
         this.id = data.remove("\$id") as String
         this.documentType = data.remove("\$type") as String
-        this.entropy = data.remove("\$entropy") as String
+        this.entropy = data.remove("\$entropy") as ByteArray
         data.remove("\$action")
         data.remove("\$dataContractId") as String
         this.createdAt = data.remove("\$createdAt")?.let { it as Long }

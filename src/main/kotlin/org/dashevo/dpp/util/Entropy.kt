@@ -6,30 +6,25 @@
  */
 package org.dashevo.dpp.util
 
-import org.bitcoinj.core.Address
-import org.bitcoinj.core.AddressFormatException
-import org.bitcoinj.core.ECKey
-import org.bitcoinj.params.TestNet3Params
+import org.bitcoinj.core.Utils
+import org.bitcoinj.crypto.LinuxSecureRandom
+import java.security.SecureRandom
 
 class Entropy {
     companion object {
 
-        fun generate() : String {
-            val privateKey = ECKey()
-            return Address.fromKey(TestNet3Params.get(), privateKey).toString()
+        // Init proper random number generator, as some old Android installations have bugs that make it unsecure.
+        private var secureRandom: SecureRandom
+
+        init {
+            // Init proper random number generator, as some old Android installations have bugs that make it unsecure.
+            if (Utils.isAndroidRuntime())
+                LinuxSecureRandom()
+            secureRandom = SecureRandom()
         }
 
-        fun generateBytes() : ByteArray {
-            return ECKey().pubKeyHash
-        }
-
-        fun validate(address : String) : Boolean {
-            return try {
-                Address.fromBase58(TestNet3Params.get(), address)
-                true
-            } catch (_ : AddressFormatException) {
-                false
-            }
+        fun generate() : ByteArray {
+            return secureRandom.generateSeed(32)
         }
     }
 }
