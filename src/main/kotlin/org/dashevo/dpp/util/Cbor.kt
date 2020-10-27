@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2020-present, Dash Core Team
+ *
+ * This source code is licensed under the MIT license found in the
+ * COPYING file in the root directory of this source tree.
+ */
+
 package org.dashevo.dpp.util
 
 import co.nstant.`in`.cbor.CborBuilder
@@ -43,6 +50,12 @@ object Cbor {
     fun encode(s: String): ByteArray {
         val baos = ByteArrayOutputStream(s.length)
         CborEncoder(baos).encode(UnicodeString(s))
+        return baos.toByteArray()
+    }
+
+    fun encode(bytes: ByteArray) : ByteArray {
+        val baos = ByteArrayOutputStream(bytes.size)
+        CborEncoder(baos).encode(ByteString(bytes))
         return baos.toByteArray()
     }
 
