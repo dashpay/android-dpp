@@ -6,6 +6,8 @@
  */
 package org.dashevo.dpp.document
 
+import org.bitcoinj.core.Base58
+import java.lang.IllegalStateException
 import kotlin.collections.HashMap
 
 
@@ -28,7 +30,12 @@ open class DocumentCreateTransition : DocumentTransition {
 
         this.id = data.remove("\$id") as String
         this.documentType = data.remove("\$type") as String
-        this.entropy = data.remove("\$entropy") as ByteArray
+        val entropy = data.remove("\$entropy")
+        this.entropy  = when(entropy) {
+            is ByteArray -> entropy
+            is String -> Base58.decode(entropy)
+            else -> throw IllegalStateException("entropy is not a ByteArray or String")
+        }
         data.remove("\$action")
         data.remove("\$dataContractId") as String
         this.createdAt = data.remove("\$createdAt")?.let { it as Long }
