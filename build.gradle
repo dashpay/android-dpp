@@ -2,7 +2,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'kotlin'
 
 buildscript {
-    ext.kotlin_version = '1.3.50'
+    ext.kotlin_version = '1.3.72'
     ext.dashj_version = '0.18-SNAPSHOT'
     repositories {
         jcenter()
@@ -65,11 +65,13 @@ publishing {
     publications {
         maven(MavenPublication) {
             from components.java
+            artifact sourcesJar
         }
     }
 }
 
 assemble.dependsOn(publishToMavenLocal)
+assemble.dependsOn(sourcesJar)
 
 test {
     useJUnitPlatform()
