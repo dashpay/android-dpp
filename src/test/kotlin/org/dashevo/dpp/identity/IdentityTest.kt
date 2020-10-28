@@ -25,7 +25,7 @@ class IdentityTest {
     fun testIdentity() {
         var identity = Fixtures.getIdentityFixture()
 
-        assertEquals("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", identity.id)
+        assertEquals("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", identity.id.toString())
         assertEquals(2, identity.publicKeys.size)
         assertEquals("AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di", identity.publicKeys[0].data.toBase64())
     }

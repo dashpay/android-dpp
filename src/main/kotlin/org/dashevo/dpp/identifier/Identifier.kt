@@ -8,6 +8,7 @@
 package org.dashevo.dpp.identifier
 
 import org.bitcoinj.core.Base58
+import org.bitcoinj.core.Sha256Hash
 import org.dashevo.dpp.identifier.errors.IdentifierError
 import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.util.Cbor
@@ -31,12 +32,17 @@ data class Identifier(private val buffer: ByteArray) {
                     Identifier(any)
                 }
                 is Identifier -> any
+                is Sha256Hash -> Identifier(any.bytes)
                 else -> throw IllegalStateException("any is not String or ByteArray")
             }
         }
 
         fun from(buffer: ByteArray): Identifier {
             return Identifier(buffer)
+        }
+
+        fun from(hash: Sha256Hash): Identifier {
+            return Identifier(hash.bytes)
         }
     }
 
