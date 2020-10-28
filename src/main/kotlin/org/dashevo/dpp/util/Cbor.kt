@@ -14,6 +14,7 @@ import co.nstant.`in`.cbor.builder.AbstractBuilder
 import co.nstant.`in`.cbor.builder.ArrayBuilder
 import co.nstant.`in`.cbor.builder.MapBuilder
 import co.nstant.`in`.cbor.model.*
+import org.dashevo.dpp.identifier.Identifier
 import java.io.ByteArrayOutputStream
 import java.lang.IllegalStateException
 import java.math.BigInteger
@@ -205,6 +206,7 @@ object Cbor {
             is Long -> mapBuilder.put(key, value)
             is Double -> mapBuilder.put(key, value)
             is ByteArray -> mapBuilder.put(key, value)
+            is Identifier -> mapBuilder.put(key, value.toBuffer())
             null -> mapBuilder.put(UnicodeString(key), SimpleValue(SimpleValueType.NULL))
             else -> mapBuilder.put(key, value.toString()) //?
         }
@@ -221,6 +223,7 @@ object Cbor {
             is Long -> arrayBuilder.add(value)
             is Double -> arrayBuilder.add(value)
             is ByteArray -> arrayBuilder.add(value)
+            is Identifier -> arrayBuilder.add(value.toBuffer())
             null -> arrayBuilder.add(SimpleValue(SimpleValueType.NULL))
             else -> arrayBuilder.add(value.toString()) //?
         }
