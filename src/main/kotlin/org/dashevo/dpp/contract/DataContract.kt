@@ -9,12 +9,13 @@ package org.dashevo.dpp.contract
 
 import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.errors.InvalidDocumentTypeError
+import org.dashevo.dpp.identifier.Identifier
 
-class DataContract(var id: String,
-                   var ownerId: String,
+class DataContract(val id: Identifier,
+                   val ownerId: Identifier,
                    val protocolVersion: Int,
-                   var schema: String,
-                   var documents: MutableMap<String, Any?>,
+                   val schema: String,
+                   val documents: MutableMap<String, Any?>,
                    var definitions: MutableMap<String, Any?> = hashMapOf()) : BaseObject() {
 
     companion object DEFAULTS {
@@ -24,8 +25,16 @@ class DataContract(var id: String,
 
     var entropy: ByteArray? = null
 
-    constructor(rawContract: MutableMap<String, Any?>) : this(rawContract["\$id"] as String,
-            rawContract["ownerId"] as String,
+    constructor(id: ByteArray, ownerId: ByteArray,
+                protocolVersion: Int, schema: String,
+                documents: MutableMap<String, Any?>,
+                definitions: MutableMap<String, Any?>) : this(
+            Identifier.from(id), Identifier.from(ownerId),
+            protocolVersion, schema,
+            documents, definitions)
+
+    constructor(rawContract: MutableMap<String, Any?>) : this(Identifier.from(rawContract["\$id"]!!),
+            Identifier.from(rawContract["ownerId"]!!),
             if (rawContract.containsKey("protocolVersion"))
                 rawContract["protocolVersion"] as Int
             else PROTOCOL_VERSION,
@@ -37,17 +46,35 @@ class DataContract(var id: String,
                 hashMapOf()
     )
 
-    override fun toJSON(): Map<String, Any> {
-        val json = hashMapOf<String, Any>()
-        json["\$id"] = this.id
-        json["protocolVersion"] = this.protocolVersion
-        json["\$schema"] = this.schema
-        json["ownerId"] = this.ownerId
-        json["documents"] = this.documents
+    override fun toObject(): Map<String, Any> {
+        return toObject(false)
+    }
+
+    fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any> {
+        val rawDataContract = hashMapOf<String, Any>(
+                "protocolVersion" to protocolVersion,
+                "\$id" to id,
+                "\$schema" to schema,
+                "ownerId" to ownerId,
+                "documents" to documents
+        )
+
+        if (!skipIdentifierConversion) {
+            rawDataContract["\$id"] = id.toBuffer()
+            rawDataContract["ownerId"] = ownerId.toBuffer()
+        }
 
         if (this.definitions.isNotEmpty()) {
-            json["definitions"] = this.definitions
+            rawDataContract["definitions"] = this.definitions
         }
+
+        return rawDataContract
+    }
+
+    override fun toJSON(): Map<String, Any> {
+        val json = toObject(false)
+        json["\$id"] = this.id.toString()
+        json["ownerId"] = this.ownerId.toString()
 
         return json
     }
@@ -57,19 +84,11 @@ class DataContract(var id: String,
     }
 
     fun getJsonSchemaId(): String {
-        return id
-    }
-
-    fun setJsonSchemaId(id: String) = apply {
-        this.id = id
+        return id.toString()
     }
 
     fun getJsonMetaSchema(): String {
         return schema
-    }
-
-    fun setJsonMetaSchema(schema: String) = apply {
-        this.schema = schema
     }
 
     private fun checkContainsDocumentType(type: String) {
@@ -78,7 +97,7 @@ class DataContract(var id: String,
         }
     }
 
-    fun getDocumentSchema(type: String): Map<String, Any>{
+    fun getDocumentSchema(type: String): Map<String, Any> {
         checkContainsDocumentType(type)
         return this.documents[type] as Map<String, Any>
     }

@@ -35,6 +35,14 @@ class IdentityCreateTransition : IdentityStateTransition {
         identityId = HashUtils.toHash(HashUtils.fromBase64(lockedOutPoint!!)).toBase64()
     }
 
+    override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
+        var map = super.toObject(skipSignature, skipIdentifiersConversion)
+        map["lockedOutPoint"] = lockedOutPoint as String
+        map["publicKeys"] = publicKeys.map { it.toObject() }
+        map.remove("signaturePublicKeyId")
+        return map
+    }
+
     override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
         var json = super.toJSON(skipSignature)
         json["lockedOutPoint"] = lockedOutPoint as String

@@ -29,7 +29,7 @@ class DataContractTest {
 
         assertEquals(DataContract.SCHEMA, contract.schema)
         assertEquals(3, contract.documents.size)
-        assertEquals("3eHkM3mWjutxbc3EQwnVQHyymDgbZfK4EhZRectK11jV", contract.id)
+        assertEquals("9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX", contract.id.toString())
     }
 
     /*@Test
@@ -62,6 +62,7 @@ class DataContractTest {
         val stateTransition = ContractStateTransition(dataContract)
 
         val result =  factory.createStateTransition(dataContract)
+        result.entropy = stateTransition.entropy!!
 
         assertEquals(result.toJSON(), stateTransition.toJSON())
     }

@@ -44,6 +44,26 @@ object HashUtils {
         return HEX.decode(base16)
     }
 
+    fun byteArrayfromBase64orByteArray(any: Any): ByteArray {
+        return when (any) {
+            is String -> {
+                fromBase64(any)
+            }
+            is ByteArray -> any
+            else -> throw IllegalStateException("any is not String or ByteArray")
+        }
+    }
+
+    fun byteArrayfromBase58orByteArray(any: Any): ByteArray {
+        return when (any) {
+            is String -> {
+                Base58.decode(any)
+            }
+            is ByteArray -> any
+            else -> throw IllegalStateException("any is not String or ByteArray")
+        }
+    }
+
     /**
      * Gets a byte array from a string by decoding from one of the
      * following formats: Base58, Base64, hex
@@ -101,22 +121,20 @@ object HashUtils {
         return merkleTree.last().clone()
     }
 
-    fun generateDocumentId(dataContractId: String, ownerId: String, type: String, entropy: ByteArray) : String {
+    fun generateDocumentId(dataContractId: ByteArray, ownerId: ByteArray, type: String, entropy: ByteArray) : ByteArray {
         val utf8charset = Charset.forName("UTF-8")
         val stream = ByteArrayOutputStream()
-        stream.write(Base58.decode(dataContractId))
-        stream.write(Base58.decode(ownerId))
+        stream.write(dataContractId)
+        stream.write(ownerId)
         stream.write(type.toByteArray(utf8charset))
         stream.write(entropy)
-        val scopeHash = toHash(stream.toByteArray())
-        return Base58.encode(scopeHash)
+        return toHash(stream.toByteArray())
     }
 
-    fun generateDataContractId(ownerId: String, entropy: ByteArray) : String {
+    fun generateDataContractId(ownerId: ByteArray, entropy: ByteArray) : ByteArray {
         val stream = ByteArrayOutputStream()
-        stream.write(Base58.decode(ownerId))
+        stream.write(ownerId)
         stream.write(entropy)
-        val scopeHash = toHash(stream.toByteArray())
-        return Base58.encode(scopeHash)
+        return toHash(stream.toByteArray())
     }
 }

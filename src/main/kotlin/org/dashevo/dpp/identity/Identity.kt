@@ -37,6 +37,16 @@ class Identity(var id: String,
         return publicKeys.find { it.id == keyId }
     }
 
+    override fun toObject(): Map<String, Any> {
+        return mapOf(
+                "protocolVersion" to protocolVersion,
+                "id" to id,
+                "publicKeys" to publicKeys.map { it.toObject() },
+                "balance" to balance,
+                "revision" to revision
+        )
+    }
+
     override fun toJSON(): Map<String, Any> {
         return mapOf(
                 "protocolVersion" to protocolVersion,

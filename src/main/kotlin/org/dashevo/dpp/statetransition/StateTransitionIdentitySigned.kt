@@ -34,18 +34,17 @@ abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
 
     constructor(type: Types, protocolVersion: Int = CURRENT_PROTOCOL_VERSION) : this(null, null, type, protocolVersion)
 
-    override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
-        val json = super.toJSON(skipSignature)
+    override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
+        val rawStateTransition = super.toObject(skipSignature, skipIdentifiersConversion)
         if (!skipSignature) {
-            json["signaturePublicKeyId"] = signaturePublicKeyId
+            rawStateTransition["signaturePublicKeyId"] = signaturePublicKeyId
         }
-        return json
+        return rawStateTransition
     }
-
 
     fun sign(identityPublicKey: IdentityPublicKey, privateKey: String) {
         var privateKeyModel: ECKey
-        val pubKeyBase: String
+        val pubKeyBase: ByteArray
         when (identityPublicKey.type) {
             IdentityPublicKey.TYPES.ECDSA_SECP256K1 -> {
                 privateKeyModel = try {
@@ -54,9 +53,9 @@ abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
                 } catch (_: AddressFormatException) {
                     ECKey.fromPrivate(HashUtils.fromHex(privateKey))
                 }
-                pubKeyBase = privateKeyModel.pubKey.toBase64()
-                if (pubKeyBase != identityPublicKey.data) {
-                    throw InvalidSignaturePublicKeyError(identityPublicKey.data)
+                pubKeyBase = privateKeyModel.pubKey
+                if (!pubKeyBase.contentEquals(identityPublicKey.data)) {
+                    throw InvalidSignaturePublicKeyError(identityPublicKey.data.toBase64())
                 }
                 signByPrivateKey(privateKeyModel)
             }
@@ -80,8 +79,7 @@ abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
             throw PublicKeyMismatchError(publicKey)
         }
 
-        val publicKeyBuffer = HashUtils.fromBase64(publicKey.data)
-        val publicKeyModel = ECKey.fromPublicOnly(publicKeyBuffer)
+        val publicKeyModel = ECKey.fromPublicOnly(publicKey.data)
 
         return verifySignatureByPublicKey(publicKeyModel)
     }

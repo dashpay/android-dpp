@@ -11,6 +11,7 @@ import org.dashevo.dpp.contract.ContractFactory
 import org.dashevo.dpp.contract.ContractStateTransition
 import org.dashevo.dpp.document.DocumentsBatchTransition
 import org.dashevo.dpp.errors.InvalidStateTransitionTypeError
+import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.identity.IdentityCreateTransition
 import org.dashevo.dpp.identity.IdentityTopupTransition
 import org.dashevo.dpp.util.Cbor
@@ -22,7 +23,7 @@ class StateTransitionFactory {
         when (StateTransition.Types.getByCode(rawStateTransition["type"] as Int)) {
             StateTransition.Types.DATA_CONTRACT_CREATE -> {
                 val rawDataContract = rawStateTransition["dataContract"] as MutableMap<String, Any?>
-                val dataContract = ContractFactory().createDataContract(rawDataContract["ownerId"] as String, rawDataContract)
+                val dataContract = ContractFactory().createDataContract(Identifier.from(rawDataContract["ownerId"]).toBuffer(), rawDataContract)
 
                 stateTransition = ContractStateTransition(dataContract)
             }

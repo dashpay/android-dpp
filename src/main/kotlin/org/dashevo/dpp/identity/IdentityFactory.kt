@@ -9,6 +9,7 @@ package org.dashevo.dpp.identity
 
 import org.bitcoinj.core.TransactionOutPoint
 import org.dashevo.dpp.Factory
+import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.util.Cbor
 
 class IdentityFactory : Factory() {
@@ -42,10 +43,8 @@ class IdentityFactory : Factory() {
         return  IdentityCreateTransition(lockedOutpoint, identityPublicKeys)
     }
 
-    fun createIdentityTopupTransition(identityId: String, lockedOutpoint: TransactionOutPoint): IdentityTopupTransition {
-        val lockedOutpointString = lockedOutpoint.toStringBase64()
-
-        return  IdentityTopupTransition(identityId, lockedOutpointString)
+    fun createIdentityTopupTransition(identityId: Identifier, lockedOutpoint: TransactionOutPoint): IdentityTopupTransition {
+        return  IdentityTopupTransition(identityId, lockedOutpoint.bitcoinSerialize())
     }
 
     fun applyIdentityCreateStateTransition(stateTransition: IdentityStateTransition) : Identity {

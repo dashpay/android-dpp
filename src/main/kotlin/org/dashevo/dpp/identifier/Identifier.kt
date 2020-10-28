@@ -19,7 +19,7 @@ data class Identifier(private val buffer: ByteArray) {
     companion object {
         const val MEDIA_TYPE = "application/x.dash.dpp.identifier"
 
-        fun from(any: Any, encoding: String = "base58"): Identifier {
+        fun from(any: Any?, encoding: String = "base58"): Identifier {
             return when (any) {
                 is String -> {
                     when (encoding) {
@@ -30,6 +30,7 @@ data class Identifier(private val buffer: ByteArray) {
                 is ByteArray -> {
                     Identifier(any)
                 }
+                is Identifier -> any
                 else -> throw IllegalStateException("any is not String or ByteArray")
             }
         }
@@ -57,7 +58,11 @@ data class Identifier(private val buffer: ByteArray) {
         return toString()
     }
 
-    fun toString(encoding: String = "base58"): String {
+    override fun toString(): String {
+        return toString("base58")
+    }
+
+    fun toString(encoding: String): String {
         return when(encoding) {
             "base58" -> Base58.encode(buffer)
             else -> buffer.toBase64()

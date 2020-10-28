@@ -10,11 +10,14 @@ import org.bitcoinj.core.ECKey
 import org.bitcoinj.core.Utils
 import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.identity.errors.EmptyPublicKeyDataException
+import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.util.HashUtils
+import org.dashevo.dpp.util.HashUtils.byteArrayfromBase64orByteArray
+import org.dashevo.dpp.util.HashUtils.fromBase64
 
-class IdentityPublicKey(var id: Int,
-                        var type: TYPES,
-                        var data: String) : BaseObject() {
+class IdentityPublicKey(val id: Int,
+                        val type: TYPES,
+                        val data: ByteArray) : BaseObject() {
 
     enum class TYPES(val value: Int) {
         ECDSA_SECP256K1(0),
@@ -28,18 +31,27 @@ class IdentityPublicKey(var id: Int,
         }
     }
 
+    constructor(id: Int, type: TYPES, data: String) : this(id, type, fromBase64(data))
+
     constructor(rawIdentityPublicKey: Map<String, Any>) :
             this(rawIdentityPublicKey["id"] as Int,
                     TYPES.getByCode(rawIdentityPublicKey["type"] as Int),
-                    rawIdentityPublicKey["data"] as String)
+                    byteArrayfromBase64orByteArray(rawIdentityPublicKey["data"] ?: error("data is missing")))
 
+    override fun toObject(): Map<String, Any> {
+        return hashMapOf<String, Any>(
+                "id" to id,
+                "type" to type.value,
+                "data" to data
+        )
+    }
 
     override fun toJSON(): Map<String, Any> {
-        val json = hashMapOf<String, Any>()
-        json["id"] = id
-        json["type"] = type.value
-        json["data"] = data
-        return json
+        return hashMapOf<String, Any>(
+                "id" to id,
+                "type" to type.value,
+                "data" to data.toBase64()
+        )
     }
 
     override fun equals(other: Any?): Boolean {
@@ -47,7 +59,7 @@ class IdentityPublicKey(var id: Int,
             return false
         return other.id == id &&
                 other.type == type &&
-                other.data == data
+                other.data.contentEquals(data)
     }
 
     override fun hashCode(): Int {
@@ -56,14 +68,13 @@ class IdentityPublicKey(var id: Int,
     }
 
     fun getKey(): ECKey {
-        return ECKey.fromPublicOnly(HashUtils.fromBase64(data))
+        return ECKey.fromPublicOnly(data)
     }
 
     override fun hashAsByteArray(): ByteArray {
-        if(data.isEmpty()) {
+        if (data.isEmpty()) {
             throw EmptyPublicKeyDataException()
         }
         return super.hashAsByteArray()
     }
-
 }

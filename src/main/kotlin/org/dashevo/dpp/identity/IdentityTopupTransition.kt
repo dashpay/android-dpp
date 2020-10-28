@@ -6,13 +6,16 @@
  */
 package org.dashevo.dpp.identity
 
+import org.dashevo.dpp.identifier.Identifier
+import org.dashevo.dpp.toBase64
+
 class IdentityTopupTransition : IdentityStateTransition {
 
-    var identityId: String = "" // base58
-    var lockedOutPoint: String  // base64
+    val identityId: Identifier
+    var lockedOutPoint: ByteArray  // base64
 
-    constructor(lockedOutPoint: String,
-                 identityId: String,
+    constructor(identityId: Identifier,
+                lockedOutPoint: ByteArray,
                  protocolVersion: Int = 0)
     : super(Types.IDENTITY_TOP_UP, protocolVersion) {
         this.lockedOutPoint = lockedOutPoint
@@ -21,18 +24,30 @@ class IdentityTopupTransition : IdentityStateTransition {
 
     constructor(rawStateTransition: MutableMap<String, Any?>)
             : super(rawStateTransition) {
-        lockedOutPoint = rawStateTransition["lockedOutPoint"] as String
-        identityId = rawStateTransition["identityId"] as String
+        lockedOutPoint = rawStateTransition["lockedOutPoint"] as ByteArray
+        identityId = Identifier.from(rawStateTransition["identityId"]!!)
+    }
+
+    override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
+        val map = super.toObject(skipSignature, skipIdentifiersConversion)
+        map["identityId"] = identityId
+        map["lockedOutPoint"] = lockedOutPoint
+
+        if (!skipIdentifiersConversion) {
+            map["identityId"] = identityId.toBuffer()
+        }
+
+        return map
     }
 
     override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
         var json = super.toJSON(skipSignature)
-        json["lockedOutPoint"] = lockedOutPoint
-        json["identityId"] = identityId
+        json["lockedOutPoint"] = lockedOutPoint.toBase64()
+        json["identityId"] = identityId.toString()
         return json
     }
 
-    fun getOwnerId() : String {
+    fun getOwnerId() : Identifier {
         return identityId
     }
 }

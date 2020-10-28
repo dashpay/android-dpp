@@ -14,6 +14,7 @@ import org.dashevo.dpp.document.errors.InvalidInitialRevisionError
 import org.dashevo.dpp.document.errors.MismatchOwnerIdsError
 import org.dashevo.dpp.document.errors.NoDocumentsSuppliedError
 import org.dashevo.dpp.errors.InvalidDocumentTypeError
+import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.statetransition.StateTransition
 import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.Entropy
@@ -21,7 +22,7 @@ import org.dashevo.dpp.util.HashUtils
 
 class DocumentFactory : Factory() {
 
-    fun create(dataContract: DataContract, ownerId: String, type: String, data: Map<String, Any> = mapOf()) : Document {
+    fun create(dataContract: DataContract, ownerId: Identifier, type: String, data: Map<String, Any> = mapOf()) : Document {
         if (!dataContract.isDocumentDefined(type)) {
             throw InvalidDocumentTypeError(dataContract, type)
         }
@@ -29,7 +30,7 @@ class DocumentFactory : Factory() {
         val documentEntropy = Entropy.generate()
         val dataContractId = dataContract.id
 
-        val id = HashUtils.generateDocumentId(dataContractId, ownerId, type, documentEntropy)
+        val id = HashUtils.generateDocumentId(dataContractId.toBuffer(), ownerId.toBuffer(), type, documentEntropy)
 
         val rawDocument = hashMapOf<String, Any?>()
         rawDocument["\$protocolVersion"] = Document.PROTOCOL_VERSION

@@ -33,7 +33,7 @@ abstract class BaseObject {
      *
      */
     fun serialize(): ByteArray {
-        return Cbor.encode(this.toJSON())
+        return Cbor.encode(this.toObject())
     }
 
     /**

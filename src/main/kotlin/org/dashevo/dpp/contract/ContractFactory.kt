@@ -8,19 +8,20 @@
 package org.dashevo.dpp.contract
 
 import org.dashevo.dpp.Factory
+import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.Entropy
 import org.dashevo.dpp.util.HashUtils
 
 class ContractFactory : Factory() {
 
-    fun createDataContract(ownerId: String, rawDataContract: MutableMap<String, Any?>): DataContract {
+    fun createDataContract(ownerId: ByteArray, rawDataContract: MutableMap<String, Any?>): DataContract {
 
         val dataContractEntropy = Entropy.generate()
         val dataContractId = HashUtils.generateDataContractId(ownerId, dataContractEntropy)
 
-        val dataContract = DataContract(dataContractId,
-                ownerId,
+        val dataContract = DataContract(Identifier.from(dataContractId),
+                Identifier(ownerId),
                 DataContract.PROTOCOL_VERSION,
                 DataContract.SCHEMA,
                 rawDataContract["documents"] as MutableMap<String, Any?>)

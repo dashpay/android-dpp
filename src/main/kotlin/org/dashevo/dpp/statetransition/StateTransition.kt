@@ -49,11 +49,11 @@ abstract class StateTransition(var signature: String?,
 
     constructor(type: Types, protocolVersion: Int = 0) : this(null, type, protocolVersion)
 
-    override fun toJSON(): MutableMap<String, Any?> {
-        return toJSON(false)
+    override fun toObject(): MutableMap<String, Any?> {
+        return toObject(false, false)
     }
 
-    open fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
+    open fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
         val json = hashMapOf<String, Any?>()
         json["protocolVersion"] = protocolVersion
         json["type"] = type.value
@@ -61,6 +61,14 @@ abstract class StateTransition(var signature: String?,
             json["signature"] = signature
         }
         return json
+    }
+
+    override fun toJSON(): MutableMap<String, Any?> {
+        return toJSON(false)
+    }
+
+    open fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
+        return toObject(skipSignature, true)
     }
 
     fun serialize(skipSignature: Boolean): ByteArray {

@@ -6,6 +6,8 @@
  */
 package org.dashevo.dpp.document
 
+import org.dashevo.dpp.identifier.Identifier
+
 abstract class DocumentTransition {
 
     enum class Action(val value: Int) {
@@ -31,16 +33,40 @@ abstract class DocumentTransition {
     }
 
     abstract val action: Action
-    var dataContractId: String
+    val id: Identifier
+    val type: String
+    var dataContractId: Identifier
 
     constructor(rawStateTransition: MutableMap<String, Any?>) {
-        dataContractId = rawStateTransition["\$dataContractId"] as String
+        type = rawStateTransition["\$type"] as String
+        id = Identifier.from(rawStateTransition["\$id"])
+        dataContractId = Identifier.from(rawStateTransition["\$dataContractId"]!!)
+    }
+
+    fun toObject(): Map<String, Any> {
+        return toObject(false)
+    }
+
+    open fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any> {
+        val map = hashMapOf<String, Any>(
+                "\$id" to id,
+                "\$type" to type,
+            "\$action" to action.value,
+            "\$dataContractId" to dataContractId
+        )
+
+        if (!skipIdentifierConversion) {
+            map["\$id"] = id.toBuffer()
+            map["\$dataContractId"] = dataContractId.toBuffer()
+        }
+
+        return map
     }
 
     open fun toJSON(): Map<String, Any> {
-        var json = HashMap<String, Any>()
-        json["\$action"] = action.value
-        json["\$dataContractId"] = dataContractId
+        var json = toObject(true)
+        json["\$id"] = id.toString()
+        json["\$dataContractId"] = dataContractId.toString()
         return json
     }
 }

@@ -7,57 +7,58 @@
 package org.dashevo.dpp.document
 
 import org.bitcoinj.core.Base58
+import org.dashevo.dpp.identifier.Identifier
 import java.lang.IllegalStateException
 import kotlin.collections.HashMap
 
 
-open class DocumentCreateTransition : DocumentTransition {
+open class DocumentCreateTransition : DataDocumentTransition {
 
     companion object {
         val INITIAL_REVISION = 1
     }
 
     override val action = Action.CREATE
-    var id: String
-    var documentType: String
     var entropy: ByteArray
-    var data: Map<String, Any?>
     var createdAt: Long?
     var updatedAt: Long?
 
     constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
-        val data = HashMap(rawStateTransition)
 
-        this.id = data.remove("\$id") as String
-        this.documentType = data.remove("\$type") as String
-        val entropy = data.remove("\$entropy")
+        val entropy = rawStateTransition["\$entropy"]
         this.entropy  = when(entropy) {
             is ByteArray -> entropy
             is String -> Base58.decode(entropy)
             else -> throw IllegalStateException("entropy is not a ByteArray or String")
         }
-        data.remove("\$action")
-        data.remove("\$dataContractId") as String
-        this.createdAt = data.remove("\$createdAt")?.let { it as Long }
-        this.updatedAt = data.remove("\$updatedAt")?.let { it as Long }
 
-        this.data = data
+        this.createdAt = rawStateTransition["\$createdAt"]?.let { it as Long }
+        this.updatedAt = rawStateTransition["\$updatedAt"]?.let { it as Long }
     }
 
-    override fun toJSON(): Map<String, Any> {
+    override fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any> {
+        val map = super.toObject(skipIdentifierConversion)
+
+        map["\$entropy"] = entropy
+
+        createdAt?.let { map["\$createdAt"] = it }
+        updatedAt?.let { map["\$updatedAt"] = it }
+
+        return map
+    }
+
+    //TODO: will this be covered by super?
+
+    /*override fun toJSON(): Map<String, Any> {
         var json = super.toJSON() as MutableMap<String, Any>
         json["\$id"] = id
         json["\$type"] = documentType
         json["\$entropy"] = entropy
 
-        data.keys.iterator().forEach {
-            data[it]?.let { it1 -> json[it] = it1 }
-        }
 
-        
         createdAt?.let { json["\$createdAt"] = it }
         updatedAt?.let { json["\$updatedAt"] = it }
 
         return json
-    }
+    }*/
 }

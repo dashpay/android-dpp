@@ -26,7 +26,7 @@ class IdentityTest {
 
         assertEquals("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", identity.id)
         assertEquals(2, identity.publicKeys.size)
-        assertEquals("AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di", identity.publicKeys[0].data)
+        assertEquals("AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di", identity.publicKeys[0].data.toBase64())
     }
 
     @Test
@@ -43,7 +43,7 @@ class IdentityTest {
         val factoryCreatedIdentity = factory.create("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", publicKeys, 0, Identity.PROTOCOL_VERSION)
 
         assertEquals(fixtureCreatedIdentity.id, factoryCreatedIdentity.id)
-        assertEquals(fixtureCreatedIdentity.publicKeys[0].data, factoryCreatedIdentity.publicKeys[0].data)
+        assertArrayEquals(fixtureCreatedIdentity.publicKeys[0].data, factoryCreatedIdentity.publicKeys[0].data)
         assertEquals(fixtureCreatedIdentity.getPublicKeyById(2), factoryCreatedIdentity.getPublicKeyById(2))
 
     }
@@ -134,14 +134,15 @@ class IdentityTest {
 
         assertFalse(stateTransition.verifySignature(incorrectIdentityKey))
 
-        incorrectIdentityKey.id = 8
-        assertThrows(PublicKeyMismatchError::class.java, Executable { stateTransition.verifySignature(incorrectIdentityKey) })
+        val incorrectIdentityKeyTwo = IdentityPublicKey(8, IdentityPublicKey.TYPES.ECDSA_SECP256K1, incorrectPublicKey)
+
+        assertThrows(PublicKeyMismatchError::class.java, Executable { stateTransition.verifySignature(incorrectIdentityKeyTwo) })
     }
 
     @Test
     fun verifySignedIdentityTest() {
         val identityST = Fixtures.getIdentityCreateSTSignedFixture()
-        assertEquals("A6AJAfRJyKuNoNvt33ygYfYh6OIYA8tF1s2BQcRA9RNg", identityST.publicKeys[0].data)
+        assertEquals("A6AJAfRJyKuNoNvt33ygYfYh6OIYA8tF1s2BQcRA9RNg", identityST.publicKeys[0].data.toBase64())
         //TODO: fix the test. after removing isEnabled, this check failed because the test data is no longer valid
         //assertTrue(identityST.verifySignatureByPublicKey(ECKey.fromPublicOnly(HashUtils.byteArrayFromString(identityST.publicKeys[0].data))))
     }
