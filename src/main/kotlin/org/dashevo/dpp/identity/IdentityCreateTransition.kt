@@ -6,38 +6,36 @@
  */
 package org.dashevo.dpp.identity
 
-import org.dashevo.dpp.toBase58
+import org.bitcoinj.core.Sha256Hash
+import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.util.HashUtils
 
 class IdentityCreateTransition : IdentityStateTransition {
 
-    var identityId: String = "" // base58
-    var lockedOutPoint: String?  // base64
-        set(value) {
-            field = value
-            identityId = HashUtils.toHash(HashUtils.fromBase64(lockedOutPoint!!)).toBase58()
-        }
-    var publicKeys: MutableList<IdentityPublicKey>
+    val identityId: Identifier // base58
+    val lockedOutPoint: ByteArray  // base64
+    val publicKeys: MutableList<IdentityPublicKey>
 
-    constructor(lockedOutPoint: String?,
+    constructor(lockedOutPoint: ByteArray,
                  publicKeys: List<IdentityPublicKey>,
                  protocolVersion: Int = 0)
     : super(Types.IDENTITY_CREATE, protocolVersion) {
         this.lockedOutPoint = lockedOutPoint
+        this.identityId = Identifier.from(Sha256Hash.twiceOf(lockedOutPoint))
         this.publicKeys = publicKeys.toMutableList()
     }
 
     constructor(rawStateTransition: MutableMap<String, Any?>)
             : super(rawStateTransition) {
-        lockedOutPoint = rawStateTransition["lockedOutPoint"] as String
+        lockedOutPoint = HashUtils.byteArrayfromBase64orByteArray(rawStateTransition["lockedOutPoint"]!!)
         publicKeys = (rawStateTransition["publicKeys"] as List<Any>).map { entry -> IdentityPublicKey(entry as MutableMap<String, Any>) }.toMutableList()
-        identityId = HashUtils.toHash(HashUtils.fromBase64(lockedOutPoint!!)).toBase64()
+        identityId = Identifier.from(Sha256Hash.twiceOf(lockedOutPoint))
     }
 
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
         var map = super.toObject(skipSignature, skipIdentifiersConversion)
-        map["lockedOutPoint"] = lockedOutPoint as String
+        map["lockedOutPoint"] = lockedOutPoint
         map["publicKeys"] = publicKeys.map { it.toObject() }
         map.remove("signaturePublicKeyId")
         return map
@@ -45,7 +43,7 @@ class IdentityCreateTransition : IdentityStateTransition {
 
     override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
         var json = super.toJSON(skipSignature)
-        json["lockedOutPoint"] = lockedOutPoint as String
+        json["lockedOutPoint"] = lockedOutPoint.toBase64()
         json["publicKeys"] = publicKeys.map { it.toJSON() }
         json.remove("signaturePublicKeyId")
         return json
@@ -55,7 +53,7 @@ class IdentityCreateTransition : IdentityStateTransition {
         publicKeys.addAll(identityPublicKeys)
     }
 
-    fun getOwnerId() : String {
+    fun getOwnerId() : Identifier {
         return identityId
     }
 }

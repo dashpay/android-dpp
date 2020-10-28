@@ -6,6 +6,7 @@
  */
 package org.dashevo.dpp.identity
 
+import org.bitcoinj.core.Base58
 import org.bitcoinj.core.ECKey
 import org.dashevo.dpp.Fixtures
 import org.dashevo.dpp.statetransition.StateTransition
@@ -88,7 +89,7 @@ class IdentityTest {
     fun validateIdentityCreateSTDataFactory() {
         val privateKey = ECKey.fromPrivate(HashUtils.fromHex("af432c476f65211f45f48f1d42c9c0b497e56696aa1736b40544ef1a496af837"))
 
-        val stateTransition = IdentityCreateTransition("azW1UgBiB0CmdphN6of4DbT91t0Xv3/c3YUV4CnoV/kAAAAA",
+        val stateTransition = IdentityCreateTransition(HashUtils.fromBase64("azW1UgBiB0CmdphN6of4DbT91t0Xv3/c3YUV4CnoV/kAAAAA"),
                 listOf(IdentityPublicKey(0, IdentityPublicKey.TYPES.ECDSA_SECP256K1, "w8x/v8UvcQyUFJf9AYdsGJFx6iJ0WPUBr8s4opfWW0"))
         )
         stateTransition.signByPrivateKey(privateKey)

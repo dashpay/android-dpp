@@ -10,8 +10,9 @@ package org.dashevo.dpp.identity
 import com.google.common.base.Preconditions
 import org.bitcoinj.core.TransactionOutPoint
 import org.dashevo.dpp.BaseObject
+import org.dashevo.dpp.identifier.Identifier
 
-class Identity(var id: String,
+class Identity(var id: Identifier,
                var balance: Long,
                var publicKeys: List<IdentityPublicKey>,
                val revision: Int,
@@ -23,13 +24,13 @@ class Identity(var id: String,
 
     var lockedOutpoint: TransactionOutPoint? = null
 
-    constructor(rawIdentity: Map<String, Any?>) : this(rawIdentity["id"] as String,
+    constructor(rawIdentity: Map<String, Any?>) : this(Identifier.from(rawIdentity["id"]),
             rawIdentity["balance"].toString().toLong(),
             (rawIdentity["publicKeys"] as List<Any>).map { IdentityPublicKey(it as Map<String, Any>) },
             rawIdentity["revision"] as Int,
             rawIdentity["protocolVersion"] as Int)
 
-    constructor(id: String, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int)
+    constructor(id: Identifier, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int)
             : this(id, 0, publicKeys, revision, protocolVersion)
 
     fun getPublicKeyById(keyId: Int): IdentityPublicKey? {
