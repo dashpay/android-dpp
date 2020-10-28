@@ -152,7 +152,7 @@ class IdentityTest {
     fun identityRoundTrip() {
         val fromFixture = Fixtures.getIdentityFixture()
 
-        val serialized = fromFixture.serialize()
+        val serialized = fromFixture.toBuffer()
 
         val fromSerialized = IdentityFactory().createFromSerialized(serialized);
 

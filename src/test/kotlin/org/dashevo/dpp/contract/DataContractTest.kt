@@ -78,11 +78,11 @@ class DataContractTest {
         val fromRaw = factory.createFromObject(rawContract)
 
         val fromSerialized = factory.createFromSerialized(serializedData)
-        val fromRoundTrip = factory.createFromSerialized(fromRaw.serialize())
+        val fromRoundTrip = factory.createFromSerialized(fromRaw.toBuffer())
         assertEquals(fromRaw.toJSON(), fromRoundTrip.toJSON())
         assertEquals(fromRaw.toJSON(), fromSerialized.toJSON())
-        assertEquals(fromRaw.serialize().toHexString(), fromRoundTrip.serialize().toHexString())
-        assertEquals(fromRaw.serialize().toHexString(), fromSerialized.serialize().toHexString())
+        assertEquals(fromRaw.toBuffer().toHexString(), fromRoundTrip.toBuffer().toHexString())
+        assertEquals(fromRaw.toBuffer().toHexString(), fromSerialized.toBuffer().toHexString())
     }
 
     @Test

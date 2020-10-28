@@ -32,7 +32,7 @@ abstract class BaseObject {
      * Return serialized object
      *
      */
-    fun serialize(): ByteArray {
+    fun toBuffer(): ByteArray {
         return Cbor.encode(this.toObject())
     }
 
@@ -41,6 +41,6 @@ abstract class BaseObject {
      *
      */
     open fun hash(): ByteArray {
-        return HashUtils.toHash(this.serialize())
+        return HashUtils.toHash(toBuffer())
     }
 }
