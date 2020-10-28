@@ -40,11 +40,7 @@ abstract class BaseObject {
      * Return the double SHA256 hash of the serialized object
      *
      */
-    fun hash(): String {
-        return hashAsByteArray().toHexString()
-    }
-
-    open fun hashAsByteArray(): ByteArray {
+    open fun hash(): ByteArray {
         return HashUtils.toHash(this.serialize())
     }
 }

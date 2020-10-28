@@ -63,7 +63,7 @@ class IdentityPublicKey(val id: Int,
     }
 
     override fun hashCode(): Int {
-        val hash = hashAsByteArray()
+        val hash = hash()
         return Utils.readUint32(hash, 0).toInt()
     }
 
@@ -71,10 +71,10 @@ class IdentityPublicKey(val id: Int,
         return ECKey.fromPublicOnly(data)
     }
 
-    override fun hashAsByteArray(): ByteArray {
+    override fun hash(): ByteArray {
         if (data.isEmpty()) {
             throw EmptyPublicKeyDataException()
         }
-        return super.hashAsByteArray()
+        return super.hash()
     }
 }
