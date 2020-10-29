@@ -20,6 +20,7 @@ data class Identifier(private val buffer: ByteArray) {
     companion object {
         const val MEDIA_TYPE = "application/x.dash.dpp.identifier"
 
+        @JvmStatic
         fun from(any: Any?, encoding: String = "base58"): Identifier {
             return when (any) {
                 is String -> {
@@ -37,10 +38,12 @@ data class Identifier(private val buffer: ByteArray) {
             }
         }
 
+        @JvmStatic
         fun from(buffer: ByteArray): Identifier {
             return Identifier(buffer)
         }
 
+        @JvmStatic
         fun from(hash: Sha256Hash): Identifier {
             return Identifier(hash.bytes)
         }
