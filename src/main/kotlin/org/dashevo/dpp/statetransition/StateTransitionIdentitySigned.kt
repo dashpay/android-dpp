@@ -18,14 +18,14 @@ import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.util.HashUtils
 
 abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
-                                             signature: String?,
+                                             signature: ByteArray?,
                                              type: Types,
                                              protocolVersion: Int = 0)
     : StateTransition(signature, type, protocolVersion) {
 
     constructor(rawStateTransition: MutableMap<String, Any?>) :
             this(rawStateTransition["signaturePublicKeyId"] as? Int,
-                    rawStateTransition["signature"] as? String,
+                    rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) },
                     Types.getByCode(rawStateTransition["type"] as Int),
                     if (rawStateTransition.containsKey("protocolVersion"))
                         rawStateTransition["protocolVersion"] as Int

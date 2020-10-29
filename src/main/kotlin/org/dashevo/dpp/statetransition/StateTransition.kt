@@ -10,12 +10,13 @@ package org.dashevo.dpp.statetransition
 import org.bitcoinj.core.*
 import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.statetransition.errors.StateTransitionIsNotSignedError
+import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.toBase64Padded
 import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
 import java.lang.Exception
 
-abstract class StateTransition(var signature: String?,
+abstract class StateTransition(var signature: ByteArray?,
                                val type: Types,
                                var protocolVersion: Int = CURRENT_PROTOCOL_VERSION)
     : BaseObject() {
@@ -42,7 +43,7 @@ abstract class StateTransition(var signature: String?,
     }
 
     constructor(rawStateTransition: MutableMap<String, Any?>) :
-            this(rawStateTransition["signature"] as? String,
+            this(rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) },
                     Types.getByCode(rawStateTransition["type"] as Int),
                     rawStateTransition["protocolVersion"] as Int)
 
@@ -68,18 +69,20 @@ abstract class StateTransition(var signature: String?,
     }
 
     open fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
-        return toObject(skipSignature, true)
+        val json = toObject(skipSignature, true)
+        signature?.let { json["signature"] = it.toBase64Padded() }
+        return json
     }
 
-    fun serialize(skipSignature: Boolean): ByteArray {
-        return Cbor.encode(this.toJSON(skipSignature))
+    fun toBuffer(skipSignature: Boolean): ByteArray {
+        return Cbor.encode(toObject(skipSignature, false))
     }
 
     fun signByPrivateKey(privateKey: ECKey) {
-        val data = serialize(true)
+        val data = toBuffer(true)
         val hash = HashUtils.toSha256Hash(data)
 
-        signature = privateKey.signHash(hash).toBase64Padded()
+        signature = privateKey.signHash(hash)
     }
 
     fun verifySignatureByPublicKey(publicKey: ECKey): Boolean {
@@ -87,13 +90,11 @@ abstract class StateTransition(var signature: String?,
             throw StateTransitionIsNotSignedError(this)
         }
 
-        val signatureBuffer = HashUtils.fromBase64(signature!!)
-
-        val data = serialize(true)
+        val data = toBuffer(true)
         val hash = HashUtils.toSha256Hash(data)
 
         return try {
-            val pubkeyFromSig = ECKey.signedMessageToKey(hash, signatureBuffer)
+            val pubkeyFromSig = ECKey.signedMessageToKey(hash, signature)
             pubkeyFromSig.pubKey.contentEquals(publicKey.pubKey)
         } catch (e: Exception) {
             false
@@ -101,7 +102,7 @@ abstract class StateTransition(var signature: String?,
     }
 
     fun calculateFee(): Long {
-        val serializedStateTransition = serialize(skipSignature = true)
+        val serializedStateTransition = toBuffer(skipSignature = true)
         return serializedStateTransition.size * PRICE_PER_BYTE
     }
 }

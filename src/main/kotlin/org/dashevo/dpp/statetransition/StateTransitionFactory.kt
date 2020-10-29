@@ -15,6 +15,7 @@ import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.identity.IdentityCreateTransition
 import org.dashevo.dpp.identity.IdentityTopupTransition
 import org.dashevo.dpp.util.Cbor
+import org.dashevo.dpp.util.HashUtils
 
 class StateTransitionFactory {
 
@@ -41,7 +42,7 @@ class StateTransitionFactory {
             }
         }
 
-        stateTransition.signature = rawStateTransition["signature"] as String
+        stateTransition.signature = rawStateTransition["signature"]?. let { HashUtils.byteArrayfromBase64orByteArray(it) }
         if(rawStateTransition.containsKey("signaturePublicKeyId")) {
             stateTransition.signaturePublicKeyId = rawStateTransition["signaturePublicKeyId"] as Int
         } else {

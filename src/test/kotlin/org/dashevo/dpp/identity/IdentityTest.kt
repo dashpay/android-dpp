@@ -109,7 +109,7 @@ class IdentityTest {
 
         val identityPublicKey = IdentityPublicKey(publicKeyId, IdentityPublicKey.TYPES.ECDSA_SECP256K1, publicKey)
 
-        val serializedDataBytes = stateTransition.serialize(false)
+        val serializedDataBytes = stateTransition.toBuffer(false)
 
         val hash = stateTransition.hash()
 

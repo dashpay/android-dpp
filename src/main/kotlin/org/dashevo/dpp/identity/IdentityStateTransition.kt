@@ -11,7 +11,7 @@ import org.dashevo.dpp.statetransition.StateTransitionIdentitySigned
 abstract class IdentityStateTransition : StateTransitionIdentitySigned {
 
     constructor(signaturePublicKeyId: Int?,
-                              signature: String?,
+                              signature: ByteArray?,
                               type: Types, protocolVersion: Int)
     : super (signaturePublicKeyId, signature, type, protocolVersion)
 
