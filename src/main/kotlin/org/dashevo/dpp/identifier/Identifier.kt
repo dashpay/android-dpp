@@ -34,7 +34,7 @@ data class Identifier(private val buffer: ByteArray) {
                 }
                 is Identifier -> any
                 is Sha256Hash -> Identifier(any.bytes)
-                else -> throw IllegalStateException("any is not String or ByteArray")
+                else -> throw IllegalStateException("any is not String, ByteArray, Identifier or Sha256Hash")
             }
         }
 
@@ -47,6 +47,11 @@ data class Identifier(private val buffer: ByteArray) {
         fun from(hash: Sha256Hash): Identifier {
             return Identifier(hash.bytes)
         }
+
+        @JvmStatic
+        fun fromList(bufferList: List<Any>, encoding: String = "base58"): List<Identifier> {
+            return bufferList.map { from(it, encoding) }
+        }
     }
 
     init {
@@ -57,6 +62,10 @@ data class Identifier(private val buffer: ByteArray) {
 
     fun toBuffer(): ByteArray {
         return buffer
+    }
+
+    fun toSha256Hash() : Sha256Hash {
+        return Sha256Hash.wrap(buffer)
     }
 
     fun encodeCBOR() : ByteArray {
