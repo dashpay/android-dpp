@@ -13,7 +13,7 @@ class ContractStateTransition : StateTransitionIdentitySigned {
 
     constructor(dataContract: DataContract) : super(Types.DATA_CONTRACT_CREATE) {
         this.dataContract = dataContract
-        this.entropy = Entropy.generate()
+        this.entropy = dataContract.entropy!!
     }
 
     constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
