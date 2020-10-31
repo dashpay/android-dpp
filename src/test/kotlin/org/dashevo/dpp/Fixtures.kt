@@ -112,7 +112,7 @@ object Fixtures {
     }
 
     fun getDataContractSTSignedFixture() : ContractStateTransition {
-        val json = File("src/test/resources/data/datacontract-transition.json").readText()
+        val json = File("src/test/resources/data/dpns-contract-transition.json").readText()
         val jsonObject = JSONObject(json)
         val rawContractST = jsonObject.toMap()
 
@@ -120,7 +120,7 @@ object Fixtures {
     }
 
     fun getDataContractSTSignedFixtureTwo() : ContractStateTransition {
-        val json = File("src/test/resources/data/datacontract-transition.json").readText()
+        val json = File("src/test/resources/data/dpns-contract-transition.json").readText()
         val jsonObject = JSONObject(json)
         val rawContractST = jsonObject.toMap()
 

@@ -3,8 +3,7 @@ package org.dashevo.dpp.contract
 import org.dashevo.dpp.statetransition.StateTransitionIdentitySigned
 import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.util.Entropy
-import org.dashevo.dpp.util.HashUtils
-import org.dashevo.dpp.util.HashUtils.byteArrayfromBase58orByteArray
+import org.dashevo.dpp.util.HashUtils.byteArrayfromBase64orByteArray
 
 class ContractStateTransition : StateTransitionIdentitySigned {
 
@@ -13,12 +12,16 @@ class ContractStateTransition : StateTransitionIdentitySigned {
 
     constructor(dataContract: DataContract) : super(Types.DATA_CONTRACT_CREATE) {
         this.dataContract = dataContract
+
+        if (dataContract.entropy == null) {
+            dataContract.entropy = Entropy.generate()
+        }
         this.entropy = dataContract.entropy!!
     }
 
     constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
         dataContract = DataContract(rawStateTransition["dataContract"] as MutableMap<String, Any?>)
-        entropy = byteArrayfromBase58orByteArray(rawStateTransition["entropy"]!!)
+        entropy = byteArrayfromBase64orByteArray(rawStateTransition["entropy"]!!)
     }
 
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {

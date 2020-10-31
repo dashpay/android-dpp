@@ -8,11 +8,10 @@
 package org.dashevo.dpp.contract
 import org.dashevo.dpp.Fixtures
 import org.dashevo.dpp.toHexString
-import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
 import org.dashevo.dpp.util.HashUtils.fromHex
-import org.dashevo.dpp.util.HashUtilsTest
 import org.json.JSONObject
+import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -102,8 +101,8 @@ class DataContractTest {
     fun verifyLoadingContractFromFile() {
         val dataContractST = Fixtures.getDataContractSTSignedFixture()
         val dataContractSTTwo = Fixtures.getDataContractSTSignedFixtureTwo()
-        assertEquals("EzLBmQdQXYMaoeXWNaegK18iaaCDShitN3s14US3DunM", dataContractST.dataContract.id)
-        assertEquals(dataContractST.signature, dataContractSTTwo.signature)
+        assertEquals("DXZ1fguWy8MRpPNEpGSGMPJ5g4U1fR2BjsYcYd6imina", dataContractST.dataContract.id.toString())
+        assertArrayEquals(dataContractST.signature, dataContractSTTwo.signature)
     }
 
 //    @Test
