@@ -35,7 +35,7 @@ class ContractFactory : Factory() {
         return DataContract(rawContract)
     }
 
-    fun createFromSerialized(payload: ByteArray, options: Options = Options()): DataContract {
+    fun createFromBuffer(payload: ByteArray, options: Options = Options()): DataContract {
         val rawDocument = Cbor.decode(payload).toMutableMap()
         return createFromObject(rawDocument, options)
     }

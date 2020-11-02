@@ -57,7 +57,7 @@ class StateTransitionFactory {
         return createStateTransition(rawStateTransition)
     }
 
-    fun createFromSerialized(payload: ByteArray, options: Options = Options()): StateTransition {
+    fun createFromBuffer(payload: ByteArray, options: Options = Options()): StateTransition {
         val rawStateTransition = Cbor.decode(payload).toMutableMap()
         return createFromObject(rawStateTransition, options)
     }

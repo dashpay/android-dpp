@@ -154,7 +154,7 @@ class IdentityTest {
 
         val serialized = fromFixture.toBuffer()
 
-        val fromSerialized = IdentityFactory().createFromSerialized(serialized);
+        val fromSerialized = IdentityFactory().createFromBuffer(serialized);
 
         assertEquals(fromFixture.toJSON(), fromSerialized.toJSON())
     }

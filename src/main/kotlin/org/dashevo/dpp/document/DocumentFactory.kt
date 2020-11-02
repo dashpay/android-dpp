@@ -55,14 +55,10 @@ class DocumentFactory : Factory() {
         return Document(rawDocument)
     }
 
-    fun createFromSerialized(payload: ByteArray, options: Options = Options()): Document {
+    fun createFromBuffer(payload: ByteArray, options: Options = Options()): Document {
         val rawDocument = Cbor.decode(payload).toMutableMap()
         return createFromObject(rawDocument, options)
     }
-    
-    /*fun createStateTransition(documents: List<Document>) : DocumentsStateTransition {
-        return DocumentsStateTransition(documents)
-    }*/
 
     fun createStateTransition(documents: Map<String, List<Document>?>): DocumentsBatchTransition {
         // Check no wrong actions were supplied
@@ -106,7 +102,7 @@ class DocumentFactory : Factory() {
         val deleteDocuments = documents["delete"] ?: listOf()
 
         val rawDocumentCreateTransitions = createDocuments.map {
-            if (it.revision !== DocumentCreateTransition.INITIAL_REVISION) {
+            if (it.revision != DocumentCreateTransition.INITIAL_REVISION) {
                 throw InvalidInitialRevisionError(it)
             }
 

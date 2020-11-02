@@ -31,7 +31,7 @@ class IdentityFactory : Factory() {
         return Identity(rawIdentity)
     }
 
-    fun createFromSerialized(payload: ByteArray, options: Options = Options()): Identity {
+    fun createFromBuffer(payload: ByteArray, options: Options = Options()): Identity {
         val rawIdentity = Cbor.decode(payload).toMutableMap()
         return createFromObject(rawIdentity, options)
     }
