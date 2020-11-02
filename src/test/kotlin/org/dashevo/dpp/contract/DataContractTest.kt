@@ -58,7 +58,7 @@ class DataContractTest {
     @Test
     fun applyStateTransition() {
         val dataContract = Fixtures.getDataContractFixtures()
-        val stateTransition = ContractStateTransition(dataContract)
+        val stateTransition = DataContractCreateTransition(dataContract)
 
         val result =  factory.createStateTransition(dataContract)
         result.entropy = stateTransition.entropy!!

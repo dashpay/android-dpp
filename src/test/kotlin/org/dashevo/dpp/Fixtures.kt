@@ -1,8 +1,7 @@
 package org.dashevo.dpp
 
-import org.bitcoinj.core.Sha256Hash
 import org.dashevo.dpp.contract.DataContract
-import org.dashevo.dpp.contract.ContractStateTransition
+import org.dashevo.dpp.contract.DataContractCreateTransition
 import org.dashevo.dpp.document.Document
 import org.dashevo.dpp.document.DocumentFactory
 import org.dashevo.dpp.document.DocumentTransition
@@ -111,20 +110,20 @@ object Fixtures {
         return IdentityCreateTransition(rawIdentity)
     }
 
-    fun getDataContractSTSignedFixture() : ContractStateTransition {
+    fun getDataContractSTSignedFixture() : DataContractCreateTransition {
         val json = File("src/test/resources/data/dpns-contract-transition.json").readText()
         val jsonObject = JSONObject(json)
         val rawContractST = jsonObject.toMap()
 
-        return ContractStateTransition(rawContractST)
+        return DataContractCreateTransition(rawContractST)
     }
 
-    fun getDataContractSTSignedFixtureTwo() : ContractStateTransition {
+    fun getDataContractSTSignedFixtureTwo() : DataContractCreateTransition {
         val json = File("src/test/resources/data/dpns-contract-transition.json").readText()
         val jsonObject = JSONObject(json)
         val rawContractST = jsonObject.toMap()
 
-        return StateTransitionFactory().createStateTransition(rawContractST) as ContractStateTransition
+        return StateTransitionFactory().createStateTransition(rawContractST) as DataContractCreateTransition
     }
 
     fun getDocumentsSTSignedFixture() : DocumentsBatchTransition {

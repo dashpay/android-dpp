@@ -40,8 +40,8 @@ class ContractFactory : Factory() {
         return createFromObject(rawDocument, options)
     }
 
-    fun createStateTransition(dataContract: DataContract) : ContractStateTransition {
-        return ContractStateTransition(dataContract)
+    fun createStateTransition(dataContract: DataContract) : DataContractCreateTransition {
+        return DataContractCreateTransition(dataContract)
     }
 
 }

@@ -5,7 +5,7 @@ import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.util.Entropy
 import org.dashevo.dpp.util.HashUtils.byteArrayfromBase64orByteArray
 
-class ContractStateTransition : StateTransitionIdentitySigned {
+class DataContractCreateTransition : StateTransitionIdentitySigned {
 
     var dataContract: DataContract
     var entropy: ByteArray
