@@ -8,11 +8,12 @@
 package org.dashevo.dpp.document
 
 import org.dashevo.dpp.BaseObject
+import org.dashevo.dpp.contract.DataContract
 import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.toBase64
 import kotlin.collections.HashMap
 
-class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
+class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract) : BaseObject() {
 
     companion object {
         const val PROTOCOL_VERSION = 0
@@ -38,7 +39,7 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
             }
         }
     }
-
+    val dataContract: DataContract
     var id: Identifier
     var type: String
     var dataContractId: Identifier
@@ -51,6 +52,7 @@ class Document(rawDocument: MutableMap<String, Any?>) : BaseObject() {
     var protocolVersion: Int
 
     init {
+        this.dataContract = dataContract
         val data = HashMap(rawDocument)
 
         this.id = Identifier.from(data.remove("\$id")!!)
