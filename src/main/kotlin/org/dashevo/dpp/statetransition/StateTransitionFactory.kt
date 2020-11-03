@@ -7,6 +7,8 @@
 
 package org.dashevo.dpp.statetransition
 
+import org.dashevo.dpp.Factory
+import org.dashevo.dpp.StateRepository
 import org.dashevo.dpp.contract.ContractFactory
 import org.dashevo.dpp.contract.DataContractCreateTransition
 import org.dashevo.dpp.document.DocumentsBatchTransition
@@ -17,14 +19,14 @@ import org.dashevo.dpp.identity.IdentityTopupTransition
 import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
 
-class StateTransitionFactory {
+class StateTransitionFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 
     fun createStateTransition(rawStateTransition: MutableMap<String, Any?>, options: Options = Options()): StateTransition {
         var stateTransition: StateTransitionIdentitySigned
         when (StateTransition.Types.getByCode(rawStateTransition["type"] as Int)) {
             StateTransition.Types.DATA_CONTRACT_CREATE -> {
                 val rawDataContract = rawStateTransition["dataContract"] as MutableMap<String, Any?>
-                val dataContract = ContractFactory().createDataContract(Identifier.from(rawDataContract["ownerId"]).toBuffer(), rawDataContract)
+                val dataContract = ContractFactory(stateRepository).createDataContract(Identifier.from(rawDataContract["ownerId"]).toBuffer(), rawDataContract)
 
                 stateTransition = DataContractCreateTransition(dataContract)
             }

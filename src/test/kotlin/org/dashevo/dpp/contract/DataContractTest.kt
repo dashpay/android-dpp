@@ -7,6 +7,7 @@
 
 package org.dashevo.dpp.contract
 import org.dashevo.dpp.Fixtures
+import org.dashevo.dpp.StateRepositoryMock
 import org.dashevo.dpp.toHexString
 import org.dashevo.dpp.util.HashUtils
 import org.dashevo.dpp.util.HashUtils.fromHex
@@ -19,7 +20,8 @@ import java.io.File
 class DataContractTest {
 
     companion object {
-        val factory = ContractFactory()
+        val stateRepository = StateRepositoryMock()
+        val factory = ContractFactory(stateRepository)
     }
 
     @Test

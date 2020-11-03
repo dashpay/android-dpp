@@ -8,6 +8,7 @@
 package org.dashevo.dpp.document
 
 import org.dashevo.dpp.Factory
+import org.dashevo.dpp.StateRepository
 import org.dashevo.dpp.contract.DataContract
 import org.dashevo.dpp.document.errors.InvalidActionNameError
 import org.dashevo.dpp.document.errors.InvalidInitialRevisionError
@@ -20,7 +21,7 @@ import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.Entropy
 import org.dashevo.dpp.util.HashUtils
 
-class DocumentFactory : Factory() {
+class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 
     fun create(dataContract: DataContract, ownerId: Identifier, type: String, data: Map<String, Any?> = mapOf()) : Document {
         if (!dataContract.isDocumentDefined(type)) {
@@ -46,13 +47,15 @@ class DocumentFactory : Factory() {
             data[key]?.let { rawDocument.put(key, it) }
         }
 
-        val document = Document(rawDocument)
+        val document = Document(rawDocument, dataContract)
         document.entropy = documentEntropy
         return document
     }
 
     fun createFromObject(rawDocument: MutableMap<String, Any?>, options: Options = Options()): Document {
-        return Document(rawDocument)
+        val dataContractId = Identifier.from(rawDocument["\$dataContractId"])
+        val dataContract = stateRepository.fetchDataContract(dataContractId)
+        return Document(rawDocument, dataContract!!)
     }
 
     fun createFromBuffer(payload: ByteArray, options: Options = Options()): Document {

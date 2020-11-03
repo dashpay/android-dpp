@@ -6,6 +6,6 @@
  */
 package org.dashevo.dpp
 
-abstract class Factory {
+abstract class Factory (val stateRepository: StateRepository) {
     data class Options(val skipValidation: Boolean = false)
 }

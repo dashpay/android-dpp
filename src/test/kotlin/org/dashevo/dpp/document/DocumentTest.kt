@@ -7,12 +7,15 @@
 package org.dashevo.dpp.document
 
 import org.dashevo.dpp.Fixtures
+import org.dashevo.dpp.StateRepositoryMock
 import org.dashevo.dpp.identifier.Identifier
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class DocumentTest {
+
+    val stateRepository = StateRepositoryMock()
 
     @Test
     fun testDocument() {
@@ -25,7 +28,7 @@ class DocumentTest {
 
     @Test
     fun testDocumentFactory() {
-        var factory = DocumentFactory()
+        var factory = DocumentFactory(stateRepository)
 
         val contract = Fixtures.getDataContractFixtures()
 
@@ -46,7 +49,7 @@ class DocumentTest {
         val batchTransition = hashMapOf(
                 "create" to documents
         )
-        val result = DocumentFactory().createStateTransition(batchTransition)
+        val result = DocumentFactory(stateRepository).createStateTransition(batchTransition)
         //assertEquals(result.documents, documents)
     }
 

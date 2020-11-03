@@ -6,7 +6,7 @@ import org.dashevo.dpp.identity.IdentityFactory
 import org.dashevo.dpp.validation.JsonSchemaValidator
 import org.dashevo.dpp.validation.Validator
 
-class DashPlatformProtocol(val dataProvider: DataProvider) {
+class DashPlatformProtocol(val stateRepository: StateRepository) {
     lateinit var document: DocumentFactory
     lateinit var dataContract: ContractFactory
     lateinit var identity: IdentityFactory
@@ -16,8 +16,8 @@ class DashPlatformProtocol(val dataProvider: DataProvider) {
     }
 
     private fun initialize(validator: Validator) {
-        document = DocumentFactory()
-        dataContract = ContractFactory()
-        identity = IdentityFactory()
+        document = DocumentFactory(stateRepository)
+        dataContract = ContractFactory(stateRepository)
+        identity = IdentityFactory(stateRepository)
     }
 }

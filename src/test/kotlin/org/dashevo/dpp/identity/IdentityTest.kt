@@ -9,6 +9,7 @@ package org.dashevo.dpp.identity
 import org.bitcoinj.core.Base58
 import org.bitcoinj.core.ECKey
 import org.dashevo.dpp.Fixtures
+import org.dashevo.dpp.StateRepositoryMock
 import org.dashevo.dpp.statetransition.StateTransition
 import org.dashevo.dpp.statetransition.errors.PublicKeyMismatchError
 import org.dashevo.dpp.toBase64
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 
 class IdentityTest {
+    val stateRepository = StateRepositoryMock()
 
     @Test
     fun testIdentity() {
@@ -33,7 +35,7 @@ class IdentityTest {
     @Test
     fun testIdentityFactory() {
 
-        val factory = IdentityFactory()
+        val factory = IdentityFactory(stateRepository)
 
         val fixtureCreatedIdentity = Fixtures.getIdentityFixture()
 
@@ -53,7 +55,7 @@ class IdentityTest {
     fun applyStateTransition() {
         val createTransition = Fixtures.getIdentityCreateSTFixture()
 
-        val factory = IdentityFactory()
+        val factory = IdentityFactory(stateRepository)
 
         //val identity = factory.applyIdentityCreateStateTransition(createTransition)
 
@@ -154,7 +156,7 @@ class IdentityTest {
 
         val serialized = fromFixture.toBuffer()
 
-        val fromSerialized = IdentityFactory().createFromBuffer(serialized);
+        val fromSerialized = IdentityFactory(stateRepository).createFromBuffer(serialized);
 
         assertEquals(fromFixture.toJSON(), fromSerialized.toJSON())
     }

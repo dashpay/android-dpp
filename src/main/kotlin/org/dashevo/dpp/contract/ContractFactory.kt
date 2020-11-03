@@ -8,12 +8,13 @@
 package org.dashevo.dpp.contract
 
 import org.dashevo.dpp.Factory
+import org.dashevo.dpp.StateRepository
 import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.Entropy
 import org.dashevo.dpp.util.HashUtils
 
-class ContractFactory : Factory() {
+class ContractFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 
     fun createDataContract(ownerId: ByteArray, rawDataContract: MutableMap<String, Any?>): DataContract {
 

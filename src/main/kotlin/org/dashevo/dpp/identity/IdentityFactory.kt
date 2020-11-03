@@ -9,10 +9,11 @@ package org.dashevo.dpp.identity
 
 import org.bitcoinj.core.TransactionOutPoint
 import org.dashevo.dpp.Factory
+import org.dashevo.dpp.StateRepository
 import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.util.Cbor
 
-class IdentityFactory : Factory() {
+class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 
     fun create(lockedOutPoint: TransactionOutPoint, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int) : Identity {
         val id = Identifier.from(lockedOutPoint.hash)
