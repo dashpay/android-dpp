@@ -12,6 +12,8 @@ import org.dashevo.dpp.Factory
 import org.dashevo.dpp.StateRepository
 import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.util.Cbor
+import org.dashevo.dpp.util.CreditsConverter
+import org.dashevo.dpp.util.HashUtils
 
 class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 
@@ -38,31 +40,39 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
     }
 
     fun createIdentityCreateTransition(identity: Identity): IdentityCreateTransition {
-        val lockedOutpoint = identity.lockedOutpoint!!.bitcoinSerialize()
-
-        return  IdentityCreateTransition(lockedOutpoint, identity.publicKeys)
+        return  IdentityCreateTransition(identity.assetLock!!, identity.publicKeys, Identity.PROTOCOL_VERSION)
     }
 
-    fun createIdentityCreateTransition(lockedOutpoint: ByteArray, identityPublicKeys: List<IdentityPublicKey>): IdentityCreateTransition {
+    fun createIdentityCreateTransition(assetLock: AssetLock, identityPublicKeys: List<IdentityPublicKey>): IdentityCreateTransition {
 
-        return  IdentityCreateTransition(lockedOutpoint, identityPublicKeys)
+        return  IdentityCreateTransition(assetLock, identityPublicKeys)
     }
 
-    fun createIdentityTopupTransition(identityId: Identifier, lockedOutpoint: TransactionOutPoint): IdentityTopupTransition {
-        return  IdentityTopupTransition(identityId, lockedOutpoint.bitcoinSerialize())
+    fun createIdentityTopupTransition(identityId: Identifier, assetLock: AssetLock): IdentityTopupTransition {
+        return  IdentityTopupTransition(identityId, assetLock)
     }
 
     fun applyIdentityCreateStateTransition(stateTransition: IdentityStateTransition) : Identity {
 
         val identityCreateTransition = stateTransition as IdentityCreateTransition
 
+        val output = identityCreateTransition.assetLock.output
+        val outpoint = identityCreateTransition.assetLock.getOutPoint()
+
+        val creditsAmount = CreditsConverter.convertSatoshiToCredits(output.value)
+
         val newIdentity = Identity(identityCreateTransition.identityId,
                 0,
-                identityCreateTransition.publicKeys, 0, Identity.PROTOCOL_VERSION)
+                identityCreateTransition.publicKeys,
+                0,
+                Identity.PROTOCOL_VERSION)
+
+        val publicKeyHashes = newIdentity.publicKeys.map { HashUtils.toHash(it.data)}
 
         //store identity
-
-        //
+        stateRepository.storeIdentity(newIdentity)
+        stateRepository.storeIdentityPublicKeyHashes(newIdentity.id, publicKeyHashes)
+        stateRepository.storeAssetLockTransactionOutPoint(outpoint)
 
         return newIdentity
 
