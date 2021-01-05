@@ -51,5 +51,12 @@ interface StateRepository {
     fun storeIdentityPublicKeyHashes(identity: Identifier, publicKeyHashes: List<ByteArray>)
 
     fun fetchLatestPlatformBlockHeader() : Block
+
+    // TODO: Implement this later
+    // fun fetchSMLStore() : SimplifiedMNListStore
+
+    fun checkAssetLockTransactionOutPointExists(outPointBuffer: ByteArray)
+
+    fun storeAssetLockTransactionOutPoint(outPointBuffer: ByteArray)
 }
 
