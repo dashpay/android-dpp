@@ -47,4 +47,12 @@ class StateRepositoryMock : StateRepository {
     override fun fetchLatestPlatformBlockHeader(): Block {
         return TestNet3Params.get().genesisBlock
     }
+
+    override fun checkAssetLockTransactionOutPointExists(outPointBuffer: ByteArray) {
+        TODO("Not yet implemented")
+    }
+
+    override fun storeAssetLockTransactionOutPoint(outPointBuffer: ByteArray) {
+        TODO("Not yet implemented")
+    }
 }
