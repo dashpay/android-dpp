@@ -6,44 +6,41 @@
  */
 package org.dashevo.dpp.identity
 
-import org.bitcoinj.core.Sha256Hash
 import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.toBase64
-import org.dashevo.dpp.util.HashUtils
 
 class IdentityCreateTransition : IdentityStateTransition {
 
     val identityId: Identifier // base58
-    val lockedOutPoint: ByteArray  // base64
+    val assetLock: AssetLock  // base64
     val publicKeys: MutableList<IdentityPublicKey>
 
-    constructor(lockedOutPoint: ByteArray,
+    constructor(assetLock: AssetLock,
                  publicKeys: List<IdentityPublicKey>,
                  protocolVersion: Int = 0)
     : super(Types.IDENTITY_CREATE, protocolVersion) {
-        this.lockedOutPoint = lockedOutPoint
-        this.identityId = Identifier.from(Sha256Hash.twiceOf(lockedOutPoint))
+        this.assetLock = assetLock
+        this.identityId = assetLock.createIdentifier()
         this.publicKeys = publicKeys.toMutableList()
     }
 
     constructor(rawStateTransition: MutableMap<String, Any?>)
             : super(rawStateTransition) {
-        lockedOutPoint = HashUtils.byteArrayfromBase64orByteArray(rawStateTransition["lockedOutPoint"]!!)
+        assetLock = AssetLock(rawStateTransition["assetLock"] as Map<String, Any?>)
         publicKeys = (rawStateTransition["publicKeys"] as List<Any>).map { entry -> IdentityPublicKey(entry as MutableMap<String, Any>) }.toMutableList()
-        identityId = Identifier.from(Sha256Hash.twiceOf(lockedOutPoint))
+        identityId = assetLock.createIdentifier()
     }
 
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
-        var map = super.toObject(skipSignature, skipIdentifiersConversion)
-        map["lockedOutPoint"] = lockedOutPoint
+        val map = super.toObject(skipSignature, skipIdentifiersConversion)
+        map["assetLock"] = assetLock.toObject()
         map["publicKeys"] = publicKeys.map { it.toObject() }
         map.remove("signaturePublicKeyId")
         return map
     }
 
     override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
-        var json = super.toJSON(skipSignature)
-        json["lockedOutPoint"] = lockedOutPoint.toBase64()
+        val json = super.toJSON(skipSignature)
+        json["assetLock"] = assetLock.toJSON()
         json["publicKeys"] = publicKeys.map { it.toJSON() }
         json.remove("signaturePublicKeyId")
         return json
