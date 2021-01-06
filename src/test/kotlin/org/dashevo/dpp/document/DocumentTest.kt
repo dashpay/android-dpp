@@ -10,7 +10,9 @@ import org.dashevo.dpp.Fixtures
 import org.dashevo.dpp.StateRepositoryMock
 import org.dashevo.dpp.identifier.Identifier
 import org.json.JSONObject
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class DocumentTest {
@@ -53,16 +55,16 @@ class DocumentTest {
         //assertEquals(result.documents, documents)
     }
 
-    @Test
+    @Test @Disabled
     fun verifySignedDocumentsSTTest() {
         //TODO: This test is completely broken, getDocumentsSTSignedFixture() has bad data
-        //val documentST = Fixtures.getDocumentsSTSignedFixture()
+        val documentST = Fixtures.getDocumentsSTSignedFixture()
         val identityST = Fixtures.getIdentityCreateSTSignedFixture()
         val identity = Fixtures.getIdentityForSignaturesFixture()
-        //Assertions.assertTrue(documentST.verifySignature(identityST.publicKeys[0]))
-        //Assertions.assertTrue(documentST.verifySignature(identity.publicKeys[0]))
+        Assertions.assertTrue(documentST.verifySignature(identityST.publicKeys[0]))
+        Assertions.assertTrue(documentST.verifySignature(identity.publicKeys[0]))
 
-        //val documentSTTwo = Fixtures.getDocumentsSTSignedFixtureTwo()
-        //assertEquals(documentST.documents[0].toJSON(), documentSTTwo.documents[0].toJSON())
+        val documentSTTwo = Fixtures.getDocumentsSTSignedFixtureTwo()
+        assertEquals(documentST.transitions[0].toJSON(), documentSTTwo.transitions[0].toJSON())
     }
 }
