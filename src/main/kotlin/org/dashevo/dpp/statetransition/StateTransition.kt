@@ -10,7 +10,6 @@ package org.dashevo.dpp.statetransition
 import org.bitcoinj.core.*
 import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.statetransition.errors.StateTransitionIsNotSignedError
-import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.toBase64Padded
 import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
@@ -51,7 +50,7 @@ abstract class StateTransition(var signature: ByteArray?,
     constructor(type: Types, protocolVersion: Int = 0) : this(null, type, protocolVersion)
 
     override fun toObject(): MutableMap<String, Any?> {
-        return toObject(false, false)
+        return toObject(skipSignature = false, skipIdentifiersConversion = false)
     }
 
     open fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
@@ -95,7 +94,7 @@ abstract class StateTransition(var signature: ByteArray?,
 
         return try {
             val pubkeyFromSig = ECKey.signedMessageToKey(hash, signature)
-            pubkeyFromSig.pubKey.contentEquals(publicKey.pubKey)
+            pubkeyFromSig.pubKey!!.contentEquals(publicKey.pubKey)
         } catch (e: Exception) {
             false
         }

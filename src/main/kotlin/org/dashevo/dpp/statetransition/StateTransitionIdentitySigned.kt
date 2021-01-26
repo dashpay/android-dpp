@@ -43,7 +43,7 @@ abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
     }
 
     fun sign(identityPublicKey: IdentityPublicKey, privateKey: String) {
-        var privateKeyModel: ECKey
+        val privateKeyModel: ECKey
         val pubKeyBase: ByteArray
         when (identityPublicKey.type) {
             IdentityPublicKey.TYPES.ECDSA_SECP256K1 -> {

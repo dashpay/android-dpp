@@ -9,4 +9,4 @@ package org.dashevo.dpp.identity.errors
 import org.dashevo.dpp.statetransition.StateTransition
 import java.lang.Exception
 
-class WrongStateTransitionTypeError(val stateTransition: StateTransition) : Exception("Can't apply a state transition to the identiy model, wrong state transition type")
+class WrongStateTransitionTypeError(val stateTransition: StateTransition) : Exception("Can't apply a state transition to the identity model, wrong state transition type")

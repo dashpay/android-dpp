@@ -22,7 +22,7 @@ import org.dashevo.dpp.util.HashUtils
 class StateTransitionFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 
     fun createStateTransition(rawStateTransition: MutableMap<String, Any?>, options: Options = Options()): StateTransition {
-        var stateTransition: StateTransitionIdentitySigned
+        val stateTransition: StateTransitionIdentitySigned
         when (StateTransition.Types.getByCode(rawStateTransition["type"] as Int)) {
             StateTransition.Types.DATA_CONTRACT_CREATE -> {
                 val rawDataContract = rawStateTransition["dataContract"] as MutableMap<String, Any?>
@@ -44,8 +44,8 @@ class StateTransitionFactory(stateRepository: StateRepository) : Factory(stateRe
             }
         }
 
-        stateTransition.signature = rawStateTransition["signature"]?. let { HashUtils.byteArrayfromBase64orByteArray(it) }
-        if(rawStateTransition.containsKey("signaturePublicKeyId")) {
+        stateTransition.signature = rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) }
+        if (rawStateTransition.containsKey("signaturePublicKeyId")) {
             stateTransition.signaturePublicKeyId = rawStateTransition["signaturePublicKeyId"] as Int
         } else {
             if (stateTransition.type != StateTransition.Types.IDENTITY_CREATE)
