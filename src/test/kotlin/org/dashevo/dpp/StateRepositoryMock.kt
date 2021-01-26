@@ -1,6 +1,7 @@
 package org.dashevo.dpp
 
 import org.bitcoinj.core.Block
+import org.bitcoinj.core.Transaction
 import org.bitcoinj.params.TestNet3Params
 import org.dashevo.dpp.contract.DataContract
 import org.dashevo.dpp.document.Document
@@ -28,8 +29,8 @@ class StateRepositoryMock : StateRepository {
         TODO("Not yet implemented")
     }
 
-    override fun fetchTransaction(id: String): Int {
-        return 0
+    override fun fetchTransaction(id: String): Transaction? {
+        return null
     }
 
     override fun fetchIdentity(id: Identifier): Identity? {
@@ -48,7 +49,7 @@ class StateRepositoryMock : StateRepository {
         return TestNet3Params.get().genesisBlock
     }
 
-    override fun checkAssetLockTransactionOutPointExists(outPointBuffer: ByteArray) {
+    override fun checkAssetLockTransactionOutPointExists(outPointBuffer: ByteArray): Boolean {
         TODO("Not yet implemented")
     }
 

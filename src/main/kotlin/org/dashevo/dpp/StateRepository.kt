@@ -7,6 +7,7 @@
 package org.dashevo.dpp
 
 import org.bitcoinj.core.Block
+import org.bitcoinj.core.Transaction
 import org.dashevo.dpp.contract.DataContract
 import org.dashevo.dpp.document.Document
 import org.dashevo.dpp.identifier.Identifier
@@ -38,7 +39,7 @@ interface StateRepository {
      * Fetch transaction by ID
      *
      */
-    fun fetchTransaction(id: String): Int
+    fun fetchTransaction(id: String): Transaction?
 
     /**
      * Fetch identity by ID
@@ -55,7 +56,7 @@ interface StateRepository {
     // TODO: Implement this later
     // fun fetchSMLStore() : SimplifiedMNListStore
 
-    fun checkAssetLockTransactionOutPointExists(outPointBuffer: ByteArray)
+    fun checkAssetLockTransactionOutPointExists(outPointBuffer: ByteArray) : Boolean
 
     fun storeAssetLockTransactionOutPoint(outPointBuffer: ByteArray)
 }
