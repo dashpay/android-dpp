@@ -51,7 +51,7 @@ class DataContract(val id: Identifier,
     }
 
     fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any> {
-        val rawDataContract = hashMapOf<String, Any>(
+        val rawDataContract = hashMapOf(
                 "protocolVersion" to protocolVersion,
                 "\$id" to id,
                 "\$schema" to schema,

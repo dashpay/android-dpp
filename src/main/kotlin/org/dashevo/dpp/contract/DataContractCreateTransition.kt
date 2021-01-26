@@ -25,14 +25,14 @@ class DataContractCreateTransition : StateTransitionIdentitySigned {
     }
 
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
-        var json = super.toObject(skipSignature, skipIdentifiersConversion)
+        val json = super.toObject(skipSignature, skipIdentifiersConversion)
         json["dataContract"] = dataContract.toObject()
         json["entropy"] = entropy
         return json
     }
 
     override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
-        var json = super.toJSON(skipSignature)
+        val json = super.toJSON(skipSignature)
         json["dataContract"] = dataContract.toJSON()
         json["entropy"] = entropy.toBase64()
         return json
