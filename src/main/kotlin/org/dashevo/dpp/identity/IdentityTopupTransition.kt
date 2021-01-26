@@ -7,17 +7,16 @@
 package org.dashevo.dpp.identity
 
 import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.toBase64
 
 class IdentityTopupTransition : IdentityStateTransition {
 
     val identityId: Identifier
-    var assetLock: AssetLock  // base64
+    var assetLock: AssetLock
 
     constructor(identityId: Identifier,
                 assetLock: AssetLock,
-                 protocolVersion: Int = 0)
-    : super(Types.IDENTITY_TOP_UP, protocolVersion) {
+                protocolVersion: Int = 0)
+            : super(Types.IDENTITY_TOP_UP, protocolVersion) {
         this.assetLock = assetLock
         this.identityId = identityId
     }
@@ -41,13 +40,13 @@ class IdentityTopupTransition : IdentityStateTransition {
     }
 
     override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
-        var json = super.toJSON(skipSignature)
+        val json = super.toJSON(skipSignature)
         json["assetLock"] = assetLock.toJSON()
         json["identityId"] = identityId.toString()
         return json
     }
 
-    fun getOwnerId() : Identifier {
+    fun getOwnerId(): Identifier {
         return identityId
     }
 }

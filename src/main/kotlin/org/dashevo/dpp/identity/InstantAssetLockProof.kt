@@ -1,17 +1,17 @@
 package org.dashevo.dpp.identity
 
-import org.bitcoinj.core.NetworkParameters
 import org.bitcoinj.quorums.InstantSendLock
 import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.util.HashUtils
 
-class InstantAssetLockProof(val instantLock: InstantSendLock) :BaseObject() {
+class InstantAssetLockProof(val instantLock: InstantSendLock) : BaseObject() {
     val type: Int = 0
 
-    constructor(instantLockPayload: ByteArray) : this (InstantSendLock(null, instantLockPayload))
+    constructor(instantLockPayload: ByteArray) : this(InstantSendLock(null, instantLockPayload))
 
     constructor(rawAssetLockProof: Map<String, Any?>)
-            : this(HashUtils.byteArrayfromBase64orByteArray(rawAssetLockProof["instantLock"] ?: error("missing instantLock field")))
+            : this(HashUtils.byteArrayfromBase64orByteArray(rawAssetLockProof["instantLock"]
+            ?: error("missing instantLock field")))
 
     override fun toJSON(): Map<String, Any?> {
         return hashMapOf(

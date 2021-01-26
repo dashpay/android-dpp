@@ -8,7 +8,6 @@
 package org.dashevo.dpp.identity
 
 import com.google.common.base.Preconditions
-import org.bitcoinj.core.TransactionOutPoint
 import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.identifier.Identifier
 

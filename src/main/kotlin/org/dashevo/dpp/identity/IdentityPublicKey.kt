@@ -11,7 +11,6 @@ import org.bitcoinj.core.Utils
 import org.dashevo.dpp.BaseObject
 import org.dashevo.dpp.identity.errors.EmptyPublicKeyDataException
 import org.dashevo.dpp.toBase64
-import org.dashevo.dpp.util.HashUtils
 import org.dashevo.dpp.util.HashUtils.byteArrayfromBase64orByteArray
 import org.dashevo.dpp.util.HashUtils.fromBase64
 
@@ -47,7 +46,7 @@ class IdentityPublicKey(val id: Int,
     }
 
     override fun toJSON(): Map<String, Any> {
-        return hashMapOf<String, Any>(
+        return hashMapOf(
                 "id" to id,
                 "type" to type.value,
                 "data" to data.toBase64()
