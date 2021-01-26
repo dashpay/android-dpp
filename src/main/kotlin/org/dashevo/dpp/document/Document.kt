@@ -20,8 +20,7 @@ class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract
 
         fun convertDataToString(map: MutableMap<String, Any>) {
             for (key in map.keys) {
-                var value = map[key]
-                when (value) {
+                when (val value = map[key]) {
                     is Map<*, *> -> convertDataToString(value as MutableMap<String, Any>)
                     is ByteArray -> map[key] = value.toBase64()
                     is Identifier -> value.toString()
@@ -31,14 +30,14 @@ class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract
 
         fun convertIdentifierToByteArray(map: MutableMap<String, Any>) {
             for (key in map.keys) {
-                var value = map[key]
-                when (value) {
+                when (val value = map[key]) {
                     is Map<*, *> -> convertDataToString(value as MutableMap<String, Any>)
                     is Identifier -> map[key] = value.toBuffer()
                 }
             }
         }
     }
+
     val dataContract: DataContract
     var id: Identifier
     var type: String
@@ -66,6 +65,7 @@ class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract
 
         this.data = data
     }
+
     override fun toObject(): Map<String, Any> {
         return toObject(false)
     }
@@ -90,7 +90,7 @@ class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract
         if (!skipIdentifierConversion) {
             map["\$id"] = id.toBuffer()
             map["\$dataContractId"] = dataContractId.toBuffer()
-            map["\$ownderId"] = ownerId.toBuffer()
+            map["\$ownerId"] = ownerId.toBuffer()
 
             //TODO: change binary items items in data to ByteArray
             convertIdentifierToByteArray(map)
@@ -106,7 +106,6 @@ class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract
         convertDataToString(json)
         return json
     }
-
 
 
     fun get(path: String): Any? {

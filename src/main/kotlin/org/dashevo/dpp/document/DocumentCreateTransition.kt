@@ -7,15 +7,13 @@
 package org.dashevo.dpp.document
 
 import org.bitcoinj.core.Base58
-import org.dashevo.dpp.identifier.Identifier
 import java.lang.IllegalStateException
-import kotlin.collections.HashMap
 
 
 open class DocumentCreateTransition : DataDocumentTransition {
 
     companion object {
-        val INITIAL_REVISION = 1
+        const val INITIAL_REVISION = 1
     }
 
     override val action = Action.CREATE
@@ -26,7 +24,7 @@ open class DocumentCreateTransition : DataDocumentTransition {
     constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
 
         val entropy = rawStateTransition["\$entropy"]
-        this.entropy  = when(entropy) {
+        this.entropy = when (entropy) {
             is ByteArray -> entropy
             is String -> Base58.decode(entropy)
             else -> throw IllegalStateException("entropy is not a ByteArray or String")

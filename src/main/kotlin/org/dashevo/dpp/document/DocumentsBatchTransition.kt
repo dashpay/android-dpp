@@ -7,7 +7,6 @@
 package org.dashevo.dpp.document
 
 import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.statetransition.StateTransition
 import org.dashevo.dpp.statetransition.StateTransitionIdentitySigned
 import java.lang.IllegalStateException
 
@@ -32,8 +31,9 @@ class DocumentsBatchTransition : StateTransitionIdentitySigned {
             }
         }
     }
+
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
-        var map = super.toObject(skipSignature, skipIdentifiersConversion)
+        val map = super.toObject(skipSignature, skipIdentifiersConversion)
         map["ownerId"] = ownerId
         map["transitions"] = transitions.map { entry -> entry.toObject() }
 
@@ -44,7 +44,7 @@ class DocumentsBatchTransition : StateTransitionIdentitySigned {
     }
 
     override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
-        var json = super.toJSON(skipSignature)
+        val json = super.toJSON(skipSignature)
         json["ownerId"] = ownerId.toString()
         json["transitions"] = transitions.map { entry -> entry.toJSON() }
         return json

@@ -23,7 +23,7 @@ import org.dashevo.dpp.util.HashUtils
 
 class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 
-    fun create(dataContract: DataContract, ownerId: Identifier, type: String, data: Map<String, Any?> = mapOf()) : Document {
+    fun create(dataContract: DataContract, ownerId: Identifier, type: String, data: Map<String, Any?> = mapOf()): Document {
         if (!dataContract.isDocumentDefined(type)) {
             throw InvalidDocumentTypeError(dataContract, type)
         }
@@ -91,7 +91,7 @@ class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepositor
 
         var mismatches = 0
         documentsFlattened.forEach {
-            if(it.ownerId != ownerId)
+            if (it.ownerId != ownerId)
                 mismatches++
         }
 
@@ -123,7 +123,7 @@ class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepositor
             val dataKeys = it.data.keys.iterator()
             while (dataKeys.hasNext()) {
                 val key = dataKeys.next()
-                it.data[key]?.let { rawTransition.put(key, it) }
+                it.data[key]?.let { value -> rawTransition.put(key, value) }
             }
             rawTransition
         }
@@ -141,7 +141,7 @@ class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepositor
             val dataKeys = it.data.keys.iterator()
             while (dataKeys.hasNext()) {
                 val key = dataKeys.next()
-                it.data[key]?.let { rawTransition.put(key, it) }
+                it.data[key]?.let { value -> rawTransition.put(key, value) }
             }
             rawTransition
         }
@@ -160,7 +160,7 @@ class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepositor
         rawDocumentTransitions.addAll(rawDocumentReplaceTransitions)
         rawDocumentTransitions.addAll(rawDocumentDeleteTransitions)
 
-        val rawBatchTransition = hashMapOf<String, Any?> (
+        val rawBatchTransition = hashMapOf<String, Any?>(
                 "\$protocolVersion" to Document.PROTOCOL_VERSION,
                 "type" to StateTransition.Types.DOCUMENTS_BATCH.value,
                 "ownerId" to ownerId,
