@@ -54,7 +54,7 @@ object Cbor {
         return baos.toByteArray()
     }
 
-    fun encode(bytes: ByteArray) : ByteArray {
+    fun encode(bytes: ByteArray): ByteArray {
         val baos = ByteArrayOutputStream(bytes.size)
         CborEncoder(baos).encode(ByteString(bytes))
         return baos.toByteArray()
@@ -71,12 +71,12 @@ object Cbor {
 
         val sortedKeys = ArrayList<String>()
         sortedKeys.addAll(obj.keys)
-        sortedKeys.sortWith(Comparator{ a, b ->
+        sortedKeys.sortWith(Comparator { a, b ->
             ByteBuffer.wrap(a.toByteArray()).short.compareTo(ByteBuffer.wrap(b.toByteArray()).short)
         })
 
         sortedKeys.forEach { key ->
-            val value = obj.get(key)
+            val value = obj[key]
             if (value is Map<*, *>) {
                 if (innerMapBuilder != null && innerMapBuilder is MapBuilder<*>) {
                     writeJSONObject(obj[key] as Map<String, Any?>, mapBuilder, baos, innerMapBuilder.putMap(key))
@@ -103,8 +103,8 @@ object Cbor {
     }
 
     private fun writeJSONArray(obj: List<Any?>, mapBuilder: ArrayBuilder<CborBuilder>,
-                                baos: ByteArrayOutputStream,
-                                innerMapBuilder: AbstractBuilder<*>? = null): CborBuilder {
+                               baos: ByteArrayOutputStream,
+                               innerMapBuilder: AbstractBuilder<*>? = null): CborBuilder {
 
         obj.forEach { value ->
             if (value is Map<*, *>) {
@@ -172,13 +172,16 @@ object Cbor {
     private fun addJSONArrayInArray(value: List<*>, mapBuilder: MapBuilder<CborBuilder>?, baos: ByteArrayOutputStream, arrayBuilder: ArrayBuilder<*>) {
         val count = value.size
         for (i in 0 until count) {
-            val item = value[i]
-            if (item is Map<*, *>) {
-                throw IllegalStateException("List contains a map")
-            } else if (item is List<*>) {
-                writeJSONArrayInArray(item, arrayBuilder.addArray(), baos, null)
-            } else {
-                addValueToArrayBuilder(item!!, arrayBuilder)
+            when (val item = value[i]) {
+                is Map<*, *> -> {
+                    throw IllegalStateException("List contains a map")
+                }
+                is List<*> -> {
+                    writeJSONArrayInArray(item, arrayBuilder.addArray(), baos, null)
+                }
+                else -> {
+                    addValueToArrayBuilder(item!!, arrayBuilder)
+                }
             }
         }
     }
@@ -254,7 +257,7 @@ object Cbor {
         return resultMap
     }
 
-    private fun readJSONArray(value: co.nstant.`in`.cbor.model.Array) : List<Any?> {
+    private fun readJSONArray(value: co.nstant.`in`.cbor.model.Array): List<Any?> {
         val count = value.dataItems.size
         val resultList = ArrayList<Any?>(count)
         for (i in 0 until count) {
@@ -270,20 +273,20 @@ object Cbor {
 
     private fun addValueFromCborMap(map: HashMap<String, Any?>, key: String, value: DataItem) {
         when (value) {
-            is UnicodeString -> map.put(key, value.string)
+            is UnicodeString -> map[key] = value.string
             is co.nstant.`in`.cbor.model.Number -> {
-                if(value.value.toLong() < Int.MAX_VALUE)
-                    map.put(key, value.value.toInt())
+                if (value.value.toLong() < Int.MAX_VALUE)
+                    map[key] = value.value.toInt()
                 else map[key] = value.value.toLong()
             }
             is HalfPrecisionFloat -> {
-                if(value.value.toLong() > Int.MIN_VALUE)
-                    map.put(key, value.value.toInt())
+                if (value.value.toLong() > Int.MIN_VALUE)
+                    map[key] = value.value.toInt()
                 else map[key] = value.value.toLong()
             }
-            is NegativeInteger -> map.put(key, value)
-            is DoublePrecisionFloat -> map.put(key, value.value)
-            is ByteString -> map.put(key, value.bytes)
+            is NegativeInteger -> map[key] = value
+            is DoublePrecisionFloat -> map[key] = value.value
+            is ByteString -> map[key] = value.bytes
             is SimpleValue -> {
                 when (value.simpleValueType) {
                     SimpleValueType.TRUE -> map[key] = true
@@ -292,7 +295,7 @@ object Cbor {
                     else -> throw IllegalArgumentException("Unknown simple datatype")
                 }
             }
-            else -> map.put(key, value.toString()) //?
+            else -> map[key] = value.toString() //?
         }
     }
 
@@ -300,12 +303,12 @@ object Cbor {
         when (value) {
             is UnicodeString -> array.add(value.string)
             is co.nstant.`in`.cbor.model.Number -> {
-                if(value.value.toLong() < Int.MAX_VALUE)
+                if (value.value.toLong() < Int.MAX_VALUE)
                     array.add(value.value.intValueExact())
                 else array.add(value.value.longValueExact())
             }
             is HalfPrecisionFloat -> {
-                if(value.value.toLong() > Int.MIN_VALUE)
+                if (value.value.toLong() > Int.MIN_VALUE)
                     array.add(value.value.toInt())
                 else array.add(value.value.toLong())
             }
