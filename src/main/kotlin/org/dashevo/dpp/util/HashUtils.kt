@@ -12,6 +12,7 @@ import org.bitcoinj.core.Base58
 import org.bitcoinj.core.Sha256Hash
 import java.io.ByteArrayOutputStream
 import java.nio.charset.Charset
+import kotlin.math.floor
 
 object HashUtils {
 
@@ -45,6 +46,10 @@ object HashUtils {
     }
 
     fun byteArrayfromBase64orByteArray(any: Any): ByteArray {
+        return byteArrayFromBase64orByteArray(any)
+    }
+
+    fun byteArrayFromBase64orByteArray(any: Any): ByteArray {
         return when (any) {
             is String -> {
                 fromBase64(any)
@@ -55,6 +60,10 @@ object HashUtils {
     }
 
     fun byteArrayfromBase58orByteArray(any: Any): ByteArray {
+        return byteArrayFromBase58orByteArray(any)
+    }
+
+    fun byteArrayFromBase58orByteArray(any: Any): ByteArray {
         return when (any) {
             is String -> {
                 Base58.decode(any)
@@ -99,12 +108,12 @@ object HashUtils {
         var j = 0
         var size = hashes.size
         while (size > 1) {
-            size = Math.floor((size + 1).toDouble() / 2).toInt()
+            size = floor((size + 1).toDouble() / 2).toInt()
 
             var i = 0
             while (i < size) {
                 i += 2
-                val i2 = Math.min(i + 1, size - 1)
+                val i2 = (i + 1).coerceAtMost(size - 1)
                 val a = tree[j + i]
                 val b = tree[j + i2]
                 val buf = a + b
@@ -121,7 +130,7 @@ object HashUtils {
         return merkleTree.last().clone()
     }
 
-    fun generateDocumentId(dataContractId: ByteArray, ownerId: ByteArray, type: String, entropy: ByteArray) : ByteArray {
+    fun generateDocumentId(dataContractId: ByteArray, ownerId: ByteArray, type: String, entropy: ByteArray): ByteArray {
         val utf8charset = Charset.forName("UTF-8")
         val stream = ByteArrayOutputStream()
         stream.write(dataContractId)
@@ -131,7 +140,7 @@ object HashUtils {
         return toHash(stream.toByteArray())
     }
 
-    fun generateDataContractId(ownerId: ByteArray, entropy: ByteArray) : ByteArray {
+    fun generateDataContractId(ownerId: ByteArray, entropy: ByteArray): ByteArray {
         val stream = ByteArrayOutputStream()
         stream.write(ownerId)
         stream.write(entropy)
