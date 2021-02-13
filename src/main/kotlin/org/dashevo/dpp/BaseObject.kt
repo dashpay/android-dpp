@@ -6,6 +6,7 @@
  */
 package org.dashevo.dpp
 
+import org.bitcoinj.core.Sha256Hash
 import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.HashUtils
 
@@ -42,5 +43,18 @@ abstract class BaseObject {
      */
     open fun hash(): ByteArray {
         return HashUtils.toHash(toBuffer())
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as BaseObject
+
+        return hash().contentEquals(other.hash())
+    }
+
+    override fun hashCode(): Int {
+        return Sha256Hash.wrap(hash()).hashCode()
     }
 }
