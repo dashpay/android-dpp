@@ -24,7 +24,7 @@ allprojects {
 }
 
 group 'org.dashevo'
-version '0.17-SNAPSHOT'
+version '0.18-SNAPSHOT'
 
 repositories {
     mavenCentral()
