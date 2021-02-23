@@ -1,7 +1,7 @@
 apply plugin: 'kotlin'
 
 buildscript {
-    ext.kotlin_version = '1.3.72'
+    ext.kotlin_version = '1.4.10'
     ext.dashj_version = '0.18-SNAPSHOT'
     repositories {
         jcenter()
