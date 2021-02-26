@@ -45,6 +45,10 @@ abstract class BaseObject {
         return HashUtils.toHash(toBuffer())
     }
 
+    open fun hashOnce(): ByteArray {
+        return Sha256Hash.hash(toBuffer())
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
