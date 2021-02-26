@@ -304,8 +304,8 @@ object Cbor {
             is UnicodeString -> array.add(value.string)
             is co.nstant.`in`.cbor.model.Number -> {
                 if (value.value.toLong() < Int.MAX_VALUE)
-                    array.add(value.value.intValueExact())
-                else array.add(value.value.longValueExact())
+                    array.add(value.value.toLong().toInt())
+                else array.add(value.value.toLong())
             }
             is HalfPrecisionFloat -> {
                 if (value.value.toLong() > Int.MIN_VALUE)
