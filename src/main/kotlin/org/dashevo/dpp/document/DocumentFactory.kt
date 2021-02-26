@@ -52,7 +52,7 @@ class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepositor
         return document
     }
 
-    fun createFromObject(rawDocument: MutableMap<String, Any?>, options: Options = Options()): Document {
+    fun createFromObject(rawDocument: Map<String, Any?>, options: Options = Options()): Document {
         val dataContractId = Identifier.from(rawDocument["\$dataContractId"])
         val dataContract = stateRepository.fetchDataContract(dataContractId)
         return Document(rawDocument, dataContract!!)

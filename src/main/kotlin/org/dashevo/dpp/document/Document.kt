@@ -13,7 +13,7 @@ import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.toBase64
 import kotlin.collections.HashMap
 
-class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract) : BaseObject() {
+class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : BaseObject() {
 
     companion object {
         const val PROTOCOL_VERSION = 0
@@ -21,9 +21,9 @@ class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract
         fun convertDataToString(map: MutableMap<String, Any?>) {
             for (key in map.keys) {
                 when (val value = map[key]) {
-                    is Map<*, *> -> convertDataToString(value as MutableMap<String, Any>)
+                    is Map<*, *> -> convertDataToString(value as MutableMap<String, Any?>)
                     is ByteArray -> map[key] = value.toBase64()
-                    is Identifier -> value.toString()
+                    is Identifier -> map[key] = value.toString()
                 }
             }
         }
@@ -31,7 +31,7 @@ class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract
         fun convertIdentifierToByteArray(map: MutableMap<String, Any?>) {
             for (key in map.keys) {
                 when (val value = map[key]) {
-                    is Map<*, *> -> convertDataToString(value as MutableMap<String, Any>)
+                    is Map<*, *> -> convertIdentifierToByteArray(value as MutableMap<String, Any?>)
                     is Identifier -> map[key] = value.toBuffer()
                 }
             }
