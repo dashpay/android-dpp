@@ -63,7 +63,7 @@ abstract class DocumentTransition {
         return map
     }
 
-    open fun toJSON(): Map<String, Any> {
+    open fun toJSON(): Map<String, Any?> {
         val json = toObject(true)
         json["\$id"] = id.toString()
         json["\$dataContractId"] = dataContractId.toString()

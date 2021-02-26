@@ -44,19 +44,4 @@ open class DocumentCreateTransition : DataDocumentTransition {
 
         return map
     }
-
-    //TODO: will this be covered by super?
-
-    /*override fun toJSON(): Map<String, Any> {
-        var json = super.toJSON() as MutableMap<String, Any>
-        json["\$id"] = id
-        json["\$type"] = documentType
-        json["\$entropy"] = entropy
-
-
-        createdAt?.let { json["\$createdAt"] = it }
-        updatedAt?.let { json["\$updatedAt"] = it }
-
-        return json
-    }*/
 }
