@@ -25,7 +25,7 @@ abstract class DataDocumentTransition(rawStateTransition: MutableMap<String, Any
         return map
     }
 
-    override fun toJSON(): Map<String, Any> {
+    override fun toJSON(): Map<String, Any?> {
         val json = super.toJSON().toMutableMap()
         Document.convertDataToString(json)
         return json

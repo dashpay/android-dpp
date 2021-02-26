@@ -17,7 +17,7 @@ class DocumentReplaceTransition : DataDocumentTransition {
         this.revision = rawStateTransition.remove("\$revision") as Int
     }
 
-    override fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any> {
+    override fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any?> {
         val map = super.toObject(skipIdentifierConversion)
         map["\$revision"] = revision
         updatedAt?.let { map["\$updatedAt"] = it }

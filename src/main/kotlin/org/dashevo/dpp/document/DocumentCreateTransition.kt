@@ -34,7 +34,7 @@ open class DocumentCreateTransition : DataDocumentTransition {
         this.updatedAt = rawStateTransition["\$updatedAt"]?.let { it as Long }
     }
 
-    override fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any> {
+    override fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any?> {
         val map = super.toObject(skipIdentifierConversion)
 
         map["\$entropy"] = entropy

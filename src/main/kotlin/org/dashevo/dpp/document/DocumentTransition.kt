@@ -43,12 +43,12 @@ abstract class DocumentTransition {
         dataContractId = Identifier.from(rawStateTransition["\$dataContractId"]!!)
     }
 
-    fun toObject(): Map<String, Any> {
+    fun toObject(): Map<String, Any?> {
         return toObject(false)
     }
 
-    open fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any> {
-        val map = hashMapOf(
+    open fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any?> {
+        val map = hashMapOf<String, Any?>(
                 "\$id" to id,
                 "\$type" to type,
                 "\$action" to action.value,

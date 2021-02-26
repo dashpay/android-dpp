@@ -18,7 +18,7 @@ class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract
     companion object {
         const val PROTOCOL_VERSION = 0
 
-        fun convertDataToString(map: MutableMap<String, Any>) {
+        fun convertDataToString(map: MutableMap<String, Any?>) {
             for (key in map.keys) {
                 when (val value = map[key]) {
                     is Map<*, *> -> convertDataToString(value as MutableMap<String, Any>)
@@ -28,7 +28,7 @@ class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract
             }
         }
 
-        fun convertIdentifierToByteArray(map: MutableMap<String, Any>) {
+        fun convertIdentifierToByteArray(map: MutableMap<String, Any?>) {
             for (key in map.keys) {
                 when (val value = map[key]) {
                     is Map<*, *> -> convertDataToString(value as MutableMap<String, Any>)
@@ -77,12 +77,12 @@ class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract
         this.data = data
     }
 
-    override fun toObject(): Map<String, Any> {
+    override fun toObject(): Map<String, Any?> {
         return toObject(false)
     }
 
-    fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any> {
-        val map = hashMapOf(
+    fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any?> {
+        val map = hashMapOf<String, Any?>(
                 "\$protocolVersion" to protocolVersion,
                 "\$id" to id,
                 "\$type" to type,
@@ -109,7 +109,7 @@ class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract
         return map
     }
 
-    override fun toJSON(): Map<String, Any> {
+    override fun toJSON(): Map<String, Any?> {
 
         val json = toObject(true)
         //TODO: change binary items in data to base64
