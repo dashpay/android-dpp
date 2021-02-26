@@ -16,12 +16,11 @@ abstract class DataDocumentTransition(rawStateTransition: MutableMap<String, Any
         this.data = data.filter { !it.key.startsWith("\$") }
     }
 
-    override fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any> {
+    override fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any?> {
         val map = super.toObject(skipIdentifierConversion)
 
-        data.keys.iterator().forEach {
-            data[it]?.let { it1 -> map[it] = it1 }
-        }
+        val deepCopy = Document.deepCopy(data)
+        map.putAll(deepCopy)
 
         return map
     }

@@ -36,6 +36,17 @@ class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract
                 }
             }
         }
+
+        fun deepCopy(map: Map<String, Any?>): MutableMap<String, Any?> {
+            val copy = HashMap<String, Any?>(map.size)
+            for (key in map.keys) {
+                when (val value = map[key]) {
+                    is Map<*, *> -> copy[key] = deepCopy(value as MutableMap<String, Any?>)
+                    else -> copy[key] = value
+                }
+            }
+            return copy;
+        }
     }
 
     val dataContract: DataContract
@@ -80,9 +91,8 @@ class Document(rawDocument: MutableMap<String, Any?>, dataContract: DataContract
                 "\$revision" to revision
         )
 
-        data.keys.iterator().forEach {
-            data[it]?.let { it1 -> map[it] = it1 }
-        }
+        val deepCopy = deepCopy(data)
+        map.putAll(deepCopy)
 
         createdAt?.let { map["\$createdAt"] = it }
         updatedAt?.let { map["\$updatedAt"] = it }
