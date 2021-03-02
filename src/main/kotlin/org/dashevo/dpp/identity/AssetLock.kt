@@ -34,7 +34,8 @@ class AssetLock(val outputIndex: Long,
         get() = transaction.getOutput(outputIndex)
 
     fun getOutPoint(): ByteArray {
-        return output.outPointFor.bitcoinSerialize()
+        val outPoint = TransactionOutPoint(output.params, output.outPointFor.index, Sha256Hash.wrap(output.outPointFor.hash.reversedBytes))
+        return outPoint.bitcoinSerialize()
     }
 
     fun createIdentifier(): Identifier {
