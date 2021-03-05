@@ -117,20 +117,17 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
         return json
     }
 
-
     fun get(path: String): Any? {
-        val paths = path.split("/")
-        var map = data
-        for (i: Int in 0..paths.size) {
-            if (map.containsKey(paths[i])) {
-                if (i == paths.size)
-                    return map[paths[i]]
-                else {
-                    map = map[paths[i]] as Map<String, Any?>
-                }
+        val keys = path.split("/")
+        var value: Any? = data
+        for (key in keys) {
+            if ((value as Map<String, Any?>).containsKey(key)) {
+                value = (value as Map<*, *>?)!![key]
+            } else {
+                return null
             }
         }
-        return null
+        return value
     }
 
     fun set(path: String, value: Any) {

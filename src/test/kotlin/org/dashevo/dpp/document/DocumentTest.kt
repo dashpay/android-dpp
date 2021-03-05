@@ -48,6 +48,32 @@ class DocumentTest {
     }
 
     @Test
+    fun getTest() {
+        val contract = Fixtures.getDataContractFixtures()
+
+        val rawDocument = hashMapOf(
+            "\$id" to Entropy.generate(),
+            "\$ownerId" to Entropy.generate(),
+            "\$dataContractId" to contract.id,
+            "\$revision" to 0,
+            "\$protocolVersion" to 0,
+            "\$type" to "essay",
+            "header" to "start-section",
+            "body" to hashMapOf(
+                "intro" to "Hello, all!",
+                "topic" to "Greetings are great for everyone.",
+                "conclusion" to "The end!"
+            ),
+            "footer" to listOf("copyright", "license", "page number")
+        )
+
+        val document = Document(rawDocument, contract)
+        assertEquals("start-section", document.get("header"))
+        assertEquals("Greetings are great for everyone.", document.get("body/topic"))
+        assertEquals(null, document.get("abstract/author"))
+    }
+
+    @Test
     fun applyStateTransition() {
         val documents = Fixtures.getDocumentsFixture()
         val batchTransition = hashMapOf(
