@@ -6,6 +6,23 @@
  */
 package org.dashevo.dpp.identity
 
+import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.statetransition.StateTransitionIdentitySigned
 
-class StateTransitionMock : StateTransitionIdentitySigned(Types.DATA_CONTRACT_CREATE, 0)
+class StateTransitionMock : StateTransitionIdentitySigned(Types.DATA_CONTRACT_CREATE, 0) {
+    override val modifiedDataIds: List<Identifier>
+        get() = TODO("Not yet implemented")
+
+    override fun isDocumentStateTransition(): Boolean {
+        return false
+    }
+
+    override fun isDataContractStateTransition(): Boolean {
+        return true
+    }
+
+    override fun isIdentityStateTransition(): Boolean {
+        return false
+    }
+
+}

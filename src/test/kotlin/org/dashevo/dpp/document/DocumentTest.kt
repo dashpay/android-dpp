@@ -10,10 +10,10 @@ import org.dashevo.dpp.Fixtures
 import org.dashevo.dpp.StateRepositoryMock
 import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.util.Cbor
+import org.dashevo.dpp.util.Entropy
 import org.dashevo.dpp.util.HashUtils
 import org.json.JSONObject
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -45,6 +45,17 @@ class DocumentTest {
         assertEquals(fixtureCreatedDocuments[0].type, factoryCreatedDocument.type)
         assertEquals(fixtureCreatedDocuments[0].data["name"], factoryCreatedDocument.data["name"])
 
+        val firstRawDocument = fixtureCreatedDocuments[0].toObject()
+        assertArrayEquals(firstRawDocument["\$dataContractId"] as ByteArray, factoryCreatedDocument.dataContractId.toBuffer())
+        assertArrayEquals(firstRawDocument["\$ownerId"] as ByteArray, factoryCreatedDocument.ownerId.toBuffer())
+        assertEquals(firstRawDocument["\$type"], factoryCreatedDocument.type)
+        assertEquals(firstRawDocument["name"], factoryCreatedDocument.data["name"])
+
+        val firstRawDocumentJson = fixtureCreatedDocuments[0].toJSON()
+        assertEquals(firstRawDocumentJson["\$dataContractId"] as String, factoryCreatedDocument.dataContractId.toString())
+        assertEquals(firstRawDocumentJson["\$ownerId"] as String, factoryCreatedDocument.ownerId.toString())
+
+        assertEquals(fixtureCreatedDocuments[0].get("name") as String, factoryCreatedDocument.data["name"])
     }
 
     @Test
@@ -80,7 +91,11 @@ class DocumentTest {
                 "create" to documents
         )
         val result = DocumentFactory(stateRepository).createStateTransition(batchTransition)
-        //assertEquals(result.documents, documents)
+        for (i in result.transitions.indices)
+            assertEquals((result.transitions[0] as DataDocumentTransition).data, documents[0].data)
+        assertTrue(result.isDocumentStateTransition())
+        assertFalse(result.isDataContractStateTransition())
+        assertFalse(result.isIdentityStateTransition())
     }
 
     @Test @Disabled
@@ -89,8 +104,8 @@ class DocumentTest {
         val documentST = Fixtures.getDocumentsSTSignedFixture()
         val identityST = Fixtures.getIdentityCreateSTSignedFixture()
         val identity = Fixtures.getIdentityForSignaturesFixture()
-        Assertions.assertTrue(documentST.verifySignature(identityST.publicKeys[0]))
-        Assertions.assertTrue(documentST.verifySignature(identity.publicKeys[0]))
+        assertTrue(documentST.verifySignature(identityST.publicKeys[0]))
+        assertTrue(documentST.verifySignature(identity.publicKeys[0]))
 
         val documentSTTwo = Fixtures.getDocumentsSTSignedFixtureTwo()
         assertEquals(documentST.transitions[0].toJSON(), documentSTTwo.transitions[0].toJSON())

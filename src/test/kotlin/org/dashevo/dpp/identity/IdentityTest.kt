@@ -6,7 +6,6 @@
  */
 package org.dashevo.dpp.identity
 
-import org.bitcoinj.core.Base58
 import org.bitcoinj.core.ECKey
 import org.dashevo.dpp.Fixtures
 import org.dashevo.dpp.StateRepositoryMock
@@ -15,7 +14,6 @@ import org.dashevo.dpp.statetransition.errors.PublicKeyMismatchError
 import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.toHexString
 import org.dashevo.dpp.util.Cbor
-import org.dashevo.dpp.util.HashUtils
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -61,6 +59,9 @@ class IdentityTest {
         val identity = factory.applyIdentityCreateStateTransition(createTransition)
 
         assertEquals("ylrObex3KikHd5h/13AW/P0yklpCyEOJt7X70cAmVOE", identity.id)
+        assertTrue(createTransition.isIdentityStateTransition())
+        assertFalse(createTransition.isDataContractStateTransition())
+        assertFalse(createTransition.isDocumentStateTransition())
     }
 
     @Test
