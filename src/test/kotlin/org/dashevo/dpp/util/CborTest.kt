@@ -9,6 +9,7 @@ package org.dashevo.dpp.util
 import org.dashevo.dpp.toHexString
 import org.json.JSONArray
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class CborTest {
@@ -22,5 +23,44 @@ class CborTest {
 
         var bytes = Cbor.encode(where)
         assertEquals("8183676d6573736167656a73746172747357697468685475746f7269616c", bytes.toHexString())
+    }
+
+    @Test
+    fun stringRoundtripTest() {
+        val string = "Hello World!"
+        val encoded = Cbor.encode(string)
+        val decoded = Cbor.decodeString(encoded)
+        assertEquals(string, decoded)
+    }
+
+    @Test
+    fun encodeArrayInArrayTest() {
+        val list = listOf(listOf("one", "two"), listOf("first", "second"))
+        val map = hashMapOf(
+            "protocolVersion" to 0,
+            "listOfLists" to list,
+            "identifier" to Entropy.generate()
+        )
+
+        val encoded = Cbor.encode(map)
+
+        val decoded = Cbor.decode(encoded)
+        assertEquals(map["protocolVersion"], decoded["protocolVersion"])
+        assertEquals(map["listOfLists"].toString(), decoded["listOfLists"].toString())
+        assertTrue((map["identifier"] as ByteArray).contentEquals(decoded["identifier"] as ByteArray))
+    }
+
+    @Test
+    fun encodeNullTest() {
+        val map = hashMapOf(
+            "protocolVersion" to 0,
+            "advancedConfig" to null
+        )
+
+        val encoded = Cbor.encode(map)
+
+        val decoded = Cbor.decode(encoded)
+        assertEquals(map["protocolVersion"], decoded["protocolVersion"])
+        assertEquals(null, decoded["advancedConfig"])
     }
 }
