@@ -41,4 +41,16 @@ class DataContractCreateTransition : StateTransitionIdentitySigned {
         json["entropy"] = entropy.toBase64()
         return json
     }
+
+    override fun isDataContractStateTransition(): Boolean {
+        return true
+    }
+
+    override fun isDocumentStateTransition(): Boolean {
+        return false
+    }
+
+    override fun isIdentityStateTransition(): Boolean {
+        return false
+    }
 }

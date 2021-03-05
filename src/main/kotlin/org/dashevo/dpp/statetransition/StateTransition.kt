@@ -107,4 +107,11 @@ abstract class StateTransition(var signature: ByteArray?,
         val serializedStateTransition = toBuffer(skipSignature = true)
         return serializedStateTransition.size * PRICE_PER_BYTE
     }
+
+    /** returns true of this state transition affects documents:  create, update and delete transitions */
+    abstract fun isDocumentStateTransition(): Boolean
+    /** returns true of this state transition affects data contracts */
+    abstract fun isDataContractStateTransition(): Boolean
+    /** returns true of this state transition affects identities: create, update and topup */
+    abstract fun isIdentityStateTransition(): Boolean
 }

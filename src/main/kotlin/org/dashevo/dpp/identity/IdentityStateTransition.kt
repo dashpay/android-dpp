@@ -18,4 +18,16 @@ abstract class IdentityStateTransition : StateTransitionIdentitySigned {
     constructor(type: Types, protocolVersion: Int = 0) : this(null, null, type, protocolVersion)
 
     constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition)
+
+    override fun isDataContractStateTransition(): Boolean {
+        return false
+    }
+
+    override fun isDocumentStateTransition(): Boolean {
+        return false
+    }
+
+    override fun isIdentityStateTransition(): Boolean {
+        return true
+    }
 }

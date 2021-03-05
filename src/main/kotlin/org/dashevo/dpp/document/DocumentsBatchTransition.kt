@@ -15,6 +15,10 @@ class DocumentsBatchTransition : StateTransitionIdentitySigned {
     var ownerId: Identifier
     var transitions: List<DocumentTransition>
 
+    /** returns ids of all affected documents */
+    override val modifiedDataIds: List<Identifier>
+        get() = transitions.map { it.id }
+
     constructor(ownerId: Identifier, transitions: List<DocumentTransition>) : super(Types.DOCUMENTS_BATCH) {
         this.ownerId = ownerId
         this.transitions = transitions
@@ -48,5 +52,17 @@ class DocumentsBatchTransition : StateTransitionIdentitySigned {
         json["ownerId"] = ownerId.toString()
         json["transitions"] = transitions.map { entry -> entry.toJSON() }
         return json
+    }
+
+    override fun isDataContractStateTransition(): Boolean {
+        return false
+    }
+
+    override fun isDocumentStateTransition(): Boolean {
+        return true
+    }
+
+    override fun isIdentityStateTransition(): Boolean {
+        return false
     }
 }
