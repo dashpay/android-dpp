@@ -9,6 +9,7 @@ package org.dashevo.dpp.statetransition
 
 import org.bitcoinj.core.*
 import org.dashevo.dpp.BaseObject
+import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.statetransition.errors.StateTransitionIsNotSignedError
 import org.dashevo.dpp.toBase64Padded
 import org.dashevo.dpp.util.Cbor
@@ -40,6 +41,8 @@ abstract class StateTransition(var signature: ByteArray?,
         const val PRICE_PER_BYTE = 1L
         const val CURRENT_PROTOCOL_VERSION = 0
     }
+
+    abstract val modifiedDataIds: List<Identifier>
 
     constructor(rawStateTransition: MutableMap<String, Any?>) :
             this(rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) },

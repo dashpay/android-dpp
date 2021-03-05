@@ -1,5 +1,6 @@
 package org.dashevo.dpp.contract
 
+import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.statetransition.StateTransitionIdentitySigned
 import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.util.Entropy
@@ -18,6 +19,9 @@ class DataContractCreateTransition : StateTransitionIdentitySigned {
         }
         this.entropy = dataContract.entropy!!
     }
+    /** returns id of created contract */
+    override val modifiedDataIds: List<Identifier>
+        get() = listOf(dataContract.id)
 
     constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
         dataContract = DataContract(rawStateTransition["dataContract"] as MutableMap<String, Any?>)

@@ -13,6 +13,9 @@ class IdentityCreateTransition : IdentityStateTransition {
     val identityId: Identifier // base58
     val assetLock: AssetLock  // base64
     val publicKeys: MutableList<IdentityPublicKey>
+    /** returns id of created identity */
+    override val modifiedDataIds: List<Identifier>
+        get() = listOf(identityId)
 
     constructor(assetLock: AssetLock,
                  publicKeys: List<IdentityPublicKey>,

@@ -12,6 +12,9 @@ class IdentityTopupTransition : IdentityStateTransition {
 
     val identityId: Identifier
     var assetLock: AssetLock
+    /** returns id of created identity */
+    override val modifiedDataIds: List<Identifier>
+        get() = listOf(identityId)
 
     constructor(identityId: Identifier,
                 assetLock: AssetLock,
