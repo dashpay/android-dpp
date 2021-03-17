@@ -44,6 +44,8 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.10.0'
 }
 
+sourceCompatibility = 1.8
+
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
