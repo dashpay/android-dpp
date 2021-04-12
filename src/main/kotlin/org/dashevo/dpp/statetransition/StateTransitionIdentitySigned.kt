@@ -8,7 +8,8 @@
 package org.dashevo.dpp.statetransition
 
 import org.bitcoinj.core.*
-import org.bitcoinj.params.EvoNetParams
+import org.bitcoinj.params.MainNetParams
+import org.bitcoinj.params.TestNet3Params
 import org.dashevo.dpp.identity.IdentityPublicKey
 import org.dashevo.dpp.statetransition.errors.InvalidSignaturePublicKeyError
 import org.dashevo.dpp.statetransition.errors.InvalidSignatureTypeError
@@ -48,8 +49,9 @@ abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
         when (identityPublicKey.type) {
             IdentityPublicKey.TYPES.ECDSA_SECP256K1 -> {
                 privateKeyModel = try {
-                    val dpk = DumpedPrivateKey.fromBase58(EvoNetParams.get(), privateKey)
-                    dpk.key
+                    DumpedPrivateKey.fromBase58(TestNet3Params.get(), privateKey).key
+                } catch (_: AddressFormatException.WrongNetwork) {
+                    DumpedPrivateKey.fromBase58(MainNetParams.get(), privateKey).key
                 } catch (_: AddressFormatException) {
                     ECKey.fromPrivate(HashUtils.fromHex(privateKey))
                 }
