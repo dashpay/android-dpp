@@ -1,4 +1,3 @@
-apply plugin: 'kotlin'
 
 buildscript {
     ext.kotlin_version = '1.4.10'
@@ -14,6 +13,13 @@ buildscript {
         classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
     }
 }
+
+plugins {
+    id 'maven-publish'
+    id 'maven'
+    id 'signing'
+}
+apply plugin: 'kotlin'
 
 allprojects {
     repositories {
@@ -58,11 +64,6 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-artifacts {
-    archives sourcesJar
-}
-
-apply plugin: 'maven-publish'
 publishing {
     publications {
         maven(MavenPublication) {
@@ -77,4 +78,66 @@ assemble.dependsOn(sourcesJar)
 
 test {
     useJUnitPlatform()
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'DashJ X11'
+                packaging 'jar'
+                groupId 'org.dashj.platform'
+                artifactId 'dpp'
+                version '0.19-SNAPSHOT'
+                description 'Dash Platform Protocol Library'
+                url 'https://github.com/dashevo/android-dpp'
+
+                scm {
+                    connection 'scm:svn:https://github.com/dashevo/android-dpp'
+                    developerConnection 'scm:svn:https://github.com/dashevo/android-dpp'
+                    url 'https://github.com/dashevo/android-dpp'
+                }
+
+                licenses {
+                    license {
+                        name 'MIT'
+                        url 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'hashengineering'
+                        name 'HashEngineering'
+                        email 'hashengineeringsolutions@gmail.com'
+                    }
+                }
+            }
+        }
+    }
 }
