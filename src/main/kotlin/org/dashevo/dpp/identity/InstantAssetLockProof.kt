@@ -1,29 +1,52 @@
 package org.dashevo.dpp.identity
 
+import org.bitcoinj.core.Sha256Hash
+import org.bitcoinj.core.Transaction
+import org.bitcoinj.core.TransactionOutPoint
+import org.bitcoinj.core.TransactionOutput
 import org.bitcoinj.quorums.InstantSendLock
 import org.dashevo.dpp.BaseObject
+import org.dashevo.dpp.identifier.Identifier
+import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.util.HashUtils
 
-class InstantAssetLockProof(val instantLock: InstantSendLock) : BaseObject() {
-    val type: Int = 0
+class InstantAssetLockProof(val outputIndex: Long,
+                            val transaction: Transaction,
+                            val instantLock: InstantSendLock) : AssetLockProof() {
 
-    constructor(instantLockPayload: ByteArray) : this(InstantSendLock(null, instantLockPayload))
+    companion object {
+        const val TYPE = 0
+    }
+    override val type: Int = TYPE
 
     constructor(rawAssetLockProof: Map<String, Any?>)
-            : this(HashUtils.byteArrayfromBase64orByteArray(rawAssetLockProof["instantLock"]
-            ?: error("missing instantLock field")))
+            : this(rawAssetLockProof["outputIndex"] as Long,
+                Transaction(null, HashUtils.byteArrayfromBase64orByteArray(rawAssetLockProof["transaction"]?: error("missing transaction field"))),
+                InstantSendLock(null, HashUtils.byteArrayfromBase64orByteArray(rawAssetLockProof["instantLock"]?: error("missing instantLock field"))))
 
-    override fun toJSON(): Map<String, Any?> {
-        return hashMapOf(
-                "type" to type,
-                "instantLock" to instantLock.toStringBase64()
-        )
+    val output: TransactionOutput
+        get() = transaction.getOutput(outputIndex)
+
+    override fun getOutPoint(): ByteArray {
+        val outPoint = TransactionOutPoint(output.params, output.outPointFor.index, Sha256Hash.wrap(output.outPointFor.hash.reversedBytes))
+        return outPoint.bitcoinSerialize()
     }
 
     override fun toObject(): Map<String, Any?> {
         return hashMapOf(
-                "type" to type,
-                "instantLock" to instantLock.bitcoinSerialize()
+            "type" to type,
+            "instantLock" to instantLock.bitcoinSerialize(),
+            "transaction" to transaction.bitcoinSerialize(),
+            "outputIndex" to outputIndex,
+        )
+    }
+
+    override fun toJSON(): Map<String, Any?> {
+        return hashMapOf(
+            "type" to type,
+            "instantLock" to instantLock.bitcoinSerialize().toBase64(),
+            "transaction" to transaction.toStringBase64(),
+            "outputIndex" to outputIndex
         )
     }
 }
