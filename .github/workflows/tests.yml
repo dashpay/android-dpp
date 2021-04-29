@@ -23,5 +23,5 @@ jobs:
       run: |
         chmod +x gradlew
         chmod +x gradle/wrapper/gradle-wrapper.jar
-        ./gradlew assemble
+        ./gradlew assemble -x sign
         ./gradlew build test --info
