@@ -21,7 +21,7 @@ class Identity(var id: Identifier,
         const val PROTOCOL_VERSION: Int = 0
     }
 
-    var assetLock: AssetLock? = null
+    var assetLockProof: AssetLockProof? = null
 
     constructor(rawIdentity: Map<String, Any?>) : this(Identifier.from(rawIdentity["id"]),
             rawIdentity["balance"].toString().toLong(),
