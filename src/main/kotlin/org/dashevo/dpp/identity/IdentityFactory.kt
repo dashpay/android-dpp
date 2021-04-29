@@ -7,12 +7,17 @@
 
 package org.dashevo.dpp.identity
 
+import org.bitcoinj.core.ECKey
+import org.bitcoinj.core.Transaction
 import org.bitcoinj.core.TransactionOutPoint
+import org.bitcoinj.quorums.InstantSendLock
 import org.dashevo.dpp.Factory
 import org.dashevo.dpp.StateRepository
 import org.dashevo.dpp.identifier.Identifier
+import org.dashevo.dpp.statetransition.AssetLockProofFactory
 import org.dashevo.dpp.util.Cbor
 import org.dashevo.dpp.util.CreditsConverter
+import org.dashevo.dpp.util.CreditsConverter.convertSatoshiToCredits
 import org.dashevo.dpp.util.HashUtils
 
 class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepository) {
@@ -30,6 +35,15 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
         return Identity(Identifier.from(id), publicKeys, revision, protocolVersion)
     }
 
+    fun create(assetLockProof: AssetLockProof, publicKeys: List<ECKey>): Identity {
+        return Identity(
+            assetLockProof.createIdentifier(),
+            publicKeys.mapIndexed { index, it -> IdentityPublicKey(index, IdentityPublicKey.TYPES.ECDSA_SECP256K1, it.pubKey) },
+            revision = 0,
+            protocolVersion = Identity.PROTOCOL_VERSION
+        )
+    }
+
     fun createFromObject(rawIdentity: MutableMap<String, Any?>, options: Options = Options()): Identity {
         return Identity(rawIdentity)
     }
@@ -39,16 +53,24 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
         return createFromObject(rawIdentity, options)
     }
 
-    fun createIdentityCreateTransition(identity: Identity): IdentityCreateTransition {
-        return  IdentityCreateTransition(identity.assetLock!!, identity.publicKeys, Identity.PROTOCOL_VERSION)
+    fun createInstantAssetLockProof(instantSendLock: InstantSendLock, assetLockTransaction: Transaction, outputIndex: Long): InstantAssetLockProof {
+        return InstantAssetLockProof(outputIndex, assetLockTransaction, instantSendLock)
     }
 
-    fun createIdentityCreateTransition(assetLock: AssetLock, identityPublicKeys: List<IdentityPublicKey>): IdentityCreateTransition {
+    fun createChainAssetLockProof(coreChainLockedHeight: Long, outPoint: TransactionOutPoint): ChainAssetLockProof {
+        return ChainAssetLockProof(coreChainLockedHeight, outPoint)
+    }
+
+    fun createIdentityCreateTransition(identity: Identity): IdentityCreateTransition {
+        return  IdentityCreateTransition(identity.assetLockProof!!, identity.publicKeys, Identity.PROTOCOL_VERSION)
+    }
+
+    fun createIdentityCreateTransition(assetLock: AssetLockProof, identityPublicKeys: List<IdentityPublicKey>): IdentityCreateTransition {
 
         return  IdentityCreateTransition(assetLock, identityPublicKeys)
     }
 
-    fun createIdentityTopupTransition(identityId: Identifier, assetLock: AssetLock): IdentityTopupTransition {
+    fun createIdentityTopupTransition(identityId: Identifier, assetLock: AssetLockProof): IdentityTopupTransition {
         return  IdentityTopupTransition(identityId, assetLock)
     }
 
@@ -56,8 +78,8 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
 
         val identityCreateTransition = stateTransition as IdentityCreateTransition
 
-        val output = identityCreateTransition.assetLock.output
-        val outpoint = identityCreateTransition.assetLock.getOutPoint()
+        val output = AssetLockProofFactory(stateRepository).fetchAssetLockTransactionOutput(identityCreateTransition.assetLockProof)
+        val outpoint = identityCreateTransition.assetLockProof.getOutPoint()
 
         val creditsAmount = CreditsConverter.convertSatoshiToCredits(output.value)
 
@@ -72,9 +94,25 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
         //store identity
         stateRepository.storeIdentity(newIdentity)
         stateRepository.storeIdentityPublicKeyHashes(newIdentity.id, publicKeyHashes)
-        stateRepository.storeAssetLockTransactionOutPoint(outpoint)
+        stateRepository.markAssetLockTransactionOutPointAsUsed(outpoint)
 
         return newIdentity
+    }
+
+    fun applyIdentityTopUpTransition(stateTransition: IdentityTopupTransition) {
+
+        val output = AssetLockProofFactory(stateRepository).fetchAssetLockTransactionOutput(stateTransition.assetLock)
+        val outPoint = stateTransition.assetLock.getOutPoint()
+
+        val creditsAmount = convertSatoshiToCredits(output.value)
+        val identityId = stateTransition.identityId
+
+        val identity = stateRepository.fetchIdentity(identityId);
+        identity!!.increaseBalance(creditsAmount)
+
+        stateRepository.storeIdentity(identity)
+
+        stateRepository.markAssetLockTransactionOutPointAsUsed(outPoint);
 
     }
 }

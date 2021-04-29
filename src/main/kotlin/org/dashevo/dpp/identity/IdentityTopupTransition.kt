@@ -7,17 +7,18 @@
 package org.dashevo.dpp.identity
 
 import org.dashevo.dpp.identifier.Identifier
+import org.dashevo.dpp.statetransition.AssetLockProofFactory
 
 class IdentityTopupTransition : IdentityStateTransition {
 
     val identityId: Identifier
-    var assetLock: AssetLock
+    var assetLock: AssetLockProof
     /** returns id of created identity */
     override val modifiedDataIds: List<Identifier>
         get() = listOf(identityId)
 
     constructor(identityId: Identifier,
-                assetLock: AssetLock,
+                assetLock: AssetLockProof,
                 protocolVersion: Int = 0)
             : super(Types.IDENTITY_TOP_UP, protocolVersion) {
         this.assetLock = assetLock
@@ -26,7 +27,7 @@ class IdentityTopupTransition : IdentityStateTransition {
 
     constructor(rawStateTransition: MutableMap<String, Any?>)
             : super(rawStateTransition) {
-        assetLock = AssetLock(rawStateTransition["assetLock"] as Map<String, Any?>)
+        assetLock = AssetLockProofFactory.createAssetLockProofInstance(rawStateTransition["assetLock"] as Map<String, Any?>)
         identityId = Identifier.from(rawStateTransition["identityId"]!!)
     }
 

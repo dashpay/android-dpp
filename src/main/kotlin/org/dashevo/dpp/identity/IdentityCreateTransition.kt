@@ -7,35 +7,36 @@
 package org.dashevo.dpp.identity
 
 import org.dashevo.dpp.identifier.Identifier
+import org.dashevo.dpp.statetransition.AssetLockProofFactory
 
 class IdentityCreateTransition : IdentityStateTransition {
 
     val identityId: Identifier // base58
-    val assetLock: AssetLock  // base64
+    val assetLockProof: AssetLockProof  // base64
     val publicKeys: MutableList<IdentityPublicKey>
     /** returns id of created identity */
     override val modifiedDataIds: List<Identifier>
         get() = listOf(identityId)
 
-    constructor(assetLock: AssetLock,
+    constructor(assetLock: AssetLockProof,
                  publicKeys: List<IdentityPublicKey>,
                  protocolVersion: Int = 0)
     : super(Types.IDENTITY_CREATE, protocolVersion) {
-        this.assetLock = assetLock
+        this.assetLockProof = assetLock
         this.identityId = assetLock.createIdentifier()
         this.publicKeys = publicKeys.toMutableList()
     }
 
     constructor(rawStateTransition: MutableMap<String, Any?>)
             : super(rawStateTransition) {
-        assetLock = AssetLock(rawStateTransition["assetLock"] as Map<String, Any?>)
+        assetLockProof = AssetLockProofFactory.createAssetLockProofInstance(rawStateTransition["assetLock"] as Map<String, Any?>)
         publicKeys = (rawStateTransition["publicKeys"] as List<Any>).map { entry -> IdentityPublicKey(entry as MutableMap<String, Any>) }.toMutableList()
-        identityId = assetLock.createIdentifier()
+        identityId = assetLockProof.createIdentifier()
     }
 
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
         val map = super.toObject(skipSignature, skipIdentifiersConversion)
-        map["assetLock"] = assetLock.toObject()
+        map["assetLock"] = assetLockProof.toObject()
         map["publicKeys"] = publicKeys.map { it.toObject() }
         map.remove("signaturePublicKeyId")
         return map
@@ -43,7 +44,7 @@ class IdentityCreateTransition : IdentityStateTransition {
 
     override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
         val json = super.toJSON(skipSignature)
-        json["assetLock"] = assetLock.toJSON()
+        json["assetLock"] = assetLockProof.toJSON()
         json["publicKeys"] = publicKeys.map { it.toJSON() }
         json.remove("signaturePublicKeyId")
         return json
