@@ -3,6 +3,7 @@ package org.dashevo.dpp
 import org.bitcoinj.core.Block
 import org.bitcoinj.core.Transaction
 import org.bitcoinj.params.TestNet3Params
+import org.bitcoinj.quorums.InstantSendLock
 import org.dashevo.dpp.contract.DataContract
 import org.dashevo.dpp.document.Document
 import org.dashevo.dpp.identifier.Identifier
@@ -49,11 +50,15 @@ class StateRepositoryMock : StateRepository {
         return TestNet3Params.get().genesisBlock
     }
 
-    override fun checkAssetLockTransactionOutPointExists(outPointBuffer: ByteArray): Boolean {
+    override fun verifyInstantLock(instantLock: InstantSendLock): Boolean {
         TODO("Not yet implemented")
     }
 
-    override fun storeAssetLockTransactionOutPoint(outPointBuffer: ByteArray) {
+    override fun isAssetLockTransactionOutPointAlreadyUsed(outPointBuffer: ByteArray): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun markAssetLockTransactionOutPointAsUsed(outPointBuffer: ByteArray) {
         TODO("Not yet implemented")
     }
 }

@@ -8,6 +8,7 @@ package org.dashevo.dpp
 
 import org.bitcoinj.core.Block
 import org.bitcoinj.core.Transaction
+import org.bitcoinj.quorums.InstantSendLock
 import org.dashevo.dpp.contract.DataContract
 import org.dashevo.dpp.document.Document
 import org.dashevo.dpp.identifier.Identifier
@@ -53,11 +54,10 @@ interface StateRepository {
 
     fun fetchLatestPlatformBlockHeader() : Block
 
-    // TODO: Implement this later
-    // fun fetchSMLStore() : SimplifiedMNListStore
+    fun verifyInstantLock(instantLock: InstantSendLock) : Boolean
 
-    fun checkAssetLockTransactionOutPointExists(outPointBuffer: ByteArray) : Boolean
+    fun isAssetLockTransactionOutPointAlreadyUsed(outPointBuffer: ByteArray) : Boolean
 
-    fun storeAssetLockTransactionOutPoint(outPointBuffer: ByteArray)
+    fun markAssetLockTransactionOutPointAsUsed(outPointBuffer: ByteArray)
 }
 
