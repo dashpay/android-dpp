@@ -34,7 +34,7 @@ class IdentityTopupTransition : IdentityStateTransition {
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
         val map = super.toObject(skipSignature, skipIdentifiersConversion)
         map["identityId"] = identityId
-        map["assetLock"] = assetLock.toObject()
+        map["assetLockProof"] = assetLock.toObject()
 
         if (!skipIdentifiersConversion) {
             map["identityId"] = identityId.toBuffer()
@@ -45,7 +45,7 @@ class IdentityTopupTransition : IdentityStateTransition {
 
     override fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
         val json = super.toJSON(skipSignature)
-        json["assetLock"] = assetLock.toJSON()
+        json["assetLockProof"] = assetLock.toJSON()
         json["identityId"] = identityId.toString()
         return json
     }
