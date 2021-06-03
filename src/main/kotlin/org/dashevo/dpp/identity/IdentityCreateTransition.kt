@@ -29,7 +29,7 @@ class IdentityCreateTransition : IdentityStateTransition {
 
     constructor(rawStateTransition: MutableMap<String, Any?>)
             : super(rawStateTransition) {
-        assetLockProof = AssetLockProofFactory.createAssetLockProofInstance(rawStateTransition["assetLock"] as Map<String, Any?>)
+        assetLockProof = AssetLockProofFactory.createAssetLockProofInstance(rawStateTransition["assetLockProof"] as Map<String, Any?>)
         publicKeys = (rawStateTransition["publicKeys"] as List<Any>).map { entry -> IdentityPublicKey(entry as MutableMap<String, Any>) }.toMutableList()
         identityId = assetLockProof.createIdentifier()
     }

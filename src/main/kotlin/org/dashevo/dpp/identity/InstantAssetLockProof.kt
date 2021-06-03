@@ -4,9 +4,8 @@ import org.bitcoinj.core.Sha256Hash
 import org.bitcoinj.core.Transaction
 import org.bitcoinj.core.TransactionOutPoint
 import org.bitcoinj.core.TransactionOutput
+import org.bitcoinj.params.TestNet3Params
 import org.bitcoinj.quorums.InstantSendLock
-import org.dashevo.dpp.BaseObject
-import org.dashevo.dpp.identifier.Identifier
 import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.util.HashUtils
 
@@ -20,9 +19,9 @@ class InstantAssetLockProof(val outputIndex: Long,
     override val type: Int = TYPE
 
     constructor(rawAssetLockProof: Map<String, Any?>)
-            : this(rawAssetLockProof["outputIndex"] as Long,
-                Transaction(null, HashUtils.byteArrayfromBase64orByteArray(rawAssetLockProof["transaction"]?: error("missing transaction field"))),
-                InstantSendLock(null, HashUtils.byteArrayfromBase64orByteArray(rawAssetLockProof["instantLock"]?: error("missing instantLock field"))))
+            : this(rawAssetLockProof["outputIndex"].toString().toLong(),
+                Transaction(TestNet3Params.get(), HashUtils.byteArrayfromBase64orByteArray(rawAssetLockProof["transaction"]?: error("missing transaction field"))),
+                InstantSendLock(TestNet3Params.get(), HashUtils.byteArrayfromBase64orByteArray(rawAssetLockProof["instantLock"]?: error("missing instantLock field"))))
 
     val output: TransactionOutput
         get() = transaction.getOutput(outputIndex)
