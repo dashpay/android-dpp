@@ -2,9 +2,8 @@ package org.dashevo.dpp.identity
 
 import org.bitcoinj.core.Sha256Hash
 import org.bitcoinj.core.TransactionOutPoint
-import org.bitcoinj.quorums.InstantSendLock
-import org.dashevo.dpp.BaseObject
-import org.dashevo.dpp.identifier.Identifier
+import org.bitcoinj.params.TestNet3Params
+
 import org.dashevo.dpp.toBase64
 import org.dashevo.dpp.util.HashUtils
 
@@ -17,7 +16,7 @@ class ChainAssetLockProof(val coreChainLockedHeight: Long,
     override val type: Int = TYPE
 
     constructor(coreChainLockedHeight: Long, outPoint: ByteArray)
-    : this(coreChainLockedHeight, TransactionOutPoint(null, outPoint, 0))
+    : this(coreChainLockedHeight, TransactionOutPoint(TestNet3Params.get(), outPoint, 0))
 
     constructor(rawAssetLockProof: Map<String, Any?>)
             : this(rawAssetLockProof["coreChainLockedHeight"] as Long,
