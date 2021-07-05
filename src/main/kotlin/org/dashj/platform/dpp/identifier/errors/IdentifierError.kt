@@ -5,7 +5,7 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.identifier.errors
+package org.dashj.platform.dpp.identifier.errors
 
 import java.lang.Exception
 

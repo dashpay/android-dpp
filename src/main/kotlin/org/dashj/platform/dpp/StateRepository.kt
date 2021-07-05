@@ -4,15 +4,15 @@
  * This source code is licensed under the MIT license found in the
  * COPYING file in the root directory of this source tree.
  */
-package org.dashevo.dpp
+package org.dashj.platform.dpp
 
 import org.bitcoinj.core.Block
 import org.bitcoinj.core.Transaction
 import org.bitcoinj.quorums.InstantSendLock
-import org.dashevo.dpp.contract.DataContract
-import org.dashevo.dpp.document.Document
-import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.identity.Identity
+import org.dashj.platform.dpp.contract.DataContract
+import org.dashj.platform.dpp.document.Document
+import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.identity.Identity
 
 
 /**

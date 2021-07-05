@@ -1,4 +1,4 @@
-package org.dashevo.dpp.identity
+package org.dashj.platform.dpp.identity
 
 import org.bitcoinj.core.Sha256Hash
 import org.bitcoinj.core.Transaction
@@ -6,8 +6,8 @@ import org.bitcoinj.core.TransactionOutPoint
 import org.bitcoinj.core.TransactionOutput
 import org.bitcoinj.params.TestNet3Params
 import org.bitcoinj.quorums.InstantSendLock
-import org.dashevo.dpp.toBase64
-import org.dashevo.dpp.util.HashUtils
+import org.dashj.platform.dpp.toBase64
+import org.dashj.platform.dpp.util.HashUtils
 
 class InstantAssetLockProof(val outputIndex: Long,
                             val transaction: Transaction,

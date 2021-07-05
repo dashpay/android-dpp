@@ -1,10 +1,10 @@
-package org.dashevo.dpp
+package org.dashj.platform.dpp
 
-import org.dashevo.dpp.contract.ContractFactory
-import org.dashevo.dpp.document.DocumentFactory
-import org.dashevo.dpp.identity.IdentityFactory
-import org.dashevo.dpp.validation.JsonSchemaValidator
-import org.dashevo.dpp.validation.Validator
+import org.dashj.platform.dpp.contract.ContractFactory
+import org.dashj.platform.dpp.document.DocumentFactory
+import org.dashj.platform.dpp.identity.IdentityFactory
+import org.dashj.platform.dpp.validation.JsonSchemaValidator
+import org.dashj.platform.dpp.validation.Validator
 
 class DashPlatformProtocol(val stateRepository: StateRepository) {
     lateinit var document: DocumentFactory

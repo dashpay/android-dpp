@@ -5,19 +5,19 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.statetransition
+package org.dashj.platform.dpp.statetransition
 
-import org.dashevo.dpp.Factory
-import org.dashevo.dpp.StateRepository
-import org.dashevo.dpp.contract.ContractFactory
-import org.dashevo.dpp.contract.DataContractCreateTransition
-import org.dashevo.dpp.document.DocumentsBatchTransition
-import org.dashevo.dpp.errors.InvalidStateTransitionTypeError
-import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.identity.IdentityCreateTransition
-import org.dashevo.dpp.identity.IdentityTopupTransition
-import org.dashevo.dpp.util.Cbor
-import org.dashevo.dpp.util.HashUtils
+import org.dashj.platform.dpp.Factory
+import org.dashj.platform.dpp.StateRepository
+import org.dashj.platform.dpp.contract.ContractFactory
+import org.dashj.platform.dpp.contract.DataContractCreateTransition
+import org.dashj.platform.dpp.document.DocumentsBatchTransition
+import org.dashj.platform.dpp.errors.InvalidStateTransitionTypeError
+import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.identity.IdentityCreateTransition
+import org.dashj.platform.dpp.identity.IdentityTopupTransition
+import org.dashj.platform.dpp.util.Cbor
+import org.dashj.platform.dpp.util.HashUtils
 
 class StateTransitionFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 

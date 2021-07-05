@@ -1,4 +1,4 @@
-package org.dashevo.dpp.validation
+package org.dashj.platform.dpp.validation
 
 class JsonSchemaValidator: Validator {
 

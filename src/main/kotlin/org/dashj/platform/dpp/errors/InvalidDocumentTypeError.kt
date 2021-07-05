@@ -5,9 +5,9 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.errors
+package org.dashj.platform.dpp.errors
 
-import org.dashevo.dpp.contract.DataContract
+import org.dashj.platform.dpp.contract.DataContract
 
 class InvalidDocumentTypeError(dataContract: DataContract, type: String)
     : IllegalStateException("Contract ${dataContract.id} doesn't contain type $type")

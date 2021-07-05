@@ -1,5 +1,5 @@
-package org.dashevo.dpp.statetransition.errors
+package org.dashj.platform.dpp.statetransition.errors
 
-import org.dashevo.dpp.errors.ConcensusException
+import org.dashj.platform.dpp.errors.ConcensusException
 
 class UnknownAssetLockProofException(val type: Int) : ConcensusException("Unknown Asset lock proof type: $type")

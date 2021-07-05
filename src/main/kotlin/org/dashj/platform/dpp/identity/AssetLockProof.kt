@@ -1,9 +1,9 @@
-package org.dashevo.dpp.identity
+package org.dashj.platform.dpp.identity
 
 import org.bitcoinj.core.*
-import org.dashevo.dpp.BaseObject
-import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.util.HashUtils
+import org.dashj.platform.dpp.BaseObject
+import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.util.HashUtils
 
 abstract class AssetLockProof() : BaseObject() {
 

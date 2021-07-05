@@ -5,14 +5,14 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.identifier
+package org.dashj.platform.dpp.identifier
 
 import org.bitcoinj.core.Base58
 import org.bitcoinj.core.Sha256Hash
-import org.dashevo.dpp.identifier.errors.IdentifierError
-import org.dashevo.dpp.toBase64
-import org.dashevo.dpp.util.Cbor
-import org.dashevo.dpp.util.HashUtils
+import org.dashj.platform.dpp.identifier.errors.IdentifierError
+import org.dashj.platform.dpp.toBase64
+import org.dashj.platform.dpp.util.Cbor
+import org.dashj.platform.dpp.util.HashUtils
 import java.lang.IllegalStateException
 
 data class Identifier(private val buffer: ByteArray) {

@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * COPYING file in the root directory of this source tree.
  */
-package org.dashevo.dpp.document
+package org.dashj.platform.dpp.document
 
 import org.bitcoinj.core.Base58
 import java.lang.IllegalStateException

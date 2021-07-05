@@ -5,15 +5,15 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.statetransition
+package org.dashj.platform.dpp.statetransition
 
 import org.bitcoinj.core.*
-import org.dashevo.dpp.BaseObject
-import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.statetransition.errors.StateTransitionIsNotSignedError
-import org.dashevo.dpp.toBase64Padded
-import org.dashevo.dpp.util.Cbor
-import org.dashevo.dpp.util.HashUtils
+import org.dashj.platform.dpp.BaseObject
+import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedError
+import org.dashj.platform.dpp.toBase64Padded
+import org.dashj.platform.dpp.util.Cbor
+import org.dashj.platform.dpp.util.HashUtils
 import java.lang.Exception
 
 abstract class StateTransition(var signature: ByteArray?,

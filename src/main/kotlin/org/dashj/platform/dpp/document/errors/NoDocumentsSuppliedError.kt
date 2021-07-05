@@ -1,4 +1,4 @@
-package org.dashevo.dpp.document.errors
+package org.dashj.platform.dpp.document.errors
 
 import java.lang.Exception
 

@@ -4,9 +4,9 @@
  * This source code is licensed under the MIT license found in the
  * COPYING file in the root directory of this source tree.
  */
-package org.dashevo.dpp.document
+package org.dashj.platform.dpp.document
 
-import org.dashevo.dpp.identifier.Identifier
+import org.dashj.platform.dpp.identifier.Identifier
 
 abstract class DocumentTransition {
 

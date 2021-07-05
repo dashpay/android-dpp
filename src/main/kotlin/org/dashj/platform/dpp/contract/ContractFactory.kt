@@ -5,14 +5,14 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.contract
+package org.dashj.platform.dpp.contract
 
-import org.dashevo.dpp.Factory
-import org.dashevo.dpp.StateRepository
-import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.util.Cbor
-import org.dashevo.dpp.util.Entropy
-import org.dashevo.dpp.util.HashUtils
+import org.dashj.platform.dpp.Factory
+import org.dashj.platform.dpp.StateRepository
+import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.util.Cbor
+import org.dashj.platform.dpp.util.Entropy
+import org.dashj.platform.dpp.util.HashUtils
 
 class ContractFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 

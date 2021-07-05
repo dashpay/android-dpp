@@ -5,20 +5,20 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.identity
+package org.dashj.platform.dpp.identity
 
 import org.bitcoinj.core.ECKey
 import org.bitcoinj.core.Transaction
 import org.bitcoinj.core.TransactionOutPoint
 import org.bitcoinj.quorums.InstantSendLock
-import org.dashevo.dpp.Factory
-import org.dashevo.dpp.StateRepository
-import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.statetransition.AssetLockProofFactory
-import org.dashevo.dpp.util.Cbor
-import org.dashevo.dpp.util.CreditsConverter
-import org.dashevo.dpp.util.CreditsConverter.convertSatoshiToCredits
-import org.dashevo.dpp.util.HashUtils
+import org.dashj.platform.dpp.Factory
+import org.dashj.platform.dpp.StateRepository
+import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.statetransition.AssetLockProofFactory
+import org.dashj.platform.dpp.util.Cbor
+import org.dashj.platform.dpp.util.CreditsConverter
+import org.dashj.platform.dpp.util.CreditsConverter.convertSatoshiToCredits
+import org.dashj.platform.dpp.util.HashUtils
 
 class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 

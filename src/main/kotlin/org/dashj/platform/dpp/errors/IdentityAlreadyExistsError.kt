@@ -5,9 +5,9 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.errors
+package org.dashj.platform.dpp.errors
 
-import org.dashevo.dpp.identity.IdentityCreateTransition
+import org.dashj.platform.dpp.identity.IdentityCreateTransition
 import java.lang.Exception
 
 class IdentityAlreadyExistsError(identityCreateTransition: IdentityCreateTransition)

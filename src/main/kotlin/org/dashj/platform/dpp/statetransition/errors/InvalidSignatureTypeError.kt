@@ -4,9 +4,9 @@
  * This source code is licensed under the MIT license found in the
  * COPYING file in the root directory of this source tree.
  */
-package org.dashevo.dpp.statetransition.errors
+package org.dashj.platform.dpp.statetransition.errors
 
-import org.dashevo.dpp.identity.IdentityPublicKey
+import org.dashj.platform.dpp.identity.IdentityPublicKey
 import java.lang.Exception
 
 class InvalidSignatureTypeError(val signatureType: IdentityPublicKey.TYPES) : Exception("Invalid Signature Type")

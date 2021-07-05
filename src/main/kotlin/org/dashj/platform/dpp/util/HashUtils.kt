@@ -5,7 +5,7 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.util
+package org.dashj.platform.dpp.util
 
 import com.google.common.io.BaseEncoding
 import org.bitcoinj.core.Base58

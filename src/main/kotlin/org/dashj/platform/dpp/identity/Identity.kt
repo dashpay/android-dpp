@@ -5,11 +5,11 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.identity
+package org.dashj.platform.dpp.identity
 
 import com.google.common.base.Preconditions
-import org.dashevo.dpp.BaseObject
-import org.dashevo.dpp.identifier.Identifier
+import org.dashj.platform.dpp.BaseObject
+import org.dashj.platform.dpp.identifier.Identifier
 
 class Identity(var id: Identifier,
                var balance: Long,

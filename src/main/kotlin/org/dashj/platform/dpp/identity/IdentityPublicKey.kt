@@ -4,15 +4,15 @@
  * This source code is licensed under the MIT license found in the
  * COPYING file in the root directory of this source tree.
  */
-package org.dashevo.dpp.identity
+package org.dashj.platform.dpp.identity
 
 import org.bitcoinj.core.ECKey
 import org.bitcoinj.core.Utils
-import org.dashevo.dpp.BaseObject
-import org.dashevo.dpp.identity.errors.EmptyPublicKeyDataException
-import org.dashevo.dpp.toBase64
-import org.dashevo.dpp.util.HashUtils.byteArrayfromBase64orByteArray
-import org.dashevo.dpp.util.HashUtils.fromBase64
+import org.dashj.platform.dpp.BaseObject
+import org.dashj.platform.dpp.identity.errors.EmptyPublicKeyDataException
+import org.dashj.platform.dpp.toBase64
+import org.dashj.platform.dpp.util.HashUtils.byteArrayfromBase64orByteArray
+import org.dashj.platform.dpp.util.HashUtils.fromBase64
 
 class IdentityPublicKey(val id: Int,
                         val type: TYPES,

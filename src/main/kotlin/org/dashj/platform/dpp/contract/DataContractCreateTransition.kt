@@ -1,10 +1,10 @@
-package org.dashevo.dpp.contract
+package org.dashj.platform.dpp.contract
 
-import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.statetransition.StateTransitionIdentitySigned
-import org.dashevo.dpp.toBase64
-import org.dashevo.dpp.util.Entropy
-import org.dashevo.dpp.util.HashUtils.byteArrayfromBase64orByteArray
+import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.statetransition.StateTransitionIdentitySigned
+import org.dashj.platform.dpp.toBase64
+import org.dashj.platform.dpp.util.Entropy
+import org.dashj.platform.dpp.util.HashUtils.byteArrayfromBase64orByteArray
 
 class DataContractCreateTransition : StateTransitionIdentitySigned {
 

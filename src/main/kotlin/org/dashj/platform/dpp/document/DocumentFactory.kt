@@ -5,21 +5,21 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.document
+package org.dashj.platform.dpp.document
 
-import org.dashevo.dpp.Factory
-import org.dashevo.dpp.StateRepository
-import org.dashevo.dpp.contract.DataContract
-import org.dashevo.dpp.document.errors.InvalidActionNameError
-import org.dashevo.dpp.document.errors.InvalidInitialRevisionError
-import org.dashevo.dpp.document.errors.MismatchOwnerIdsError
-import org.dashevo.dpp.document.errors.NoDocumentsSuppliedError
-import org.dashevo.dpp.errors.InvalidDocumentTypeError
-import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.statetransition.StateTransition
-import org.dashevo.dpp.util.Cbor
-import org.dashevo.dpp.util.Entropy
-import org.dashevo.dpp.util.HashUtils
+import org.dashj.platform.dpp.Factory
+import org.dashj.platform.dpp.StateRepository
+import org.dashj.platform.dpp.contract.DataContract
+import org.dashj.platform.dpp.document.errors.InvalidActionNameError
+import org.dashj.platform.dpp.document.errors.InvalidInitialRevisionError
+import org.dashj.platform.dpp.document.errors.MismatchOwnerIdsError
+import org.dashj.platform.dpp.document.errors.NoDocumentsSuppliedError
+import org.dashj.platform.dpp.errors.InvalidDocumentTypeError
+import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.statetransition.StateTransition
+import org.dashj.platform.dpp.util.Cbor
+import org.dashj.platform.dpp.util.Entropy
+import org.dashj.platform.dpp.util.HashUtils
 
 class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 

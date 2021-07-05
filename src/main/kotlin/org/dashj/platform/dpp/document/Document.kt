@@ -5,12 +5,12 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.document
+package org.dashj.platform.dpp.document
 
-import org.dashevo.dpp.BaseObject
-import org.dashevo.dpp.contract.DataContract
-import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.toBase64
+import org.dashj.platform.dpp.BaseObject
+import org.dashj.platform.dpp.contract.DataContract
+import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.toBase64
 import kotlin.collections.HashMap
 
 class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : BaseObject() {

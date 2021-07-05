@@ -5,7 +5,7 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.document
+package org.dashj.platform.dpp.document
 
 abstract class DataDocumentTransition(rawStateTransition: MutableMap<String, Any?>) : DocumentTransition(rawStateTransition) {
 

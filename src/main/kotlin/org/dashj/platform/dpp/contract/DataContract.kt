@@ -5,11 +5,11 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.contract
+package org.dashj.platform.dpp.contract
 
-import org.dashevo.dpp.BaseObject
-import org.dashevo.dpp.errors.InvalidDocumentTypeError
-import org.dashevo.dpp.identifier.Identifier
+import org.dashj.platform.dpp.BaseObject
+import org.dashj.platform.dpp.errors.InvalidDocumentTypeError
+import org.dashj.platform.dpp.identifier.Identifier
 
 class DataContract(val id: Identifier,
                    val ownerId: Identifier,

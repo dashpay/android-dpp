@@ -1,4 +1,4 @@
-package org.dashevo.dpp.util
+package org.dashj.platform.dpp.util
 
 import org.bitcoinj.core.Coin
 import kotlin.math.floor

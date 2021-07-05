@@ -5,18 +5,18 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.statetransition
+package org.dashj.platform.dpp.statetransition
 
 import org.bitcoinj.core.*
 import org.bitcoinj.params.MainNetParams
 import org.bitcoinj.params.TestNet3Params
-import org.dashevo.dpp.identity.IdentityPublicKey
-import org.dashevo.dpp.statetransition.errors.InvalidSignaturePublicKeyError
-import org.dashevo.dpp.statetransition.errors.InvalidSignatureTypeError
-import org.dashevo.dpp.statetransition.errors.PublicKeyMismatchError
-import org.dashevo.dpp.statetransition.errors.StateTransitionIsNotSignedError
-import org.dashevo.dpp.toBase64
-import org.dashevo.dpp.util.HashUtils
+import org.dashj.platform.dpp.identity.IdentityPublicKey
+import org.dashj.platform.dpp.statetransition.errors.InvalidSignaturePublicKeyError
+import org.dashj.platform.dpp.statetransition.errors.InvalidSignatureTypeError
+import org.dashj.platform.dpp.statetransition.errors.PublicKeyMismatchError
+import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedError
+import org.dashj.platform.dpp.toBase64
+import org.dashj.platform.dpp.util.HashUtils
 
 abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
                                              signature: ByteArray?,

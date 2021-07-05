@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * COPYING file in the root directory of this source tree.
  */
-package org.dashevo.dpp
+package org.dashj.platform.dpp
 
 abstract class Factory (val stateRepository: StateRepository) {
     data class Options(val skipValidation: Boolean = false)

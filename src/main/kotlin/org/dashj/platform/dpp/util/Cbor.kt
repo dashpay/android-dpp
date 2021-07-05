@@ -5,7 +5,7 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.util
+package org.dashj.platform.dpp.util
 
 import co.nstant.`in`.cbor.CborBuilder
 import co.nstant.`in`.cbor.CborDecoder
@@ -14,7 +14,7 @@ import co.nstant.`in`.cbor.builder.AbstractBuilder
 import co.nstant.`in`.cbor.builder.ArrayBuilder
 import co.nstant.`in`.cbor.builder.MapBuilder
 import co.nstant.`in`.cbor.model.*
-import org.dashevo.dpp.identifier.Identifier
+import org.dashj.platform.dpp.identifier.Identifier
 import java.io.ByteArrayOutputStream
 import java.lang.IllegalStateException
 import java.math.BigInteger

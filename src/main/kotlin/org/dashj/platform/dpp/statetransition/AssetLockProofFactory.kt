@@ -1,12 +1,12 @@
-package org.dashevo.dpp.statetransition
+package org.dashj.platform.dpp.statetransition
 
 import org.bitcoinj.core.TransactionOutput
-import org.dashevo.dpp.StateRepository
-import org.dashevo.dpp.identity.AssetLockProof
-import org.dashevo.dpp.identity.ChainAssetLockProof
-import org.dashevo.dpp.identity.InstantAssetLockProof
-import org.dashevo.dpp.statetransition.errors.IdentityAssetLockTransactionIsNotFoundException
-import org.dashevo.dpp.statetransition.errors.UnknownAssetLockProofException
+import org.dashj.platform.dpp.StateRepository
+import org.dashj.platform.dpp.identity.AssetLockProof
+import org.dashj.platform.dpp.identity.ChainAssetLockProof
+import org.dashj.platform.dpp.identity.InstantAssetLockProof
+import org.dashj.platform.dpp.statetransition.errors.IdentityAssetLockTransactionIsNotFoundException
+import org.dashj.platform.dpp.statetransition.errors.UnknownAssetLockProofException
 import java.lang.IllegalStateException
 
 class AssetLockProofFactory (val stateRepository: StateRepository) {

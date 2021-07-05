@@ -4,10 +4,10 @@
  * This source code is licensed under the MIT license found in the
  * COPYING file in the root directory of this source tree.
  */
-package org.dashevo.dpp.identity
+package org.dashj.platform.dpp.identity
 
-import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.statetransition.AssetLockProofFactory
+import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.statetransition.AssetLockProofFactory
 
 class IdentityCreateTransition : IdentityStateTransition {
 

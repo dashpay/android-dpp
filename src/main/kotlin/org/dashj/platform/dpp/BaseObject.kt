@@ -4,11 +4,11 @@
  * This source code is licensed under the MIT license found in the
  * COPYING file in the root directory of this source tree.
  */
-package org.dashevo.dpp
+package org.dashj.platform.dpp
 
 import org.bitcoinj.core.Sha256Hash
-import org.dashevo.dpp.util.Cbor
-import org.dashevo.dpp.util.HashUtils
+import org.dashj.platform.dpp.util.Cbor
+import org.dashj.platform.dpp.util.HashUtils
 
 /**
  * The abstract base class for Dash Platform objects that will handle
