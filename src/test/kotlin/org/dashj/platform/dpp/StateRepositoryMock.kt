@@ -1,13 +1,13 @@
-package org.dashevo.dpp
+package org.dashj.platform.dpp
 
 import org.bitcoinj.core.Block
 import org.bitcoinj.core.Transaction
 import org.bitcoinj.params.TestNet3Params
 import org.bitcoinj.quorums.InstantSendLock
-import org.dashevo.dpp.contract.DataContract
-import org.dashevo.dpp.document.Document
-import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.identity.Identity
+import org.dashj.platform.dpp.contract.DataContract
+import org.dashj.platform.dpp.document.Document
+import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.identity.Identity
 
 class StateRepositoryMock : StateRepository {
     override fun fetchDataContract(id: Identifier): DataContract? {

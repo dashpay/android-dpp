@@ -5,12 +5,12 @@
  * COPYING file in the root directory of this source tree.
  */
 
-package org.dashevo.dpp.contract
-import org.dashevo.dpp.Fixtures
-import org.dashevo.dpp.StateRepositoryMock
-import org.dashevo.dpp.toHexString
-import org.dashevo.dpp.util.HashUtils
-import org.dashevo.dpp.util.HashUtils.fromHex
+package org.dashj.platform.dpp.contract
+import org.dashj.platform.dpp.Fixtures
+import org.dashj.platform.dpp.StateRepositoryMock
+import org.dashj.platform.dpp.toHexString
+import org.dashj.platform.dpp.util.HashUtils
+import org.dashj.platform.dpp.util.HashUtils.fromHex
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

@@ -4,16 +4,16 @@
  * This source code is licensed under the MIT license found in the
  * COPYING file in the root directory of this source tree.
  */
-package org.dashevo.dpp.identity
+package org.dashj.platform.dpp.identity
 
 import org.bitcoinj.core.ECKey
-import org.dashevo.dpp.Fixtures
-import org.dashevo.dpp.StateRepositoryMock
-import org.dashevo.dpp.statetransition.StateTransition
-import org.dashevo.dpp.statetransition.errors.PublicKeyMismatchError
-import org.dashevo.dpp.toBase64
-import org.dashevo.dpp.toHexString
-import org.dashevo.dpp.util.Cbor
+import org.dashj.platform.dpp.Fixtures
+import org.dashj.platform.dpp.StateRepositoryMock
+import org.dashj.platform.dpp.statetransition.StateTransition
+import org.dashj.platform.dpp.statetransition.errors.PublicKeyMismatchError
+import org.dashj.platform.dpp.toBase64
+import org.dashj.platform.dpp.toHexString
+import org.dashj.platform.dpp.util.Cbor
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test

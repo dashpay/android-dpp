@@ -1,8 +1,8 @@
-package org.dashevo.dpp.util
+package org.dashj.platform.dpp.util
 
 import org.bitcoinj.core.Coin
-import org.dashevo.dpp.util.CreditsConverter.convertCreditsToSatoshis
-import org.dashevo.dpp.util.CreditsConverter.convertSatoshiToCredits
+import org.dashj.platform.dpp.util.CreditsConverter.convertCreditsToSatoshis
+import org.dashj.platform.dpp.util.CreditsConverter.convertSatoshiToCredits
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

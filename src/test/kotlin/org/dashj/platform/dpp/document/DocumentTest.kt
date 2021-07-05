@@ -4,14 +4,14 @@
  * This source code is licensed under the MIT license found in the
  * COPYING file in the root directory of this source tree.
  */
-package org.dashevo.dpp.document
+package org.dashj.platform.dpp.document
 
-import org.dashevo.dpp.Fixtures
-import org.dashevo.dpp.StateRepositoryMock
-import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.util.Cbor
-import org.dashevo.dpp.util.Entropy
-import org.dashevo.dpp.util.HashUtils
+import org.dashj.platform.dpp.Fixtures
+import org.dashj.platform.dpp.StateRepositoryMock
+import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.util.Cbor
+import org.dashj.platform.dpp.util.Entropy
+import org.dashj.platform.dpp.util.HashUtils
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Disabled

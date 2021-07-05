@@ -1,17 +1,17 @@
-package org.dashevo.dpp
+package org.dashj.platform.dpp
 
-import org.dashevo.dpp.contract.DataContract
-import org.dashevo.dpp.contract.DataContractCreateTransition
-import org.dashevo.dpp.document.Document
-import org.dashevo.dpp.document.DocumentFactory
-import org.dashevo.dpp.document.DocumentTransition
-import org.dashevo.dpp.document.DocumentsBatchTransition
-import org.dashevo.dpp.identifier.Identifier
-import org.dashevo.dpp.identity.Identity
-import org.dashevo.dpp.identity.IdentityCreateTransition
-import org.dashevo.dpp.identity.IdentityPublicKey
-import org.dashevo.dpp.statetransition.StateTransition
-import org.dashevo.dpp.statetransition.StateTransitionFactory
+import org.dashj.platform.dpp.contract.DataContract
+import org.dashj.platform.dpp.contract.DataContractCreateTransition
+import org.dashj.platform.dpp.document.Document
+import org.dashj.platform.dpp.document.DocumentFactory
+import org.dashj.platform.dpp.document.DocumentTransition
+import org.dashj.platform.dpp.document.DocumentsBatchTransition
+import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.identity.Identity
+import org.dashj.platform.dpp.identity.IdentityCreateTransition
+import org.dashj.platform.dpp.identity.IdentityPublicKey
+import org.dashj.platform.dpp.statetransition.StateTransition
+import org.dashj.platform.dpp.statetransition.StateTransitionFactory
 import org.json.JSONObject
 import java.io.File
 
