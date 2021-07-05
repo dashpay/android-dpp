@@ -2,6 +2,7 @@
 buildscript {
     ext.kotlin_version = '1.4.10'
     ext.dashj_version = '0.18-SNAPSHOT'
+    ext.dpp_version = '0.20-SNAPSHOT'
     repositories {
         jcenter()
         mavenCentral()
@@ -30,7 +31,7 @@ allprojects {
 }
 
 group 'org.dashj.platform'
-version '0.19-SNAPSHOT'
+version ext.dpp_version
 
 repositories {
     mavenCentral()
@@ -114,7 +115,7 @@ uploadArchives {
                 packaging 'jar'
                 groupId 'org.dashj.platform'
                 artifactId 'dpp'
-                version '0.19-SNAPSHOT'
+                version project.findProperty('dpp_version')
                 description 'Dash Platform Protocol Library'
                 url 'https://github.com/dashevo/android-dpp'
 
