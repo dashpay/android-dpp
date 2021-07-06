@@ -24,4 +24,4 @@ jobs:
         chmod +x gradlew
         chmod +x gradle/wrapper/gradle-wrapper.jar
         ./gradlew assemble -x ktlintCheck
-        ./gradlew build test --info -x ktlintCheck
+        ./gradlew build test --info -x ktlintCheck -x ktlintApplyToIdea -x ktlintApplyToIdeaGlobally -x ktlintFormat -x ktlintKotlinScriptCheck -x ktlintKotlinScriptFormat -x ktlintMainSourceSetCheck -x ktlintMainSourceSetFormat -x ktlintTestSourceSetCheck -x ktlintTestSourceSetFormat
