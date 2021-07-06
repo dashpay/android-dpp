@@ -23,5 +23,5 @@ jobs:
       run: |
         chmod +x gradlew
         chmod +x gradle/wrapper/gradle-wrapper.jar
-        ./gradlew assemble
-        ./gradlew build test --info
+        ./gradlew assemble -x ktlintCheck
+        ./gradlew build test --info -x ktlintCheck
