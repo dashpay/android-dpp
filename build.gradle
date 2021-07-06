@@ -8,10 +8,12 @@ buildscript {
         mavenCentral()
         mavenLocal()
         maven { url "https://kotlin.bintray.com/kotlinx" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
+        classpath "org.jlleitschuh.gradle:ktlint-gradle:8.2.0"
     }
 }
 
@@ -27,6 +29,27 @@ allprojects {
         mavenLocal()
         mavenCentral()
         maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'}
+    }
+}
+apply plugin: "org.jlleitschuh.gradle.ktlint"
+ext.ReporterType = org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+
+ktlint {
+    version = "0.34.2"
+    debug = true
+    verbose = true
+    android = false
+    outputToConsole = true
+    reporters = [ReporterType.PLAIN, ReporterType.CHECKSTYLE]
+    ignoreFailures = true
+    enableExperimentalRules = true
+    additionalEditorconfigFile = file("/some/additional/.editorconfig")
+    kotlinScriptAdditionalPaths {
+        include fileTree("scripts/")
+    }
+    filter {
+        exclude("**/generated/**")
+        include("**/kotlin/**")
     }
 }
 
