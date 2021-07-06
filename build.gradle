@@ -41,7 +41,7 @@ ktlint {
     android = false
     outputToConsole = true
     reporters = [ReporterType.PLAIN, ReporterType.CHECKSTYLE]
-    ignoreFailures = true
+    ignoreFailures = false
     enableExperimentalRules = true
     additionalEditorconfigFile = file("/some/additional/.editorconfig")
     kotlinScriptAdditionalPaths {
