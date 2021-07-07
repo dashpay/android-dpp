@@ -18,20 +18,23 @@ import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedE
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.HashUtils
 
-abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
-                                             signature: ByteArray?,
-                                             type: Types,
-                                             protocolVersion: Int = 0)
-    : StateTransition(signature, type, protocolVersion) {
+abstract class StateTransitionIdentitySigned(
+    var signaturePublicKeyId: Int?,
+    signature: ByteArray?,
+    type: Types,
+    protocolVersion: Int = 0
+) :
+    StateTransition(signature, type, protocolVersion) {
 
     constructor(rawStateTransition: MutableMap<String, Any?>) :
-            this(rawStateTransition["signaturePublicKeyId"] as? Int,
-                    rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) },
-                    Types.getByCode(rawStateTransition["type"] as Int),
-                    if (rawStateTransition.containsKey("protocolVersion"))
-                        rawStateTransition["protocolVersion"] as Int
-                    else CURRENT_PROTOCOL_VERSION
-            )
+        this(
+            rawStateTransition["signaturePublicKeyId"] as? Int,
+            rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) },
+            Types.getByCode(rawStateTransition["type"] as Int),
+            if (rawStateTransition.containsKey("protocolVersion"))
+                rawStateTransition["protocolVersion"] as Int
+            else CURRENT_PROTOCOL_VERSION
+        )
 
     constructor(type: Types, protocolVersion: Int = CURRENT_PROTOCOL_VERSION) : this(null, null, type, protocolVersion)
 
@@ -70,7 +73,6 @@ abstract class StateTransitionIdentitySigned(var signaturePublicKeyId: Int?,
         }
         signaturePublicKeyId = identityPublicKey.id
     }
-
 
     fun verifySignature(publicKey: IdentityPublicKey): Boolean {
         if (signature == null) {

@@ -22,16 +22,16 @@ import org.dashj.platform.dpp.util.HashUtils
 
 class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 
-    fun create(lockedOutPoint: TransactionOutPoint, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int) : Identity {
+    fun create(lockedOutPoint: TransactionOutPoint, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int): Identity {
         val id = Identifier.from(lockedOutPoint.hash)
         return Identity(id, publicKeys, revision, protocolVersion)
     }
 
-    fun create(id: Identifier, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int) : Identity {
+    fun create(id: Identifier, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int): Identity {
         return Identity(id, publicKeys, revision, protocolVersion)
     }
 
-    fun create(id: String, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int) : Identity {
+    fun create(id: String, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int): Identity {
         return Identity(Identifier.from(id), publicKeys, revision, protocolVersion)
     }
 
@@ -62,19 +62,19 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
     }
 
     fun createIdentityCreateTransition(identity: Identity): IdentityCreateTransition {
-        return  IdentityCreateTransition(identity.assetLockProof!!, identity.publicKeys, Identity.PROTOCOL_VERSION)
+        return IdentityCreateTransition(identity.assetLockProof!!, identity.publicKeys, Identity.PROTOCOL_VERSION)
     }
 
     fun createIdentityCreateTransition(assetLock: AssetLockProof, identityPublicKeys: List<IdentityPublicKey>): IdentityCreateTransition {
 
-        return  IdentityCreateTransition(assetLock, identityPublicKeys)
+        return IdentityCreateTransition(assetLock, identityPublicKeys)
     }
 
     fun createIdentityTopupTransition(identityId: Identifier, assetLock: AssetLockProof): IdentityTopupTransition {
-        return  IdentityTopupTransition(identityId, assetLock)
+        return IdentityTopupTransition(identityId, assetLock)
     }
 
-    fun applyIdentityCreateStateTransition(stateTransition: IdentityStateTransition) : Identity {
+    fun applyIdentityCreateStateTransition(stateTransition: IdentityStateTransition): Identity {
 
         val identityCreateTransition = stateTransition as IdentityCreateTransition
 
@@ -83,15 +83,17 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
 
         val creditsAmount = CreditsConverter.convertSatoshiToCredits(output.value)
 
-        val newIdentity = Identity(identityCreateTransition.identityId,
-                0,
-                identityCreateTransition.publicKeys,
-                0,
-                Identity.PROTOCOL_VERSION)
+        val newIdentity = Identity(
+            identityCreateTransition.identityId,
+            0,
+            identityCreateTransition.publicKeys,
+            0,
+            Identity.PROTOCOL_VERSION
+        )
 
-        val publicKeyHashes = newIdentity.publicKeys.map { HashUtils.toHash(it.data)}
+        val publicKeyHashes = newIdentity.publicKeys.map { HashUtils.toHash(it.data) }
 
-        //store identity
+        // store identity
         stateRepository.storeIdentity(newIdentity)
         stateRepository.storeIdentityPublicKeyHashes(newIdentity.id, publicKeyHashes)
         stateRepository.markAssetLockTransactionOutPointAsUsed(outpoint)
@@ -107,12 +109,11 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
         val creditsAmount = convertSatoshiToCredits(output.value)
         val identityId = stateTransition.identityId
 
-        val identity = stateRepository.fetchIdentity(identityId);
+        val identity = stateRepository.fetchIdentity(identityId)
         identity!!.increaseBalance(creditsAmount)
 
         stateRepository.storeIdentity(identity)
 
-        stateRepository.markAssetLockTransactionOutPointAsUsed(outPoint);
-
+        stateRepository.markAssetLockTransactionOutPointAsUsed(outPoint)
     }
 }

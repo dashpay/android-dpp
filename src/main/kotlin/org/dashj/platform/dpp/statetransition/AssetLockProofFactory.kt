@@ -9,7 +9,7 @@ import org.dashj.platform.dpp.statetransition.errors.IdentityAssetLockTransactio
 import org.dashj.platform.dpp.statetransition.errors.UnknownAssetLockProofException
 import java.lang.IllegalStateException
 
-class AssetLockProofFactory (val stateRepository: StateRepository) {
+class AssetLockProofFactory(val stateRepository: StateRepository) {
 
     companion object {
         @JvmStatic

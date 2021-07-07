@@ -45,7 +45,7 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
                     else -> copy[key] = value
                 }
             }
-            return copy;
+            return copy
         }
     }
 
@@ -83,12 +83,12 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
 
     fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any?> {
         val map = hashMapOf<String, Any?>(
-                "\$protocolVersion" to protocolVersion,
-                "\$id" to id,
-                "\$type" to type,
-                "\$dataContractId" to dataContractId,
-                "\$ownerId" to ownerId,
-                "\$revision" to revision
+            "\$protocolVersion" to protocolVersion,
+            "\$id" to id,
+            "\$type" to type,
+            "\$dataContractId" to dataContractId,
+            "\$ownerId" to ownerId,
+            "\$revision" to revision
         )
 
         val deepCopy = deepCopy(data)
@@ -102,7 +102,7 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
             map["\$dataContractId"] = dataContractId.toBuffer()
             map["\$ownerId"] = ownerId.toBuffer()
 
-            //TODO: change binary items items in data to ByteArray
+            // TODO: change binary items items in data to ByteArray
             convertIdentifierToByteArray(map)
         }
 
@@ -112,7 +112,7 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
     override fun toJSON(): Map<String, Any?> {
 
         val json = toObject(true)
-        //TODO: change binary items in data to base64
+        // TODO: change binary items in data to base64
         convertDataToString(json)
         return json
     }
@@ -134,4 +134,3 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
         TODO("set field specified by path to the value")
     }
 }
-

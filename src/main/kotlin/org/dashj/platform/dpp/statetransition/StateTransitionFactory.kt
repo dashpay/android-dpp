@@ -65,5 +65,4 @@ class StateTransitionFactory(stateRepository: StateRepository) : Factory(stateRe
     }
 
     class Options(val skipValidation: Boolean = false)
-
 }

@@ -21,11 +21,13 @@ class ContractFactory(stateRepository: StateRepository) : Factory(stateRepositor
         val dataContractEntropy = Entropy.generate()
         val dataContractId = HashUtils.generateDataContractId(ownerId, dataContractEntropy)
 
-        val dataContract = DataContract(Identifier.from(dataContractId),
-                Identifier(ownerId),
-                DataContract.PROTOCOL_VERSION,
-                DataContract.SCHEMA,
-                rawDataContract["documents"] as MutableMap<String, Any?>)
+        val dataContract = DataContract(
+            Identifier.from(dataContractId),
+            Identifier(ownerId),
+            DataContract.PROTOCOL_VERSION,
+            DataContract.SCHEMA,
+            rawDataContract["documents"] as MutableMap<String, Any?>
+        )
 
         dataContract.entropy = dataContractEntropy
 
@@ -41,8 +43,7 @@ class ContractFactory(stateRepository: StateRepository) : Factory(stateRepositor
         return createFromObject(rawDocument, options)
     }
 
-    fun createStateTransition(dataContract: DataContract) : DataContractCreateTransition {
+    fun createStateTransition(dataContract: DataContract): DataContractCreateTransition {
         return DataContractCreateTransition(dataContract)
     }
-
 }

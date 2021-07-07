@@ -1,6 +1,6 @@
 package org.dashj.platform.dpp.validation
 
-class JsonSchemaValidator: Validator {
+class JsonSchemaValidator : Validator {
 
     enum class SCHEMAS(value: String) {
         DATA_CONTRACT("https://schema.dash.org/dpp-0-4-0/meta/data-contract"),

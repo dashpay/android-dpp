@@ -10,10 +10,13 @@ import org.dashj.platform.dpp.statetransition.StateTransitionIdentitySigned
 
 abstract class IdentityStateTransition : StateTransitionIdentitySigned {
 
-    constructor(signaturePublicKeyId: Int?,
-                              signature: ByteArray?,
-                              type: Types, protocolVersion: Int)
-    : super (signaturePublicKeyId, signature, type, protocolVersion)
+    constructor(
+        signaturePublicKeyId: Int?,
+        signature: ByteArray?,
+        type: Types,
+        protocolVersion: Int
+    ) :
+        super(signaturePublicKeyId, signature, type, protocolVersion)
 
     constructor(type: Types, protocolVersion: Int = 0) : this(null, null, type, protocolVersion)
 

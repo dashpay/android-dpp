@@ -23,7 +23,7 @@ class Entropy {
             secureRandom = SecureRandom()
         }
 
-        fun generate() : ByteArray {
+        fun generate(): ByteArray {
             return secureRandom.generateSeed(32)
         }
     }

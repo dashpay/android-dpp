@@ -6,6 +6,6 @@
  */
 package org.dashj.platform.dpp
 
-abstract class Factory (val stateRepository: StateRepository) {
+abstract class Factory(val stateRepository: StateRepository) {
     data class Options(val skipValidation: Boolean = false)
 }

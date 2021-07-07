@@ -10,5 +10,5 @@ package org.dashj.platform.dpp.errors
 import org.dashj.platform.dpp.identity.IdentityCreateTransition
 import java.lang.Exception
 
-class IdentityAlreadyExistsError(identityCreateTransition: IdentityCreateTransition)
-    : Exception("Identity ${identityCreateTransition.identityId} already exists")
+class IdentityAlreadyExistsError(identityCreateTransition: IdentityCreateTransition) :
+    Exception("Identity ${identityCreateTransition.identityId} already exists")

@@ -161,10 +161,10 @@ class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepositor
         rawDocumentTransitions.addAll(rawDocumentDeleteTransitions)
 
         val rawBatchTransition = hashMapOf<String, Any?>(
-                "\$protocolVersion" to Document.PROTOCOL_VERSION,
-                "type" to StateTransition.Types.DOCUMENTS_BATCH.value,
-                "ownerId" to ownerId,
-                "transitions" to rawDocumentTransitions
+            "\$protocolVersion" to Document.PROTOCOL_VERSION,
+            "type" to StateTransition.Types.DOCUMENTS_BATCH.value,
+            "ownerId" to ownerId,
+            "transitions" to rawDocumentTransitions
         )
         return DocumentsBatchTransition(rawBatchTransition)
     }

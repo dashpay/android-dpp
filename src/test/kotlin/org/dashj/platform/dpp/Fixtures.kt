@@ -21,16 +21,16 @@ object Fixtures {
     val contractId = Identifier.from("9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX")
     val stateRepository = StateRepositoryMock()
 
-    fun getDataContractFixtures() : DataContract {
+    fun getDataContractFixtures(): DataContract {
         val json = File("src/test/resources/data/documentsforcontract.json").readText()
         val jsonObject = JSONObject(json)
         val map = jsonObject.toMap()
         val dataContract = DataContract(
-                contractId,
-                userId,
-                DataContract.PROTOCOL_VERSION,
-                DataContract.SCHEMA,
-                map
+            contractId,
+            userId,
+            DataContract.PROTOCOL_VERSION,
+            DataContract.SCHEMA,
+            map
         )
 
         dataContract.definitions = JSONObject("{lastName: { type: 'string', }, }").toMap()
@@ -38,18 +38,17 @@ object Fixtures {
         return dataContract
     }
 
-
-    fun getDocumentsFixture() : List<Document> {
+    fun getDocumentsFixture(): List<Document> {
         val dataContract = getDataContractFixtures()
 
         val factory = DocumentFactory(stateRepository)
 
         return listOf(
-                factory.create(dataContract, userId, "niceDocument", JSONObject("{ name: 'Cutie' }").toMap()),
-                factory.create(dataContract, userId, "prettyDocument", JSONObject("{ lastName: 'Shiny' }").toMap()) ,
-                factory.create(dataContract, userId, "prettyDocument", JSONObject("{ lastName: 'Sweety' }").toMap()) ,
-                factory.create(dataContract, userId, "indexedDocument", JSONObject("{ firstName: 'William', lastName: 'Birkin' }").toMap()) ,
-                factory.create(dataContract, userId, "indexedDocument", JSONObject("{ firstName: 'Leon', lastName: 'Kennedy' }").toMap())
+            factory.create(dataContract, userId, "niceDocument", JSONObject("{ name: 'Cutie' }").toMap()),
+            factory.create(dataContract, userId, "prettyDocument", JSONObject("{ lastName: 'Shiny' }").toMap()),
+            factory.create(dataContract, userId, "prettyDocument", JSONObject("{ lastName: 'Sweety' }").toMap()),
+            factory.create(dataContract, userId, "indexedDocument", JSONObject("{ firstName: 'William', lastName: 'Birkin' }").toMap()),
+            factory.create(dataContract, userId, "indexedDocument", JSONObject("{ firstName: 'Leon', lastName: 'Kennedy' }").toMap())
         )
     }
 
@@ -63,9 +62,9 @@ object Fixtures {
         val factory = DocumentFactory(stateRepository)
 
         val documentsForTransition = hashMapOf(
-                "create" to createDocuments,
-                "replace" to replaceDocuments,
-                "delete" to deleteDocuments
+            "create" to createDocuments,
+            "replace" to replaceDocuments,
+            "delete" to deleteDocuments
         )
 
         val stateTransition = factory.createStateTransition(documentsForTransition)
@@ -89,7 +88,7 @@ object Fixtures {
         return Identity(rawIdentity)
     }
 
-    fun getIdentityCreateSTFixture() : IdentityCreateTransition {
+    fun getIdentityCreateSTFixture(): IdentityCreateTransition {
         val rawStateTransition = HashMap<String, Any?>()
 
         rawStateTransition["protocolVersion"] = 0
@@ -103,7 +102,7 @@ object Fixtures {
         return IdentityCreateTransition(rawStateTransition)
     }
 
-    fun getIdentityCreateSTSignedFixture() : IdentityCreateTransition {
+    fun getIdentityCreateSTSignedFixture(): IdentityCreateTransition {
         val json = File("src/test/resources/data/identity-transition.json").readText()
         val jsonObject = JSONObject(json)
         val rawIdentity = jsonObject.toMap()
@@ -111,7 +110,7 @@ object Fixtures {
         return IdentityCreateTransition(rawIdentity)
     }
 
-    fun getDataContractSTSignedFixture() : DataContractCreateTransition {
+    fun getDataContractSTSignedFixture(): DataContractCreateTransition {
         val json = File("src/test/resources/data/dpns-contract-transition.json").readText()
         val jsonObject = JSONObject(json)
         val rawContractST = jsonObject.toMap()
@@ -119,7 +118,7 @@ object Fixtures {
         return DataContractCreateTransition(rawContractST)
     }
 
-    fun getDataContractSTSignedFixtureTwo() : DataContractCreateTransition {
+    fun getDataContractSTSignedFixtureTwo(): DataContractCreateTransition {
         val json = File("src/test/resources/data/dpns-contract-transition.json").readText()
         val jsonObject = JSONObject(json)
         val rawContractST = jsonObject.toMap()
@@ -127,14 +126,14 @@ object Fixtures {
         return StateTransitionFactory(stateRepository).createStateTransition(rawContractST) as DataContractCreateTransition
     }
 
-    fun getDocumentsSTSignedFixture() : DocumentsBatchTransition {
+    fun getDocumentsSTSignedFixture(): DocumentsBatchTransition {
         val jsonObject = JSONObject(File("src/test/resources/data/documents-transition.json").readText())
         val rawDocumentST = jsonObject.toMap()
 
         return DocumentsBatchTransition(rawDocumentST)
     }
 
-    fun getDocumentsSTSignedFixtureTwo() : DocumentsBatchTransition {
+    fun getDocumentsSTSignedFixtureTwo(): DocumentsBatchTransition {
         val jsonObject = JSONObject(File("src/test/resources/data/documents-transition.json").readText())
         val rawDocumentST = jsonObject.toMap()
         return StateTransitionFactory(stateRepository).createStateTransition(rawDocumentST) as DocumentsBatchTransition

@@ -14,9 +14,11 @@ import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.HashUtils.byteArrayfromBase64orByteArray
 import org.dashj.platform.dpp.util.HashUtils.fromBase64
 
-class IdentityPublicKey(val id: Int,
-                        val type: TYPES,
-                        val data: ByteArray) : BaseObject() {
+class IdentityPublicKey(
+    val id: Int,
+    val type: TYPES,
+    val data: ByteArray
+) : BaseObject() {
 
     enum class TYPES(val value: Int) {
         ECDSA_SECP256K1(0),
@@ -33,23 +35,25 @@ class IdentityPublicKey(val id: Int,
     constructor(id: Int, type: TYPES, data: String) : this(id, type, fromBase64(data))
 
     constructor(rawIdentityPublicKey: Map<String, Any>) :
-            this(rawIdentityPublicKey["id"] as Int,
-                    TYPES.getByCode(rawIdentityPublicKey["type"] as Int),
-                    byteArrayfromBase64orByteArray(rawIdentityPublicKey["data"] ?: error("data is missing")))
+        this(
+            rawIdentityPublicKey["id"] as Int,
+            TYPES.getByCode(rawIdentityPublicKey["type"] as Int),
+            byteArrayfromBase64orByteArray(rawIdentityPublicKey["data"] ?: error("data is missing"))
+        )
 
     override fun toObject(): Map<String, Any> {
         return hashMapOf<String, Any>(
-                "id" to id,
-                "type" to type.value,
-                "data" to data
+            "id" to id,
+            "type" to type.value,
+            "data" to data
         )
     }
 
     override fun toJSON(): Map<String, Any> {
         return hashMapOf(
-                "id" to id,
-                "type" to type.value,
-                "data" to data.toBase64()
+            "id" to id,
+            "type" to type.value,
+            "data" to data.toBase64()
         )
     }
 
@@ -57,8 +61,8 @@ class IdentityPublicKey(val id: Int,
         if (other !is IdentityPublicKey)
             return false
         return other.id == id &&
-                other.type == type &&
-                other.data.contentEquals(data)
+            other.type == type &&
+            other.data.contentEquals(data)
     }
 
     override fun hashCode(): Int {

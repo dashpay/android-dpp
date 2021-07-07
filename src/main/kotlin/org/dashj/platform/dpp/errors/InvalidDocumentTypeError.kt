@@ -9,5 +9,5 @@ package org.dashj.platform.dpp.errors
 
 import org.dashj.platform.dpp.contract.DataContract
 
-class InvalidDocumentTypeError(dataContract: DataContract, type: String)
-    : IllegalStateException("Contract ${dataContract.id} doesn't contain type $type")
+class InvalidDocumentTypeError(dataContract: DataContract, type: String) :
+    IllegalStateException("Contract ${dataContract.id} doesn't contain type $type")

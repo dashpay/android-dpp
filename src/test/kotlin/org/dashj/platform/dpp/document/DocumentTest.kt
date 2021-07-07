@@ -88,7 +88,7 @@ class DocumentTest {
     fun applyStateTransition() {
         val documents = Fixtures.getDocumentsFixture()
         val batchTransition = hashMapOf(
-                "create" to documents
+            "create" to documents
         )
         val result = DocumentFactory(stateRepository).createStateTransition(batchTransition)
         for (i in result.transitions.indices)
@@ -100,7 +100,7 @@ class DocumentTest {
 
     @Test @Disabled
     fun verifySignedDocumentsSTTest() {
-        //TODO: This test is completely broken, getDocumentsSTSignedFixture() has bad data
+        // TODO: This test is completely broken, getDocumentsSTSignedFixture() has bad data
         val documentST = Fixtures.getDocumentsSTSignedFixture()
         val identityST = Fixtures.getIdentityCreateSTSignedFixture()
         val identity = Fixtures.getIdentityForSignaturesFixture()

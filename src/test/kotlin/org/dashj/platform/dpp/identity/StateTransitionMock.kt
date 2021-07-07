@@ -24,5 +24,4 @@ class StateTransitionMock : StateTransitionIdentitySigned(Types.DATA_CONTRACT_CR
     override fun isIdentityStateTransition(): Boolean {
         return false
     }
-
 }

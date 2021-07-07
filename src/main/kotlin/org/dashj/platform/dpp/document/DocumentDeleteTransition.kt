@@ -11,5 +11,4 @@ class DocumentDeleteTransition : DocumentTransition {
     override val action = Action.DELETE
 
     constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition)
-
 }

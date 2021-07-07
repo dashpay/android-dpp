@@ -41,7 +41,6 @@ object Cbor {
         return baos.toByteArray()
     }
 
-
     fun decode(payload: ByteArray): MutableMap<String, Any?> {
         val dataItems = CborDecoder.decode(payload)
 
@@ -65,15 +64,20 @@ object Cbor {
         return decoded[0].toString()
     }
 
-    private fun writeJSONObject(obj: Map<String, Any?>, mapBuilder: MapBuilder<CborBuilder>,
-                                baos: ByteArrayOutputStream,
-                                innerMapBuilder: AbstractBuilder<*>? = null): CborBuilder {
+    private fun writeJSONObject(
+        obj: Map<String, Any?>,
+        mapBuilder: MapBuilder<CborBuilder>,
+        baos: ByteArrayOutputStream,
+        innerMapBuilder: AbstractBuilder<*>? = null
+    ): CborBuilder {
 
         val sortedKeys = ArrayList<String>()
         sortedKeys.addAll(obj.keys)
-        sortedKeys.sortWith(Comparator { a, b ->
-            ByteBuffer.wrap(a.toByteArray()).short.compareTo(ByteBuffer.wrap(b.toByteArray()).short)
-        })
+        sortedKeys.sortWith(
+            Comparator { a, b ->
+                ByteBuffer.wrap(a.toByteArray()).short.compareTo(ByteBuffer.wrap(b.toByteArray()).short)
+            }
+        )
 
         sortedKeys.forEach { key ->
             val value = obj[key]
@@ -102,9 +106,12 @@ object Cbor {
         return mapBuilder.end()
     }
 
-    private fun writeJSONArray(obj: List<Any?>, mapBuilder: ArrayBuilder<CborBuilder>,
-                               baos: ByteArrayOutputStream,
-                               innerMapBuilder: AbstractBuilder<*>? = null): CborBuilder {
+    private fun writeJSONArray(
+        obj: List<Any?>,
+        mapBuilder: ArrayBuilder<CborBuilder>,
+        baos: ByteArrayOutputStream,
+        innerMapBuilder: AbstractBuilder<*>? = null
+    ): CborBuilder {
 
         obj.forEach { value ->
             if (value is Map<*, *>) {
@@ -136,9 +143,12 @@ object Cbor {
      * @param innerMapBuilder AbstractBuilder<*>?
      * @return ArrayBuilder<*>
      */
-    private fun writeJSONArrayInArray(obj: List<Any?>, mapBuilder: ArrayBuilder<*>,
-                                      baos: ByteArrayOutputStream,
-                                      innerMapBuilder: AbstractBuilder<*>? = null): ArrayBuilder<*> {
+    private fun writeJSONArrayInArray(
+        obj: List<Any?>,
+        mapBuilder: ArrayBuilder<*>,
+        baos: ByteArrayOutputStream,
+        innerMapBuilder: AbstractBuilder<*>? = null
+    ): ArrayBuilder<*> {
 
         obj.forEach { value ->
             if (value is Map<*, *>) {
@@ -211,7 +221,7 @@ object Cbor {
             is ByteArray -> mapBuilder.put(key, value)
             is Identifier -> mapBuilder.put(key, value.toBuffer())
             null -> mapBuilder.put(UnicodeString(key), SimpleValue(SimpleValueType.NULL))
-            else -> mapBuilder.put(key, value.toString()) //?
+            else -> mapBuilder.put(key, value.toString()) // ?
         }
     }
 
@@ -228,7 +238,7 @@ object Cbor {
             is ByteArray -> arrayBuilder.add(value)
             is Identifier -> arrayBuilder.add(value.toBuffer())
             null -> arrayBuilder.add(SimpleValue(SimpleValueType.NULL))
-            else -> arrayBuilder.add(value.toString()) //?
+            else -> arrayBuilder.add(value.toString()) // ?
         }
     }
 
@@ -295,7 +305,7 @@ object Cbor {
                     else -> throw IllegalArgumentException("Unknown simple datatype")
                 }
             }
-            else -> map[key] = value.toString() //?
+            else -> map[key] = value.toString() // ?
         }
     }
 
@@ -323,8 +333,7 @@ object Cbor {
                     else -> throw IllegalArgumentException("Unknown simple datatype")
                 }
             }
-            else -> throw java.lang.IllegalArgumentException(value.toString()) //?
+            else -> throw java.lang.IllegalArgumentException(value.toString()) // ?
         }
     }
-
 }

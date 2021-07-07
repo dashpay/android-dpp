@@ -12,27 +12,29 @@ import org.dashj.platform.dpp.statetransition.AssetLockProofFactory
 class IdentityCreateTransition : IdentityStateTransition {
 
     val identityId: Identifier // base58
-    val assetLockProof: AssetLockProof  // base64
+    val assetLockProof: AssetLockProof // base64
     val publicKeys: MutableList<IdentityPublicKey>
     /** returns id of created identity */
     override val modifiedDataIds: List<Identifier>
         get() = listOf(identityId)
 
-    constructor(assetLock: AssetLockProof,
-                 publicKeys: List<IdentityPublicKey>,
-                 protocolVersion: Int = 0)
-    : super(Types.IDENTITY_CREATE, protocolVersion) {
-        this.assetLockProof = assetLock
-        this.identityId = assetLock.createIdentifier()
-        this.publicKeys = publicKeys.toMutableList()
-    }
+    constructor(
+        assetLock: AssetLockProof,
+        publicKeys: List<IdentityPublicKey>,
+        protocolVersion: Int = 0
+    ) :
+        super(Types.IDENTITY_CREATE, protocolVersion) {
+            this.assetLockProof = assetLock
+            this.identityId = assetLock.createIdentifier()
+            this.publicKeys = publicKeys.toMutableList()
+        }
 
-    constructor(rawStateTransition: MutableMap<String, Any?>)
-            : super(rawStateTransition) {
-        assetLockProof = AssetLockProofFactory.createAssetLockProofInstance(rawStateTransition["assetLockProof"] as Map<String, Any?>)
-        publicKeys = (rawStateTransition["publicKeys"] as List<Any>).map { entry -> IdentityPublicKey(entry as MutableMap<String, Any>) }.toMutableList()
-        identityId = assetLockProof.createIdentifier()
-    }
+    constructor(rawStateTransition: MutableMap<String, Any?>) :
+        super(rawStateTransition) {
+            assetLockProof = AssetLockProofFactory.createAssetLockProofInstance(rawStateTransition["assetLockProof"] as Map<String, Any?>)
+            publicKeys = (rawStateTransition["publicKeys"] as List<Any>).map { entry -> IdentityPublicKey(entry as MutableMap<String, Any>) }.toMutableList()
+            identityId = assetLockProof.createIdentifier()
+        }
 
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
         val map = super.toObject(skipSignature, skipIdentifiersConversion)
@@ -54,7 +56,7 @@ class IdentityCreateTransition : IdentityStateTransition {
         publicKeys.addAll(identityPublicKeys)
     }
 
-    fun getOwnerId() : Identifier {
+    fun getOwnerId(): Identifier {
         return identityId
     }
 }

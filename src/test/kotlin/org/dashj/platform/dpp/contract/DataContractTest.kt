@@ -61,7 +61,7 @@ class DataContractTest {
         val dataContract = Fixtures.getDataContractFixtures()
         val stateTransition = DataContractCreateTransition(dataContract)
 
-        val result =  factory.createStateTransition(dataContract)
+        val result = factory.createStateTransition(dataContract)
 
         assertEquals(result.toJSON(), stateTransition.toJSON())
     }

@@ -64,11 +64,11 @@ data class Identifier(private val buffer: ByteArray) {
         return buffer
     }
 
-    fun toSha256Hash() : Sha256Hash {
+    fun toSha256Hash(): Sha256Hash {
         return Sha256Hash.wrap(buffer)
     }
 
-    fun encodeCBOR() : ByteArray {
+    fun encodeCBOR(): ByteArray {
         return Cbor.encode(buffer)
     }
 
@@ -81,7 +81,7 @@ data class Identifier(private val buffer: ByteArray) {
     }
 
     fun toString(encoding: String): String {
-        return when(encoding) {
+        return when (encoding) {
             "base58" -> Base58.encode(buffer)
             else -> buffer.toBase64()
         }

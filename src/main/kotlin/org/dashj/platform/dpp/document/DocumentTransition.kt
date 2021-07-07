@@ -49,10 +49,10 @@ abstract class DocumentTransition {
 
     open fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any?> {
         val map = hashMapOf<String, Any?>(
-                "\$id" to id,
-                "\$type" to type,
-                "\$action" to action.value,
-                "\$dataContractId" to dataContractId
+            "\$id" to id,
+            "\$type" to type,
+            "\$action" to action.value,
+            "\$dataContractId" to dataContractId
         )
 
         if (!skipIdentifierConversion) {

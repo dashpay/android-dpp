@@ -14,7 +14,6 @@ import org.dashj.platform.dpp.document.Document
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.identity.Identity
 
-
 /**
  *
  */
@@ -52,12 +51,11 @@ interface StateRepository {
 
     fun storeIdentityPublicKeyHashes(identity: Identifier, publicKeyHashes: List<ByteArray>)
 
-    fun fetchLatestPlatformBlockHeader() : Block
+    fun fetchLatestPlatformBlockHeader(): Block
 
-    fun verifyInstantLock(instantLock: InstantSendLock) : Boolean
+    fun verifyInstantLock(instantLock: InstantSendLock): Boolean
 
-    fun isAssetLockTransactionOutPointAlreadyUsed(outPointBuffer: ByteArray) : Boolean
+    fun isAssetLockTransactionOutPointAlreadyUsed(outPointBuffer: ByteArray): Boolean
 
     fun markAssetLockTransactionOutPointAsUsed(outPointBuffer: ByteArray)
 }
-

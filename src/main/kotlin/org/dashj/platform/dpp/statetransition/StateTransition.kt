@@ -16,10 +16,12 @@ import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.HashUtils
 import java.lang.Exception
 
-abstract class StateTransition(var signature: ByteArray?,
-                               val type: Types,
-                               var protocolVersion: Int = CURRENT_PROTOCOL_VERSION)
-    : BaseObject() {
+abstract class StateTransition(
+    var signature: ByteArray?,
+    val type: Types,
+    var protocolVersion: Int = CURRENT_PROTOCOL_VERSION
+) :
+    BaseObject() {
 
     enum class Types(val value: Int) {
         DATA_CONTRACT_CREATE(0),
@@ -45,10 +47,11 @@ abstract class StateTransition(var signature: ByteArray?,
     abstract val modifiedDataIds: List<Identifier>
 
     constructor(rawStateTransition: MutableMap<String, Any?>) :
-            this(rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) },
-                    Types.getByCode(rawStateTransition["type"] as Int),
-                    rawStateTransition["protocolVersion"] as Int)
-
+        this(
+            rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) },
+            Types.getByCode(rawStateTransition["type"] as Int),
+            rawStateTransition["protocolVersion"] as Int
+        )
 
     constructor(type: Types, protocolVersion: Int = 0) : this(null, type, protocolVersion)
 

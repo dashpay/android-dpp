@@ -47,7 +47,6 @@ class IdentityTest {
         assertEquals(fixtureCreatedIdentity.id, factoryCreatedIdentity.id)
         assertArrayEquals(fixtureCreatedIdentity.publicKeys[0].data, factoryCreatedIdentity.publicKeys[0].data)
         assertEquals(fixtureCreatedIdentity.getPublicKeyById(2), factoryCreatedIdentity.getPublicKeyById(2))
-
     }
 
     @Test @Disabled
@@ -83,10 +82,10 @@ class IdentityTest {
 
         println(bytes.toHexString())
         println(bytes2.toHexString())
-        assertEquals("a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
-                bytes.toHexString())
-
-
+        assertEquals(
+            "a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
+            bytes.toHexString()
+        )
     }
 
     /*@Test
@@ -118,10 +117,12 @@ class IdentityTest {
         val hash = stateTransition.hash()
 
         assertEquals("6b05d28bc9e9d7ceb53eeb42e243815359032c6b43d0657da27cfa7d1c9b63bf", hash.toHexString())
-        assertEquals("a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
-                serializedDataBytes.toHexString())
+        assertEquals(
+            "a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
+            serializedDataBytes.toHexString()
+        )
 
-        //should return public key ID
+        // should return public key ID
         stateTransition.sign(identityPublicKey, privateKeyHex)
 
         val keyId = stateTransition.signaturePublicKeyId
@@ -130,7 +131,6 @@ class IdentityTest {
         val isValid = stateTransition.verifySignature(identityPublicKey)
 
         assertTrue(isValid)
-
 
         // trigger a failure to verify
         val incorrectKey = ECKey()
@@ -148,7 +148,7 @@ class IdentityTest {
     fun verifySignedIdentityTest() {
         val identityST = Fixtures.getIdentityCreateSTSignedFixture()
         assertEquals("A6AJAfRJyKuNoNvt33ygYfYh6OIYA8tF1s2BQcRA9RNg", identityST.publicKeys[0].data.toBase64())
-        //TODO: fix the test. after removing isEnabled, this check failed because the test data is no longer valid
+        // TODO: fix the test. after removing isEnabled, this check failed because the test data is no longer valid
         assertTrue(identityST.verifySignatureByPublicKey(ECKey.fromPublicOnly(identityST.publicKeys[0].data)))
     }
 
@@ -158,7 +158,7 @@ class IdentityTest {
 
         val serialized = fromFixture.toBuffer()
 
-        val fromSerialized = IdentityFactory(stateRepository).createFromBuffer(serialized);
+        val fromSerialized = IdentityFactory(stateRepository).createFromBuffer(serialized)
 
         assertEquals(fromFixture.toJSON(), fromSerialized.toJSON())
     }
