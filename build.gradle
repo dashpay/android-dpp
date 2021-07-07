@@ -4,7 +4,6 @@ buildscript {
     ext.dashj_version = '0.18-SNAPSHOT'
     ext.dpp_version = '0.20-SNAPSHOT'
     repositories {
-        jcenter()
         mavenCentral()
         mavenLocal()
         maven { url "https://kotlin.bintray.com/kotlinx" }
