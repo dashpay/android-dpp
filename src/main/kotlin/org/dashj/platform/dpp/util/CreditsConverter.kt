@@ -1,7 +1,7 @@
 package org.dashj.platform.dpp.util
 
-import org.bitcoinj.core.Coin
 import kotlin.math.floor
+import org.bitcoinj.core.Coin
 
 object CreditsConverter {
     const val RATIO = 1000

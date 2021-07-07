@@ -1,6 +1,6 @@
 package org.dashj.platform.dpp.identity
 
-import org.bitcoinj.core.*
+import org.bitcoinj.core.Sha256Hash
 import org.dashj.platform.dpp.BaseObject
 import org.dashj.platform.dpp.identifier.Identifier
 

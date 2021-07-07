@@ -8,11 +8,11 @@
 package org.dashj.platform.dpp.util
 
 import com.google.common.io.BaseEncoding
-import org.bitcoinj.core.Base58
-import org.bitcoinj.core.Sha256Hash
 import java.io.ByteArrayOutputStream
 import java.nio.charset.Charset
 import kotlin.math.floor
+import org.bitcoinj.core.Base58
+import org.bitcoinj.core.Sha256Hash
 
 object HashUtils {
 

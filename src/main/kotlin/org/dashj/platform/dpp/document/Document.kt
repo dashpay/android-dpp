@@ -7,11 +7,11 @@
 
 package org.dashj.platform.dpp.document
 
+import kotlin.collections.HashMap
 import org.dashj.platform.dpp.BaseObject
 import org.dashj.platform.dpp.contract.DataContract
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.toBase64
-import kotlin.collections.HashMap
 
 class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : BaseObject() {
 
@@ -110,7 +110,6 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
     }
 
     override fun toJSON(): Map<String, Any?> {
-
         val json = toObject(true)
         // TODO: change binary items in data to base64
         convertDataToString(json)

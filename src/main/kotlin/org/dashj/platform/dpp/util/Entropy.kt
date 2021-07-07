@@ -6,9 +6,9 @@
  */
 package org.dashj.platform.dpp.util
 
+import java.security.SecureRandom
 import org.bitcoinj.core.Utils
 import org.bitcoinj.crypto.LinuxSecureRandom
-import java.security.SecureRandom
 
 class Entropy {
     companion object {
@@ -18,8 +18,9 @@ class Entropy {
 
         init {
             // Init proper random number generator, as some old Android installations have bugs that make it unsecure.
-            if (Utils.isAndroidRuntime())
+            if (Utils.isAndroidRuntime()) {
                 LinuxSecureRandom()
+            }
             secureRandom = SecureRandom()
         }
 

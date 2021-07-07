@@ -91,8 +91,9 @@ class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepositor
 
         var mismatches = 0
         documentsFlattened.forEach {
-            if (it.ownerId != ownerId)
+            if (it.ownerId != ownerId) {
                 mismatches++
+            }
         }
 
         if (mismatches > 0) {
@@ -115,10 +116,12 @@ class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepositor
             rawTransition["\$type"] = it.type
             rawTransition["\$dataContractId"] = it.dataContractId
             rawTransition["\$entropy"] = it.entropy
-            if (it.createdAt != null)
+            if (it.createdAt != null) {
                 rawTransition["\$createdAt"] = it.createdAt!!
-            if (it.updatedAt != null)
+            }
+            if (it.updatedAt != null) {
                 rawTransition["\$updatedAt"] = it.updatedAt!!
+            }
 
             val dataKeys = it.data.keys.iterator()
             while (dataKeys.hasNext()) {
@@ -135,9 +138,9 @@ class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepositor
             rawTransition["\$type"] = it.type
             rawTransition["\$dataContractId"] = it.dataContractId
             rawTransition["\$revision"] = it.revision + 1
-            if (it.updatedAt != null)
+            if (it.updatedAt != null) {
                 rawTransition["\$updatedAt"] = it.updatedAt!!
-
+            }
             val dataKeys = it.data.keys.iterator()
             while (dataKeys.hasNext()) {
                 val key = dataKeys.next()

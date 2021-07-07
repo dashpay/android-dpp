@@ -13,7 +13,10 @@ import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.Entropy
 import org.dashj.platform.dpp.util.HashUtils
 import org.json.JSONObject
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 

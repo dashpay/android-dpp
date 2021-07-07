@@ -22,16 +22,16 @@ class IdentityTopupTransition : IdentityStateTransition {
         assetLock: AssetLockProof,
         protocolVersion: Int = 0
     ) :
-        super(Types.IDENTITY_TOP_UP, protocolVersion) {
-            this.assetLock = assetLock
-            this.identityId = identityId
-        }
+    super(Types.IDENTITY_TOP_UP, protocolVersion) {
+        this.assetLock = assetLock
+        this.identityId = identityId
+    }
 
     constructor(rawStateTransition: MutableMap<String, Any?>) :
-        super(rawStateTransition) {
-            assetLock = AssetLockProofFactory.createAssetLockProofInstance(rawStateTransition["assetLock"] as Map<String, Any?>)
-            identityId = Identifier.from(rawStateTransition["identityId"]!!)
-        }
+    super(rawStateTransition) {
+        assetLock = AssetLockProofFactory.createAssetLockProofInstance(rawStateTransition["assetLock"] as Map<String, Any?>)
+        identityId = Identifier.from(rawStateTransition["identityId"]!!)
+    }
 
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
         val map = super.toObject(skipSignature, skipIdentifiersConversion)

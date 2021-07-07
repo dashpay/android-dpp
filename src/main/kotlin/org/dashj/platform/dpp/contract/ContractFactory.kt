@@ -17,7 +17,6 @@ import org.dashj.platform.dpp.util.HashUtils
 class ContractFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 
     fun createDataContract(ownerId: ByteArray, rawDataContract: MutableMap<String, Any?>): DataContract {
-
         val dataContractEntropy = Entropy.generate()
         val dataContractId = HashUtils.generateDataContractId(ownerId, dataContractEntropy)
 

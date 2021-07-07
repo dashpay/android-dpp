@@ -66,7 +66,6 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
     }
 
     fun createIdentityCreateTransition(assetLock: AssetLockProof, identityPublicKeys: List<IdentityPublicKey>): IdentityCreateTransition {
-
         return IdentityCreateTransition(assetLock, identityPublicKeys)
     }
 
@@ -75,7 +74,6 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
     }
 
     fun applyIdentityCreateStateTransition(stateTransition: IdentityStateTransition): Identity {
-
         val identityCreateTransition = stateTransition as IdentityCreateTransition
 
         val output = AssetLockProofFactory(stateRepository).fetchAssetLockTransactionOutput(identityCreateTransition.assetLockProof)
@@ -102,7 +100,6 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
     }
 
     fun applyIdentityTopUpTransition(stateTransition: IdentityTopupTransition) {
-
         val output = AssetLockProofFactory(stateRepository).fetchAssetLockTransactionOutput(stateTransition.assetLock)
         val outPoint = stateTransition.assetLock.getOutPoint()
 

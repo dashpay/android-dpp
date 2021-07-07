@@ -17,16 +17,16 @@ class ChainAssetLockProof(
     override val type: Int = TYPE
 
     constructor(coreChainLockedHeight: Long, outPoint: ByteArray) :
-        this(coreChainLockedHeight, TransactionOutPoint(TestNet3Params.get(), outPoint, 0))
+    this(coreChainLockedHeight, TransactionOutPoint(TestNet3Params.get(), outPoint, 0))
 
     constructor(rawAssetLockProof: Map<String, Any?>) :
-        this(
-            rawAssetLockProof["coreChainLockedHeight"] as Long,
-            HashUtils.byteArrayfromBase64orByteArray(
-                rawAssetLockProof["outPoint"]
-                    ?: error("missing outPoint field")
-            )
+    this(
+        rawAssetLockProof["coreChainLockedHeight"] as Long,
+        HashUtils.byteArrayfromBase64orByteArray(
+            rawAssetLockProof["outPoint"]
+                ?: error("missing outPoint field")
         )
+    )
 
     override fun getOutPoint(): ByteArray {
         val outPoint = TransactionOutPoint(outPoint.params, outPoint.index, Sha256Hash.wrap(outPoint.hash.reversedBytes))
@@ -37,7 +37,7 @@ class ChainAssetLockProof(
         return hashMapOf(
             "type" to type,
             "coreChainLockedHeight" to coreChainLockedHeight,
-            "outPoint" to getOutPoint(),
+            "outPoint" to getOutPoint()
         )
     }
 
@@ -45,7 +45,7 @@ class ChainAssetLockProof(
         return hashMapOf(
             "type" to type,
             "coreChainLockedHeight" to coreChainLockedHeight,
-            "outPoint" to getOutPoint().toBase64(),
+            "outPoint" to getOutPoint().toBase64()
         )
     }
 }

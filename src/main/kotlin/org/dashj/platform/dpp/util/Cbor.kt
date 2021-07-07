@@ -13,13 +13,20 @@ import co.nstant.`in`.cbor.CborEncoder
 import co.nstant.`in`.cbor.builder.AbstractBuilder
 import co.nstant.`in`.cbor.builder.ArrayBuilder
 import co.nstant.`in`.cbor.builder.MapBuilder
-import co.nstant.`in`.cbor.model.*
-import org.dashj.platform.dpp.identifier.Identifier
+import co.nstant.`in`.cbor.model.ByteString
+import co.nstant.`in`.cbor.model.DataItem
+import co.nstant.`in`.cbor.model.DoublePrecisionFloat
+import co.nstant.`in`.cbor.model.HalfPrecisionFloat
+import co.nstant.`in`.cbor.model.NegativeInteger
+import co.nstant.`in`.cbor.model.SimpleValue
+import co.nstant.`in`.cbor.model.SimpleValueType
+import co.nstant.`in`.cbor.model.UnicodeString
 import java.io.ByteArrayOutputStream
 import java.lang.IllegalStateException
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.util.HashMap
+import org.dashj.platform.dpp.identifier.Identifier
 
 object Cbor {
 
@@ -70,7 +77,6 @@ object Cbor {
         baos: ByteArrayOutputStream,
         innerMapBuilder: AbstractBuilder<*>? = null
     ): CborBuilder {
-
         val sortedKeys = ArrayList<String>()
         sortedKeys.addAll(obj.keys)
         sortedKeys.sortWith(
@@ -112,7 +118,6 @@ object Cbor {
         baos: ByteArrayOutputStream,
         innerMapBuilder: AbstractBuilder<*>? = null
     ): CborBuilder {
-
         obj.forEach { value ->
             if (value is Map<*, *>) {
                 throw IllegalArgumentException("List contains a map")
@@ -149,7 +154,6 @@ object Cbor {
         baos: ByteArrayOutputStream,
         innerMapBuilder: AbstractBuilder<*>? = null
     ): ArrayBuilder<*> {
-
         obj.forEach { value ->
             if (value is Map<*, *>) {
                 throw IllegalArgumentException("List contains a map")
@@ -243,7 +247,6 @@ object Cbor {
     }
 
     private fun readJSONObject(obj: co.nstant.`in`.cbor.model.Map): MutableMap<String, Any?> {
-
         val resultMap = HashMap<String, Any?>()
         val sortedKeys = ArrayList<DataItem>()
         sortedKeys.addAll(obj.keys)
@@ -283,16 +286,22 @@ object Cbor {
 
     private fun addValueFromCborMap(map: HashMap<String, Any?>, key: String, value: DataItem) {
         when (value) {
-            is UnicodeString -> map[key] = value.string
+            is UnicodeString -> {
+                map[key] = value.string
+            }
             is co.nstant.`in`.cbor.model.Number -> {
-                if (value.value.toLong() < Int.MAX_VALUE)
+                if (value.value.toLong() < Int.MAX_VALUE) {
                     map[key] = value.value.toInt()
-                else map[key] = value.value.toLong()
+                } else {
+                    map[key] = value.value.toLong()
+                }
             }
             is HalfPrecisionFloat -> {
-                if (value.value.toLong() > Int.MIN_VALUE)
+                if (value.value.toLong() > Int.MIN_VALUE) {
                     map[key] = value.value.toInt()
-                else map[key] = value.value.toLong()
+                } else {
+                    map[key] = value.value.toLong()
+                }
             }
             is NegativeInteger -> map[key] = value
             is DoublePrecisionFloat -> map[key] = value.value
@@ -313,14 +322,18 @@ object Cbor {
         when (value) {
             is UnicodeString -> array.add(value.string)
             is co.nstant.`in`.cbor.model.Number -> {
-                if (value.value.toLong() < Int.MAX_VALUE)
+                if (value.value.toLong() < Int.MAX_VALUE) {
                     array.add(value.value.toLong().toInt())
-                else array.add(value.value.toLong())
+                } else {
+                    array.add(value.value.toLong())
+                }
             }
             is HalfPrecisionFloat -> {
-                if (value.value.toLong() > Int.MIN_VALUE)
+                if (value.value.toLong() > Int.MIN_VALUE) {
                     array.add(value.value.toInt())
-                else array.add(value.value.toLong())
+                } else {
+                    array.add(value.value.toLong())
+                }
             }
             is NegativeInteger -> array.add(value)
             is DoublePrecisionFloat -> array.add(value.value)

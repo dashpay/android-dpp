@@ -7,13 +7,13 @@
 
 package org.dashj.platform.dpp.identifier
 
+import java.lang.IllegalStateException
 import org.bitcoinj.core.Base58
 import org.bitcoinj.core.Sha256Hash
 import org.dashj.platform.dpp.identifier.errors.IdentifierError
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.HashUtils
-import java.lang.IllegalStateException
 
 data class Identifier(private val buffer: ByteArray) {
 

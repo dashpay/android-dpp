@@ -7,7 +7,9 @@
 
 package org.dashj.platform.dpp.statetransition
 
-import org.bitcoinj.core.*
+import org.bitcoinj.core.AddressFormatException
+import org.bitcoinj.core.DumpedPrivateKey
+import org.bitcoinj.core.ECKey
 import org.bitcoinj.params.MainNetParams
 import org.bitcoinj.params.TestNet3Params
 import org.dashj.platform.dpp.identity.IdentityPublicKey
@@ -27,14 +29,14 @@ abstract class StateTransitionIdentitySigned(
     StateTransition(signature, type, protocolVersion) {
 
     constructor(rawStateTransition: MutableMap<String, Any?>) :
-        this(
-            rawStateTransition["signaturePublicKeyId"] as? Int,
-            rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) },
-            Types.getByCode(rawStateTransition["type"] as Int),
-            if (rawStateTransition.containsKey("protocolVersion"))
-                rawStateTransition["protocolVersion"] as Int
-            else CURRENT_PROTOCOL_VERSION
-        )
+    this(
+        rawStateTransition["signaturePublicKeyId"] as? Int,
+        rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) },
+        Types.getByCode(rawStateTransition["type"] as Int),
+        if (rawStateTransition.containsKey("protocolVersion")) {
+            rawStateTransition["protocolVersion"] as Int
+        } else CURRENT_PROTOCOL_VERSION
+    )
 
     constructor(type: Types, protocolVersion: Int = CURRENT_PROTOCOL_VERSION) : this(null, null, type, protocolVersion)
 

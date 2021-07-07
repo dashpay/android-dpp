@@ -35,11 +35,11 @@ class IdentityPublicKey(
     constructor(id: Int, type: TYPES, data: String) : this(id, type, fromBase64(data))
 
     constructor(rawIdentityPublicKey: Map<String, Any>) :
-        this(
-            rawIdentityPublicKey["id"] as Int,
-            TYPES.getByCode(rawIdentityPublicKey["type"] as Int),
-            byteArrayfromBase64orByteArray(rawIdentityPublicKey["data"] ?: error("data is missing"))
-        )
+    this(
+        rawIdentityPublicKey["id"] as Int,
+        TYPES.getByCode(rawIdentityPublicKey["type"] as Int),
+        byteArrayfromBase64orByteArray(rawIdentityPublicKey["data"] ?: error("data is missing"))
+    )
 
     override fun toObject(): Map<String, Any> {
         return hashMapOf<String, Any>(
@@ -58,8 +58,9 @@ class IdentityPublicKey(
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other !is IdentityPublicKey)
+        if (other !is IdentityPublicKey) {
             return false
+        }
         return other.id == id &&
             other.type == type &&
             other.data.contentEquals(data)

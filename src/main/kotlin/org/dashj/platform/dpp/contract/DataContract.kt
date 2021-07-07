@@ -43,15 +43,18 @@ class DataContract(
     constructor(rawContract: MutableMap<String, Any?>) : this(
         Identifier.from(rawContract["\$id"]!!),
         Identifier.from(rawContract["ownerId"]!!),
-        if (rawContract.containsKey("protocolVersion"))
+        if (rawContract.containsKey("protocolVersion")) {
             rawContract["protocolVersion"] as Int
-        else PROTOCOL_VERSION,
+        } else {
+            PROTOCOL_VERSION
+        },
         rawContract["\$schema"] as String,
         rawContract["documents"] as MutableMap<String, Any?>,
-        if (rawContract.containsKey("definitions"))
+        if (rawContract.containsKey("definitions")) {
             rawContract["definitions"] as MutableMap<String, Any?>
-        else
+        } else {
             hashMapOf()
+        }
     )
 
     override fun toObject(): Map<String, Any> {

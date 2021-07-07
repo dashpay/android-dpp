@@ -48,8 +48,9 @@ class StateTransitionFactory(stateRepository: StateRepository) : Factory(stateRe
         if (rawStateTransition.containsKey("signaturePublicKeyId")) {
             stateTransition.signaturePublicKeyId = rawStateTransition["signaturePublicKeyId"] as Int
         } else {
-            if (stateTransition.type != StateTransition.Types.IDENTITY_CREATE)
+            if (stateTransition.type != StateTransition.Types.IDENTITY_CREATE) {
                 throw IllegalArgumentException("signaturePublicKeyId is missing from transition")
+            }
         }
 
         return stateTransition

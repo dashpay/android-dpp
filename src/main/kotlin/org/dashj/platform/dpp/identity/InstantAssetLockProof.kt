@@ -21,11 +21,11 @@ class InstantAssetLockProof(
     override val type: Int = TYPE
 
     constructor(rawAssetLockProof: Map<String, Any?>) :
-        this(
-            rawAssetLockProof["outputIndex"].toString().toLong(),
-            Transaction(TestNet3Params.get(), HashUtils.byteArrayfromBase64orByteArray(rawAssetLockProof["transaction"] ?: error("missing transaction field"))),
-            InstantSendLock(TestNet3Params.get(), HashUtils.byteArrayfromBase64orByteArray(rawAssetLockProof["instantLock"] ?: error("missing instantLock field")))
-        )
+    this(
+        rawAssetLockProof["outputIndex"].toString().toLong(),
+        Transaction(TestNet3Params.get(), HashUtils.byteArrayfromBase64orByteArray(rawAssetLockProof["transaction"] ?: error("missing transaction field"))),
+        InstantSendLock(TestNet3Params.get(), HashUtils.byteArrayfromBase64orByteArray(rawAssetLockProof["instantLock"] ?: error("missing instantLock field")))
+    )
 
     val output: TransactionOutput
         get() = transaction.getOutput(outputIndex)
@@ -40,7 +40,7 @@ class InstantAssetLockProof(
             "type" to type,
             "instantLock" to instantLock.bitcoinSerialize(),
             "transaction" to transaction.bitcoinSerialize(),
-            "outputIndex" to outputIndex,
+            "outputIndex" to outputIndex
         )
     }
 
