@@ -1,3 +1,4 @@
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 buildscript {
     ext.kotlin_version = '1.4.32'
@@ -31,7 +32,6 @@ allprojects {
     }
 }
 apply plugin: "org.jlleitschuh.gradle.ktlint"
-ext.ReporterType = org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 ktlint {
     version = "0.34.2"
