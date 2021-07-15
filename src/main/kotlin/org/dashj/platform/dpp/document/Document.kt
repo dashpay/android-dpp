@@ -9,6 +9,7 @@ package org.dashj.platform.dpp.document
 
 import kotlin.collections.HashMap
 import org.dashj.platform.dpp.BaseObject
+import org.dashj.platform.dpp.Metadata
 import org.dashj.platform.dpp.contract.DataContract
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.toBase64
@@ -60,6 +61,7 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
     var createdAt: Long?
     var updatedAt: Long?
     var protocolVersion: Int
+    var metadata: Metadata? = null
 
     init {
         this.dataContract = dataContract

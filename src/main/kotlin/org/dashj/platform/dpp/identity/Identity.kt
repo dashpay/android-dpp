@@ -9,6 +9,7 @@ package org.dashj.platform.dpp.identity
 
 import com.google.common.base.Preconditions
 import org.dashj.platform.dpp.BaseObject
+import org.dashj.platform.dpp.Metadata
 import org.dashj.platform.dpp.identifier.Identifier
 
 class Identity(
@@ -24,6 +25,7 @@ class Identity(
     }
 
     var assetLockProof: AssetLockProof? = null
+    var metadata: Metadata? = null
 
     constructor(rawIdentity: Map<String, Any?>) : this(
         Identifier.from(rawIdentity["id"]),

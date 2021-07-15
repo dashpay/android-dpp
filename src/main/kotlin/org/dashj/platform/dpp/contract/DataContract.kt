@@ -8,6 +8,7 @@
 package org.dashj.platform.dpp.contract
 
 import org.dashj.platform.dpp.BaseObject
+import org.dashj.platform.dpp.Metadata
 import org.dashj.platform.dpp.errors.InvalidDocumentTypeError
 import org.dashj.platform.dpp.identifier.Identifier
 
@@ -26,6 +27,7 @@ class DataContract(
     }
 
     var entropy: ByteArray? = null
+    var metadata: Metadata? = null
 
     constructor(
         id: ByteArray,
