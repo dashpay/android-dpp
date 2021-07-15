@@ -6,4 +6,21 @@
  */
 package org.dashj.platform.dpp.validation
 
-class ValidationResult
+import org.dashj.platform.dpp.errors.ConcensusException
+
+class ValidationResult(errors: List<ConcensusException>) {
+    val errors = arrayListOf<ConcensusException>()
+    var data: Any?
+    init {
+        this.errors.addAll(errors)
+        data = null
+    }
+
+    fun isValid(): Boolean {
+        return errors.isEmpty()
+    }
+
+    fun merge(validationResult: ValidationResult) {
+        errors.addAll(validationResult.errors)
+    }
+}

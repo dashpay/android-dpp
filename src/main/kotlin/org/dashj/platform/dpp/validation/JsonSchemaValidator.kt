@@ -2,7 +2,7 @@ package org.dashj.platform.dpp.validation
 
 class JsonSchemaValidator : Validator {
 
-    enum class SCHEMAS(value: String) {
+    enum class SCHEMAS(val value: String) {
         DATA_CONTRACT("https://schema.dash.org/dpp-0-4-0/meta/data-contract"),
         DP_OBJECT("https://schema.dash.org/dpp-0-4-0/base/document")
     }
@@ -13,7 +13,7 @@ class JsonSchemaValidator : Validator {
      * @param {array|Object} additionalSchemas
      * @return {ValidationResult}
      */
-    fun validate(schema: MutableMap<String, Any>, o: Any, additionalSchemas: List<MutableMap<String, Any>>): ValidationResult {
+    fun validate(schema: MutableMap<String, Any>, obj: Any, additionalSchemas: List<MutableMap<String, Any>>): ValidationResult {
         TODO()
     }
 
