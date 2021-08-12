@@ -1,5 +1,3 @@
-import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
-
 buildscript {
     ext.kotlin_version = '1.4.32'
     ext.dashj_version = '0.18-SNAPSHOT'
@@ -21,6 +19,7 @@ plugins {
     id 'maven-publish'
     id 'maven'
     id 'signing'
+    id('io.gitlab.arturbosch.detekt').version("1.1.1")
 }
 apply plugin: 'kotlin'
 
@@ -29,22 +28,6 @@ allprojects {
         mavenLocal()
         mavenCentral()
         maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'}
-    }
-}
-apply plugin: "org.jlleitschuh.gradle.ktlint"
-
-ktlint {
-    version = "0.34.2"
-    debug = true
-    verbose = true
-    android = false
-    outputToConsole = true
-    reporters = [ReporterType.PLAIN, ReporterType.CHECKSTYLE]
-    ignoreFailures = false
-    enableExperimentalRules = true
-    filter {
-        exclude("**/generated/**")
-        include("**/kotlin/**")
     }
 }
 
@@ -161,3 +144,5 @@ uploadArchives {
         }
     }
 }
+
+apply from: 'ktlint.gradle'
