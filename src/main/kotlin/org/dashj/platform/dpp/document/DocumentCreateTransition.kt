@@ -6,8 +6,8 @@
  */
 package org.dashj.platform.dpp.document
 
-import java.lang.IllegalStateException
 import org.bitcoinj.core.Base58
+import java.lang.IllegalStateException
 
 open class DocumentCreateTransition : DataDocumentTransition {
 

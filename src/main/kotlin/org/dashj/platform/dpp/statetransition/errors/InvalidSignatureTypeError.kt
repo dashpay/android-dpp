@@ -6,7 +6,7 @@
  */
 package org.dashj.platform.dpp.statetransition.errors
 
-import java.lang.Exception
 import org.dashj.platform.dpp.identity.IdentityPublicKey
+import java.lang.Exception
 
 class InvalidSignatureTypeError(val signatureType: IdentityPublicKey.TYPES) : Exception("Invalid Signature Type")

@@ -7,7 +7,8 @@
 
 package org.dashj.platform.dpp.document
 
-abstract class DataDocumentTransition(rawStateTransition: MutableMap<String, Any?>) : DocumentTransition(rawStateTransition) {
+abstract class DataDocumentTransition(rawStateTransition: MutableMap<String, Any?>) :
+    DocumentTransition(rawStateTransition) {
 
     val data: Map<String, Any?>
 

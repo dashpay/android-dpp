@@ -4,7 +4,7 @@ import org.bitcoinj.core.Sha256Hash
 import org.dashj.platform.dpp.BaseObject
 import org.dashj.platform.dpp.identifier.Identifier
 
-abstract class AssetLockProof() : BaseObject() {
+abstract class AssetLockProof : BaseObject() {
 
     abstract val type: Int
 

@@ -13,7 +13,11 @@ class JsonSchemaValidator : Validator {
      * @param {array|Object} additionalSchemas
      * @return {ValidationResult}
      */
-    fun validate(schema: MutableMap<String, Any>, obj: Any, additionalSchemas: List<MutableMap<String, Any>>): ValidationResult {
+    fun validate(
+        schema: MutableMap<String, Any>,
+        obj: Any,
+        additionalSchemas: List<MutableMap<String, Any>>
+    ): ValidationResult {
         TODO()
     }
 
@@ -24,7 +28,10 @@ class JsonSchemaValidator : Validator {
      * @param additionalSchemas
      * @return {ValidationResult}
      */
-    fun validateSchema(schema: MutableMap<String, Any>, additionalSchemas: List<MutableMap<String, Any>>): ValidationResult {
+    fun validateSchema(
+        schema: MutableMap<String, Any>,
+        additionalSchemas: List<MutableMap<String, Any>>
+    ): ValidationResult {
         TODO()
     }
 }

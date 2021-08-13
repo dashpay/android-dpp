@@ -6,12 +6,14 @@
  */
 package org.dashj.platform.dpp.util
 
-import java.security.SecureRandom
 import org.bitcoinj.core.Utils
 import org.bitcoinj.crypto.LinuxSecureRandom
+import java.security.SecureRandom
 
 class Entropy {
     companion object {
+
+        const val SEED_SIZE = 32
 
         // Init proper random number generator, as some old Android installations have bugs that make it unsecure.
         private var secureRandom: SecureRandom
@@ -25,7 +27,7 @@ class Entropy {
         }
 
         fun generate(): ByteArray {
-            return secureRandom.generateSeed(32)
+            return secureRandom.generateSeed(SEED_SIZE)
         }
     }
 }

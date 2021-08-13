@@ -23,18 +23,23 @@ class IdentityCreateTransition : IdentityStateTransition {
         publicKeys: List<IdentityPublicKey>,
         protocolVersion: Int = 0
     ) :
-    super(Types.IDENTITY_CREATE, protocolVersion) {
-        this.assetLockProof = assetLock
-        this.identityId = assetLock.createIdentifier()
-        this.publicKeys = publicKeys.toMutableList()
-    }
+        super(Types.IDENTITY_CREATE, protocolVersion) {
+            this.assetLockProof = assetLock
+            this.identityId = assetLock.createIdentifier()
+            this.publicKeys = publicKeys.toMutableList()
+        }
 
     constructor(rawStateTransition: MutableMap<String, Any?>) :
-    super(rawStateTransition) {
-        assetLockProof = AssetLockProofFactory.createAssetLockProofInstance(rawStateTransition["assetLockProof"] as Map<String, Any?>)
-        publicKeys = (rawStateTransition["publicKeys"] as List<Any>).map { entry -> IdentityPublicKey(entry as MutableMap<String, Any>) }.toMutableList()
-        identityId = assetLockProof.createIdentifier()
-    }
+        super(rawStateTransition) {
+            assetLockProof = AssetLockProofFactory.createAssetLockProofInstance(
+                rawStateTransition["assetLockProof"] as Map<String, Any?>
+            )
+            publicKeys = (rawStateTransition["publicKeys"] as List<Any>).map {
+                entry ->
+                IdentityPublicKey(entry as MutableMap<String, Any>)
+            }.toMutableList()
+            identityId = assetLockProof.createIdentifier()
+        }
 
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
         val map = super.toObject(skipSignature, skipIdentifiersConversion)

@@ -21,12 +21,12 @@ import co.nstant.`in`.cbor.model.NegativeInteger
 import co.nstant.`in`.cbor.model.SimpleValue
 import co.nstant.`in`.cbor.model.SimpleValueType
 import co.nstant.`in`.cbor.model.UnicodeString
+import org.dashj.platform.dpp.identifier.Identifier
 import java.io.ByteArrayOutputStream
 import java.lang.IllegalStateException
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.util.HashMap
-import org.dashj.platform.dpp.identifier.Identifier
 
 object Cbor {
 
@@ -183,7 +183,12 @@ object Cbor {
      * @param baos ByteArrayOutputStream
      * @param arrayBuilder ArrayBuilder<*> The array will be added to this builder
      */
-    private fun addJSONArrayInArray(value: List<*>, mapBuilder: MapBuilder<CborBuilder>?, baos: ByteArrayOutputStream, arrayBuilder: ArrayBuilder<*>) {
+    private fun addJSONArrayInArray(
+        value: List<*>,
+        mapBuilder: MapBuilder<CborBuilder>?,
+        baos: ByteArrayOutputStream,
+        arrayBuilder: ArrayBuilder<*>
+    ) {
         val count = value.size
         for (i in 0 until count) {
             when (val item = value[i]) {
@@ -200,7 +205,12 @@ object Cbor {
         }
     }
 
-    private fun addJSONArray(value: List<*>, mapBuilder: MapBuilder<CborBuilder>, baos: ByteArrayOutputStream, arrayBuilder: ArrayBuilder<*>) {
+    private fun addJSONArray(
+        value: List<*>,
+        mapBuilder: MapBuilder<CborBuilder>,
+        baos: ByteArrayOutputStream,
+        arrayBuilder: ArrayBuilder<*>
+    ) {
         val count = value.size
         for (i in 0 until count) {
             val item = value[i]

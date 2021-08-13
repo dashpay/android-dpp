@@ -7,5 +7,6 @@
 package org.dashj.platform.dpp
 
 data class Metadata(val blockHeight: Int, val coreChainLockedHeight: Int) {
-    constructor(rawMetaData: Map<String, Any?>) : this(rawMetaData["blockHeight"].toString().toInt(), rawMetaData["coreChainLockedHeight"].toString().toInt())
+    constructor(rawMetaData: Map<String, Any?>) :
+        this(rawMetaData["blockHeight"].toString().toInt(), rawMetaData["coreChainLockedHeight"].toString().toInt())
 }

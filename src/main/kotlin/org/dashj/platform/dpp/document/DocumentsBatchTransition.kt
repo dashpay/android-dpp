@@ -6,9 +6,9 @@
  */
 package org.dashj.platform.dpp.document
 
-import java.lang.IllegalStateException
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.StateTransitionIdentitySigned
+import java.lang.IllegalStateException
 
 class DocumentsBatchTransition : StateTransitionIdentitySigned {
 

@@ -7,7 +7,6 @@
 
 package org.dashj.platform.dpp.statetransition
 
-import java.lang.Exception
 import org.bitcoinj.core.ECKey
 import org.dashj.platform.dpp.BaseObject
 import org.dashj.platform.dpp.identifier.Identifier
@@ -15,6 +14,7 @@ import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedE
 import org.dashj.platform.dpp.toBase64Padded
 import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.HashUtils
+import java.lang.Exception
 
 abstract class StateTransition(
     var signature: ByteArray?,
@@ -47,11 +47,11 @@ abstract class StateTransition(
     abstract val modifiedDataIds: List<Identifier>
 
     constructor(rawStateTransition: MutableMap<String, Any?>) :
-    this(
-        rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) },
-        Types.getByCode(rawStateTransition["type"] as Int),
-        rawStateTransition["protocolVersion"] as Int
-    )
+        this(
+            rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) },
+            Types.getByCode(rawStateTransition["type"] as Int),
+            rawStateTransition["protocolVersion"] as Int
+        )
 
     constructor(type: Types, protocolVersion: Int = 0) : this(null, type, protocolVersion)
 

@@ -23,7 +23,12 @@ import org.dashj.platform.dpp.util.HashUtils
 
 class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 
-    fun create(dataContract: DataContract, ownerId: Identifier, type: String, data: Map<String, Any?> = mapOf()): Document {
+    fun create(
+        dataContract: DataContract,
+        ownerId: Identifier,
+        type: String,
+        data: Map<String, Any?> = mapOf()
+    ): Document {
         if (!dataContract.isDocumentDefined(type)) {
             throw InvalidDocumentTypeError(dataContract, type)
         }

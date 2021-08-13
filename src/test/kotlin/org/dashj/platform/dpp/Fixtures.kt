@@ -1,6 +1,5 @@
 package org.dashj.platform.dpp
 
-import java.io.File
 import org.dashj.platform.dpp.contract.DataContract
 import org.dashj.platform.dpp.contract.DataContractCreateTransition
 import org.dashj.platform.dpp.document.Document
@@ -14,6 +13,7 @@ import org.dashj.platform.dpp.identity.IdentityPublicKey
 import org.dashj.platform.dpp.statetransition.StateTransition
 import org.dashj.platform.dpp.statetransition.StateTransitionFactory
 import org.json.JSONObject
+import java.io.File
 
 object Fixtures {
 
