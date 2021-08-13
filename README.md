@@ -21,7 +21,7 @@ dependencies {
 # KtLint
 Check using ktlint:
 ```shell
-./gradlew ktlintCheck
+./gradlew ktlint
 ```
 Format using ktlint:
 ```shell
