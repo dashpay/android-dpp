@@ -16,7 +16,7 @@ abstract class IdentityStateTransition : StateTransitionIdentitySigned {
         type: Types,
         protocolVersion: Int
     ) :
-    super(signaturePublicKeyId, signature, type, protocolVersion)
+        super(signaturePublicKeyId, signature, type, protocolVersion)
 
     constructor(type: Types, protocolVersion: Int = 0) : this(null, null, type, protocolVersion)
 

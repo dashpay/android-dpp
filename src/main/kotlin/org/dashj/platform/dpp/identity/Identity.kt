@@ -36,7 +36,7 @@ class Identity(
     )
 
     constructor(id: Identifier, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int) :
-    this(id, 0, publicKeys, revision, protocolVersion)
+        this(id, 0, publicKeys, revision, protocolVersion)
 
     fun getPublicKeyById(keyId: Int): IdentityPublicKey? {
         Preconditions.checkArgument(keyId >= 0, "keyId ($keyId) must be >= 0")

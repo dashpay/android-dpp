@@ -21,12 +21,17 @@ import org.dashj.platform.dpp.util.HashUtils
 
 class StateTransitionFactory(stateRepository: StateRepository) : Factory(stateRepository) {
 
-    fun createStateTransition(rawStateTransition: MutableMap<String, Any?>, options: Options = Options()): StateTransition {
+    fun createStateTransition(
+        rawStateTransition: MutableMap<String, Any?>,
+        options: Options = Options()
+    ): StateTransition {
         val stateTransition: StateTransitionIdentitySigned
         when (StateTransition.Types.getByCode(rawStateTransition["type"] as Int)) {
             StateTransition.Types.DATA_CONTRACT_CREATE -> {
                 val rawDataContract = rawStateTransition["dataContract"] as MutableMap<String, Any?>
-                val dataContract = ContractFactory(stateRepository).createDataContract(Identifier.from(rawDataContract["ownerId"]).toBuffer(), rawDataContract)
+                val dataContract = ContractFactory(stateRepository).createDataContract(
+                    Identifier.from(rawDataContract["ownerId"]).toBuffer(), rawDataContract
+                )
 
                 stateTransition = DataContractCreateTransition(dataContract)
             }
@@ -44,7 +49,9 @@ class StateTransitionFactory(stateRepository: StateRepository) : Factory(stateRe
             }
         }
 
-        stateTransition.signature = rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) }
+        stateTransition.signature = rawStateTransition["signature"]?.let {
+            HashUtils.byteArrayfromBase64orByteArray(it)
+        }
         if (rawStateTransition.containsKey("signaturePublicKeyId")) {
             stateTransition.signaturePublicKeyId = rawStateTransition["signaturePublicKeyId"] as Int
         } else {

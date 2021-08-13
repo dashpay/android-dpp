@@ -6,7 +6,6 @@
  */
 
 package org.dashj.platform.dpp.contract
-import java.io.File
 import org.dashj.platform.dpp.Fixtures
 import org.dashj.platform.dpp.StateRepositoryMock
 import org.dashj.platform.dpp.toHexString
@@ -18,6 +17,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import java.io.File
 
 class DataContractTest {
 

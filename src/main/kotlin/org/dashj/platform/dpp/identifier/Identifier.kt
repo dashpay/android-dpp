@@ -7,18 +7,19 @@
 
 package org.dashj.platform.dpp.identifier
 
-import java.lang.IllegalStateException
 import org.bitcoinj.core.Base58
 import org.bitcoinj.core.Sha256Hash
 import org.dashj.platform.dpp.identifier.errors.IdentifierError
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.HashUtils
+import java.lang.IllegalStateException
 
 data class Identifier(private val buffer: ByteArray) {
 
     companion object {
         const val MEDIA_TYPE = "application/x.dash.dpp.identifier"
+        const val IDENTIFIER_LENGTH = 32
 
         @JvmStatic
         fun from(any: Any?, encoding: String = "base58"): Identifier {
@@ -55,7 +56,7 @@ data class Identifier(private val buffer: ByteArray) {
     }
 
     init {
-        if (buffer.size != 32) {
+        if (buffer.size != IDENTIFIER_LENGTH) {
             throw IdentifierError("Identifier must be 32 bytes")
         }
     }
