@@ -60,7 +60,6 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
     var data: Map<String, Any?>
     var createdAt: Long?
     var updatedAt: Long?
-    var protocolVersion: Int
     var metadata: Metadata? = null
 
     init {
