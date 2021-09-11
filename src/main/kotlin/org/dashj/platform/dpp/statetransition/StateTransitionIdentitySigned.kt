@@ -12,6 +12,7 @@ import org.bitcoinj.core.DumpedPrivateKey
 import org.bitcoinj.core.ECKey
 import org.bitcoinj.params.MainNetParams
 import org.bitcoinj.params.TestNet3Params
+import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.identity.IdentityPublicKey
 import org.dashj.platform.dpp.statetransition.errors.InvalidSignaturePublicKeyError
 import org.dashj.platform.dpp.statetransition.errors.InvalidSignatureTypeError
@@ -35,10 +36,11 @@ abstract class StateTransitionIdentitySigned(
             Types.getByCode(rawStateTransition["type"] as Int),
             if (rawStateTransition.containsKey("protocolVersion")) {
                 rawStateTransition["protocolVersion"] as Int
-            } else CURRENT_PROTOCOL_VERSION
+            } else ProtocolVersion.latestVersion
         )
 
-    constructor(type: Types, protocolVersion: Int = CURRENT_PROTOCOL_VERSION) : this(null, null, type, protocolVersion)
+    constructor(type: Types, protocolVersion: Int = ProtocolVersion.latestVersion) :
+        this(null, null, type, protocolVersion)
 
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
         val rawStateTransition = super.toObject(skipSignature, skipIdentifiersConversion)
