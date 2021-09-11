@@ -17,12 +17,8 @@ class Identity(
     var balance: Long,
     var publicKeys: List<IdentityPublicKey>,
     val revision: Int,
-    val protocolVersion: Int
-) : BaseObject() {
-
-    companion object {
-        const val PROTOCOL_VERSION: Int = 0
-    }
+    protocolVersion: Int
+) : BaseObject(protocolVersion) {
 
     var assetLockProof: AssetLockProof? = null
     var metadata: Metadata? = null
