@@ -7,6 +7,7 @@
 package org.dashj.platform.dpp
 
 import org.bitcoinj.core.Sha256Hash
+import org.bitcoinj.core.Utils
 import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.HashUtils
 
@@ -15,7 +16,7 @@ import org.dashj.platform.dpp.util.HashUtils
  * serialization and hashing of the object data
  */
 
-abstract class BaseObject {
+abstract class BaseObject(var protocolVersion: Int = ProtocolVersion.latestVersion) {
 
     /**
      * Return plain JSON object
@@ -34,7 +35,15 @@ abstract class BaseObject {
      *
      */
     fun toBuffer(): ByteArray {
-        return Cbor.encode(this.toObject())
+        return encodeProtocolEntity(toObject())
+    }
+
+    fun encodeProtocolEntity(payload: Map<String, Any?>): ByteArray {
+        val encoded = Cbor.encode(payload)
+        val buffer = ByteArray(encoded.size + 4)
+        Utils.uint32ToByteArrayLE(protocolVersion.toLong(), buffer, 0)
+        System.arraycopy(encoded, 0, buffer, 4, encoded.size)
+        return buffer
     }
 
     /**
