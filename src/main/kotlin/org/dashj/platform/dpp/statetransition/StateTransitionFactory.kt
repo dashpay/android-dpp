@@ -7,6 +7,7 @@
 
 package org.dashj.platform.dpp.statetransition
 
+import org.dashj.platform.dpp.DashPlatformProtocol
 import org.dashj.platform.dpp.Factory
 import org.dashj.platform.dpp.StateRepository
 import org.dashj.platform.dpp.contract.ContractFactory
@@ -19,7 +20,7 @@ import org.dashj.platform.dpp.identity.IdentityTopupTransition
 import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.HashUtils
 
-class StateTransitionFactory(stateRepository: StateRepository) : Factory(stateRepository) {
+class StateTransitionFactory(dpp: DashPlatformProtocol, stateRepository: StateRepository) : Factory(dpp, stateRepository) {
 
     fun createStateTransition(
         rawStateTransition: MutableMap<String, Any?>,
@@ -29,7 +30,7 @@ class StateTransitionFactory(stateRepository: StateRepository) : Factory(stateRe
         when (StateTransition.Types.getByCode(rawStateTransition["type"] as Int)) {
             StateTransition.Types.DATA_CONTRACT_CREATE -> {
                 val rawDataContract = rawStateTransition["dataContract"] as MutableMap<String, Any?>
-                val dataContract = ContractFactory(stateRepository).createDataContract(
+                val dataContract = ContractFactory(dpp, stateRepository).createDataContract(
                     Identifier.from(rawDataContract["ownerId"]).toBuffer(), rawDataContract
                 )
 

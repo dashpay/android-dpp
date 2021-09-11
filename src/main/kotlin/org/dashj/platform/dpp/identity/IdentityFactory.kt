@@ -11,16 +11,17 @@ import org.bitcoinj.core.ECKey
 import org.bitcoinj.core.Transaction
 import org.bitcoinj.core.TransactionOutPoint
 import org.bitcoinj.quorums.InstantSendLock
+import org.dashj.platform.dpp.DashPlatformProtocol
 import org.dashj.platform.dpp.Factory
+import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.StateRepository
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.AssetLockProofFactory
-import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.CreditsConverter
 import org.dashj.platform.dpp.util.CreditsConverter.convertSatoshiToCredits
 import org.dashj.platform.dpp.util.HashUtils
 
-class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepository) {
+class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepository) : Factory(dpp, stateRepository) {
 
     fun create(
         lockedOutPoint: TransactionOutPoint,
@@ -48,7 +49,7 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
                 IdentityPublicKey(index, IdentityPublicKey.TYPES.ECDSA_SECP256K1, it.pubKey)
             },
             revision = 0,
-            protocolVersion = Identity.PROTOCOL_VERSION
+            protocolVersion = ProtocolVersion.latestVersion
         )
     }
 
@@ -57,7 +58,8 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
     }
 
     fun createFromBuffer(payload: ByteArray, options: Options = Options()): Identity {
-        val rawIdentity = Cbor.decode(payload).toMutableMap()
+        val (protocolVersion, rawIdentity) = decodeProtocolEntity(payload, dpp.protocolVersion)
+        rawIdentity["protocolVersion"] = protocolVersion
         return createFromObject(rawIdentity, options)
     }
 
@@ -77,7 +79,7 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
     }
 
     fun createIdentityCreateTransition(identity: Identity): IdentityCreateTransition {
-        return IdentityCreateTransition(identity.assetLockProof!!, identity.publicKeys, Identity.PROTOCOL_VERSION)
+        return IdentityCreateTransition(identity.assetLockProof!!, identity.publicKeys, ProtocolVersion.latestVersion)
     }
 
     fun createIdentityCreateTransition(
@@ -109,7 +111,7 @@ class IdentityFactory(stateRepository: StateRepository) : Factory(stateRepositor
             0,
             identityCreateTransition.publicKeys,
             0,
-            Identity.PROTOCOL_VERSION
+            ProtocolVersion.latestVersion
         )
 
         val publicKeyHashes = newIdentity.publicKeys.map { HashUtils.toHash(it.data) }

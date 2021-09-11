@@ -6,6 +6,7 @@
  */
 package org.dashj.platform.dpp.document
 
+import org.dashj.platform.dpp.DashPlatformProtocol
 import org.dashj.platform.dpp.Fixtures
 import org.dashj.platform.dpp.StateRepositoryMock
 import org.dashj.platform.dpp.identifier.Identifier
@@ -22,7 +23,8 @@ import org.junit.jupiter.api.Test
 
 class DocumentTest {
 
-    val stateRepository = StateRepositoryMock()
+    private val stateRepository = StateRepositoryMock()
+    private val dpp = DashPlatformProtocol(stateRepository)
 
     @Test
     fun testDocument() {
@@ -35,7 +37,7 @@ class DocumentTest {
 
     @Test
     fun testDocumentFactory() {
-        var factory = DocumentFactory(stateRepository)
+        var factory = DocumentFactory(dpp, stateRepository)
 
         val contract = Fixtures.getDataContractFixtures()
 
@@ -93,7 +95,7 @@ class DocumentTest {
         val batchTransition = hashMapOf(
             "create" to documents
         )
-        val result = DocumentFactory(stateRepository).createStateTransition(batchTransition)
+        val result = DocumentFactory(dpp, stateRepository).createStateTransition(batchTransition)
         for (i in result.transitions.indices)
             assertEquals((result.transitions[0] as DataDocumentTransition).data, documents[0].data)
         assertTrue(result.isDocumentStateTransition())
@@ -125,7 +127,7 @@ class DocumentTest {
         records["dashUniqueIdentityId"] = Identifier.from(records["dashUniqueIdentityId"])
 
         // see if the deepCopy is working, if not the type for dashUniqueIdentityId will be a String
-        val json = transition.toJSON()
+        // val json = transition.toJSON()
 
         records["dashUniqueIdentityId"] as Identifier
     }

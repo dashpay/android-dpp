@@ -7,6 +7,7 @@
 package org.dashj.platform.dpp.identity
 
 import org.bitcoinj.core.ECKey
+import org.dashj.platform.dpp.DashPlatformProtocol
 import org.dashj.platform.dpp.Fixtures
 import org.dashj.platform.dpp.StateRepositoryMock
 import org.dashj.platform.dpp.statetransition.StateTransition
@@ -25,6 +26,8 @@ import org.junit.jupiter.api.function.Executable
 
 class IdentityTest {
     val stateRepository = StateRepositoryMock()
+    val dpp = DashPlatformProtocol(stateRepository)
+    val factory = IdentityFactory(dpp, stateRepository)
 
     @Test
     fun testIdentity() {
@@ -37,7 +40,6 @@ class IdentityTest {
 
     @Test
     fun testIdentityFactory() {
-        val factory = IdentityFactory(stateRepository)
 
         val fixtureCreatedIdentity = Fixtures.getIdentityFixture()
 
@@ -55,8 +57,6 @@ class IdentityTest {
     @Test @Disabled
     fun applyStateTransition() {
         val createTransition = Fixtures.getIdentityCreateSTFixture()
-
-        val factory = IdentityFactory(stateRepository)
 
         val identity = factory.applyIdentityCreateStateTransition(createTransition)
 
@@ -119,9 +119,9 @@ class IdentityTest {
 
         val hash = stateTransition.hash()
 
-        assertEquals("6b05d28bc9e9d7ceb53eeb42e243815359032c6b43d0657da27cfa7d1c9b63bf", hash.toHexString())
+        assertEquals("a1a0bd256af8449969ab01684bcbfce95209a4d45efc74f1b58948facff67061", hash.toHexString())
         assertEquals(
-            "a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
+            "00000000a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
             serializedDataBytes.toHexString()
         )
 
@@ -161,7 +161,7 @@ class IdentityTest {
 
         val serialized = fromFixture.toBuffer()
 
-        val fromSerialized = IdentityFactory(stateRepository).createFromBuffer(serialized)
+        val fromSerialized = IdentityFactory(dpp, stateRepository).createFromBuffer(serialized)
 
         assertEquals(fromFixture.toJSON(), fromSerialized.toJSON())
     }

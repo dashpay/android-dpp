@@ -17,9 +17,10 @@ import java.io.File
 
 object Fixtures {
 
-    val userId = Identifier.from("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp")
-    val contractId = Identifier.from("9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX")
-    val stateRepository = StateRepositoryMock()
+    private val userId = Identifier.from("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp")
+    private val contractId = Identifier.from("9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX")
+    private val stateRepository = StateRepositoryMock()
+    val dpp = DashPlatformProtocol(stateRepository)
 
     fun getDataContractFixtures(): DataContract {
         val json = File("src/test/resources/data/documentsforcontract.json").readText()
@@ -28,7 +29,7 @@ object Fixtures {
         val dataContract = DataContract(
             contractId,
             userId,
-            DataContract.PROTOCOL_VERSION,
+            ProtocolVersion.latestVersion,
             DataContract.SCHEMA,
             map
         )
@@ -41,7 +42,7 @@ object Fixtures {
     fun getDocumentsFixture(): List<Document> {
         val dataContract = getDataContractFixtures()
 
-        val factory = DocumentFactory(stateRepository)
+        val factory = DocumentFactory(dpp, stateRepository)
 
         return listOf(
             factory.create(dataContract, userId, "niceDocument", JSONObject("{ name: 'Cutie' }").toMap()),
@@ -60,7 +61,7 @@ object Fixtures {
         if (createDocuments.isEmpty()) {
             createDocuments = fixtureDocuments
         }
-        val factory = DocumentFactory(stateRepository)
+        val factory = DocumentFactory(dpp, stateRepository)
 
         val documentsForTransition = hashMapOf(
             "create" to createDocuments,
@@ -124,7 +125,7 @@ object Fixtures {
         val jsonObject = JSONObject(json)
         val rawContractST = jsonObject.toMap()
 
-        return StateTransitionFactory(stateRepository).createStateTransition(rawContractST) as DataContractCreateTransition
+        return StateTransitionFactory(dpp, stateRepository).createStateTransition(rawContractST) as DataContractCreateTransition
     }
 
     fun getDocumentsSTSignedFixture(): DocumentsBatchTransition {
@@ -137,6 +138,6 @@ object Fixtures {
     fun getDocumentsSTSignedFixtureTwo(): DocumentsBatchTransition {
         val jsonObject = JSONObject(File("src/test/resources/data/documents-transition.json").readText())
         val rawDocumentST = jsonObject.toMap()
-        return StateTransitionFactory(stateRepository).createStateTransition(rawDocumentST) as DocumentsBatchTransition
+        return StateTransitionFactory(dpp, stateRepository).createStateTransition(rawDocumentST) as DocumentsBatchTransition
     }
 }

@@ -10,14 +10,15 @@ class DashPlatformProtocol(val stateRepository: StateRepository) {
     lateinit var document: DocumentFactory
     lateinit var dataContract: ContractFactory
     lateinit var identity: IdentityFactory
+    var protocolVersion = ProtocolVersion.latestVersion
 
     init {
         initialize(JsonSchemaValidator())
     }
 
     private fun initialize(validator: Validator) {
-        document = DocumentFactory(stateRepository)
-        dataContract = ContractFactory(stateRepository)
-        identity = IdentityFactory(stateRepository)
+        document = DocumentFactory(this, stateRepository)
+        dataContract = ContractFactory(this, stateRepository)
+        identity = IdentityFactory(this, stateRepository)
     }
 }

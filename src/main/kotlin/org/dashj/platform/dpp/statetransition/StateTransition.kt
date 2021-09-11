@@ -79,7 +79,7 @@ abstract class StateTransition(
     }
 
     fun toBuffer(skipSignature: Boolean): ByteArray {
-        return Cbor.encode(toObject(skipSignature, false))
+        return encodeProtocolEntity(toObject(skipSignature, false))
     }
 
     fun signByPrivateKey(privateKey: ECKey) {

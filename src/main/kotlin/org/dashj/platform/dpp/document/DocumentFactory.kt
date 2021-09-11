@@ -7,6 +7,7 @@
 
 package org.dashj.platform.dpp.document
 
+import org.dashj.platform.dpp.DashPlatformProtocol
 import org.dashj.platform.dpp.Factory
 import org.dashj.platform.dpp.StateRepository
 import org.dashj.platform.dpp.contract.DataContract
@@ -17,11 +18,10 @@ import org.dashj.platform.dpp.document.errors.NoDocumentsSuppliedError
 import org.dashj.platform.dpp.errors.InvalidDocumentTypeError
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.StateTransition
-import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.Entropy
 import org.dashj.platform.dpp.util.HashUtils
 
-class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepository) {
+class DocumentFactory(dpp: DashPlatformProtocol, stateRepository: StateRepository) : Factory(dpp, stateRepository) {
 
     fun create(
         dataContract: DataContract,
@@ -64,7 +64,8 @@ class DocumentFactory(stateRepository: StateRepository) : Factory(stateRepositor
     }
 
     fun createFromBuffer(payload: ByteArray, options: Options = Options()): Document {
-        val rawDocument = Cbor.decode(payload).toMutableMap()
+        val (protocolVersion, rawDocument) = decodeProtocolEntity(payload, dpp.protocolVersion)
+        rawDocument["\$protocolVersion"] = protocolVersion
         return createFromObject(rawDocument, options)
     }
 
