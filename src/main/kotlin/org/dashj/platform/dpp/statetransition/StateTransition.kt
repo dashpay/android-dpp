@@ -9,19 +9,19 @@ package org.dashj.platform.dpp.statetransition
 
 import org.bitcoinj.core.ECKey
 import org.dashj.platform.dpp.BaseObject
+import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedError
 import org.dashj.platform.dpp.toBase64Padded
-import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.HashUtils
 import java.lang.Exception
 
 abstract class StateTransition(
     var signature: ByteArray?,
     val type: Types,
-    var protocolVersion: Int = CURRENT_PROTOCOL_VERSION
+    protocolVersion: Int = ProtocolVersion.latestVersion
 ) :
-    BaseObject() {
+    BaseObject(protocolVersion) {
 
     enum class Types(val value: Int) {
         DATA_CONTRACT_CREATE(0),
@@ -41,7 +41,6 @@ abstract class StateTransition(
 
     companion object {
         const val PRICE_PER_BYTE = 1L
-        const val CURRENT_PROTOCOL_VERSION = 0
     }
 
     abstract val modifiedDataIds: List<Identifier>
