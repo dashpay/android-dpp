@@ -9,21 +9,21 @@ package org.dashj.platform.dpp.contract
 
 import org.dashj.platform.dpp.BaseObject
 import org.dashj.platform.dpp.Metadata
+import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.errors.InvalidDocumentTypeError
 import org.dashj.platform.dpp.identifier.Identifier
 
 class DataContract(
     val id: Identifier,
     val ownerId: Identifier,
-    val protocolVersion: Int,
+    protocolVersion: Int,
     val schema: String,
     val documents: MutableMap<String, Any?>,
     var definitions: MutableMap<String, Any?> = hashMapOf()
-) : BaseObject() {
+) : BaseObject(protocolVersion) {
 
     companion object DEFAULTS {
         const val SCHEMA = "https://schema.dash.org/dpp-0-4-0/meta/data-contract"
-        const val PROTOCOL_VERSION: Int = 0
     }
 
     var entropy: ByteArray? = null
@@ -48,7 +48,7 @@ class DataContract(
         if (rawContract.containsKey("protocolVersion")) {
             rawContract["protocolVersion"] as Int
         } else {
-            PROTOCOL_VERSION
+            ProtocolVersion.latestVersion
         },
         rawContract["\$schema"] as String,
         rawContract["documents"] as MutableMap<String, Any?>,
