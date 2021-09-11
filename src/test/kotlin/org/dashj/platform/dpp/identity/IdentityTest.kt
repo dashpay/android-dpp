@@ -9,6 +9,7 @@ package org.dashj.platform.dpp.identity
 import org.bitcoinj.core.ECKey
 import org.dashj.platform.dpp.DashPlatformProtocol
 import org.dashj.platform.dpp.Fixtures
+import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.StateRepositoryMock
 import org.dashj.platform.dpp.statetransition.StateTransition
 import org.dashj.platform.dpp.statetransition.errors.PublicKeyMismatchError
@@ -22,16 +23,15 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.function.Executable
 
 class IdentityTest {
-    val stateRepository = StateRepositoryMock()
-    val dpp = DashPlatformProtocol(stateRepository)
-    val factory = IdentityFactory(dpp, stateRepository)
+    private val stateRepository = StateRepositoryMock()
+    private val dpp = DashPlatformProtocol(stateRepository)
+    private val factory = IdentityFactory(dpp, stateRepository)
 
     @Test
     fun testIdentity() {
-        var identity = Fixtures.getIdentityFixture()
+        val identity = Fixtures.getIdentityFixture()
 
         assertEquals("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", identity.id.toString())
         assertEquals(2, identity.publicKeys.size)
@@ -47,7 +47,7 @@ class IdentityTest {
         publicKeys.add(IdentityPublicKey(0, IdentityPublicKey.TYPES.ECDSA_SECP256K1, "AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di"))
         publicKeys.add(IdentityPublicKey(2, IdentityPublicKey.TYPES.ECDSA_SECP256K1, "A8AK95PYMVX5VQKzOhcVQRCUbc9pyg3RiL7jttEMDU+L"))
 
-        val factoryCreatedIdentity = factory.create("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", publicKeys, 0, Identity.PROTOCOL_VERSION)
+        val factoryCreatedIdentity = factory.create("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", publicKeys, 0, ProtocolVersion.latestVersion)
 
         assertEquals(fixtureCreatedIdentity.id, factoryCreatedIdentity.id)
         assertArrayEquals(fixtureCreatedIdentity.publicKeys[0].data, factoryCreatedIdentity.publicKeys[0].data)
@@ -83,11 +83,14 @@ class IdentityTest {
         val bytes = Cbor.encode(json)
         val bytes2 = Cbor.encode(json2)
 
-        println(bytes.toHexString())
-        println(bytes2.toHexString())
         assertEquals(
-            "a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
+            "a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572" +
+                "655075626c69634b65794964f6",
             bytes.toHexString()
+        )
+        assertEquals(
+            "a2647479706574444154415f434f4e54524143545f4352454154456f70726f746f636f6c56657273696f6e00",
+            bytes2.toHexString()
         )
     }
 
@@ -121,7 +124,8 @@ class IdentityTest {
 
         assertEquals("a1a0bd256af8449969ab01684bcbfce95209a4d45efc74f1b58948facff67061", hash.toHexString())
         assertEquals(
-            "00000000a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6",
+            "00000000a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e6174757" +
+                "2655075626c69634b65794964f6",
             serializedDataBytes.toHexString()
         )
 
@@ -138,13 +142,15 @@ class IdentityTest {
         // trigger a failure to verify
         val incorrectKey = ECKey()
         val incorrectPublicKey = incorrectKey.pubKey.toBase64()
-        val incorrectIdentityKey = IdentityPublicKey(publicKeyId, IdentityPublicKey.TYPES.ECDSA_SECP256K1, incorrectPublicKey)
+        val incorrectOne = IdentityPublicKey(publicKeyId, IdentityPublicKey.TYPES.ECDSA_SECP256K1, incorrectPublicKey)
 
-        assertFalse(stateTransition.verifySignature(incorrectIdentityKey))
+        assertFalse(stateTransition.verifySignature(incorrectOne))
 
-        val incorrectIdentityKeyTwo = IdentityPublicKey(8, IdentityPublicKey.TYPES.ECDSA_SECP256K1, incorrectPublicKey)
+        val incorrectTwo = IdentityPublicKey(8, IdentityPublicKey.TYPES.ECDSA_SECP256K1, incorrectPublicKey)
 
-        assertThrows(PublicKeyMismatchError::class.java, Executable { stateTransition.verifySignature(incorrectIdentityKeyTwo) })
+        assertThrows(PublicKeyMismatchError::class.java) {
+            stateTransition.verifySignature(incorrectTwo)
+        }
     }
 
     @Test @Disabled
