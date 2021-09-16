@@ -3,8 +3,8 @@ package org.dashj.platform.dpp.contract
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.StateTransitionIdentitySigned
 import org.dashj.platform.dpp.toBase64
+import org.dashj.platform.dpp.util.Converters
 import org.dashj.platform.dpp.util.Entropy
-import org.dashj.platform.dpp.util.HashUtils.byteArrayfromBase64orByteArray
 
 class DataContractCreateTransition : StateTransitionIdentitySigned {
 
@@ -25,7 +25,7 @@ class DataContractCreateTransition : StateTransitionIdentitySigned {
 
     constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
         dataContract = DataContract(rawStateTransition["dataContract"] as MutableMap<String, Any?>)
-        entropy = byteArrayfromBase64orByteArray(rawStateTransition["entropy"]!!)
+        entropy = Converters.byteArrayFromBase64orByteArray(rawStateTransition["entropy"]!!)
     }
 
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {

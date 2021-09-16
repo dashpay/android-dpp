@@ -42,7 +42,7 @@ class DataContract(
         documents, definitions
     )
 
-    constructor(rawContract: MutableMap<String, Any?>) : this(
+    constructor(rawContract: Map<String, Any?>) : this(
         Identifier.from(rawContract["\$id"]!!),
         Identifier.from(rawContract["ownerId"]!!),
         if (rawContract.containsKey("protocolVersion")) {
@@ -50,10 +50,14 @@ class DataContract(
         } else {
             ProtocolVersion.latestVersion
         },
-        rawContract["\$schema"] as String,
+        if (rawContract.containsKey("\$schema")) {
+            rawContract["\$schema"] as String
+        } else {
+            ""
+        },
         rawContract["documents"] as MutableMap<String, Any?>,
-        if (rawContract.containsKey("definitions")) {
-            rawContract["definitions"] as MutableMap<String, Any?>
+        if (rawContract.containsKey("\$defs")) {
+            rawContract["\$defs"] as MutableMap<String, Any?>
         } else {
             hashMapOf()
         }
@@ -78,7 +82,7 @@ class DataContract(
         }
 
         if (this.definitions.isNotEmpty()) {
-            rawDataContract["definitions"] = this.definitions
+            rawDataContract["\$defs"] = this.definitions
         }
 
         return rawDataContract

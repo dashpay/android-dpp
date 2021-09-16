@@ -17,16 +17,19 @@ import org.dashj.platform.dpp.util.HashUtils
 
 class ContractFactory(dpp: DashPlatformProtocol, stateRepository: StateRepository) : Factory(dpp, stateRepository) {
 
-    fun createDataContract(ownerId: ByteArray, rawDataContract: MutableMap<String, Any?>): DataContract {
+    fun create(ownerId: ByteArray, documents: Map<String, Any?>): DataContract {
+        return create(Identifier.from(ownerId), documents)
+    }
+    fun create(ownerId: Identifier, documents: Map<String, Any?>): DataContract {
         val dataContractEntropy = Entropy.generate()
-        val dataContractId = HashUtils.generateDataContractId(ownerId, dataContractEntropy)
+        val dataContractId = HashUtils.generateDataContractId(ownerId.toBuffer(), dataContractEntropy)
 
         val dataContract = DataContract(
             Identifier.from(dataContractId),
-            Identifier(ownerId),
+            ownerId,
             ProtocolVersion.latestVersion,
             DataContract.SCHEMA,
-            rawDataContract["documents"] as MutableMap<String, Any?>
+            documents.toMutableMap()
         )
 
         dataContract.entropy = dataContractEntropy
@@ -34,7 +37,7 @@ class ContractFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         return dataContract
     }
 
-    fun createFromObject(rawContract: MutableMap<String, Any?>, options: Options = Options()): DataContract {
+    fun createFromObject(rawContract: Map<String, Any?>, options: Options = Options()): DataContract {
         return DataContract(rawContract)
     }
 
