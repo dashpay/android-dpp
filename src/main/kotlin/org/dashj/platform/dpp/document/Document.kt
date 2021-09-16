@@ -9,35 +9,15 @@ package org.dashj.platform.dpp.document
 
 import org.dashj.platform.dpp.BaseObject
 import org.dashj.platform.dpp.Metadata
+import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.contract.DataContract
 import org.dashj.platform.dpp.identifier.Identifier
-import org.dashj.platform.dpp.toBase64
+import org.dashj.platform.dpp.util.Converters
 import kotlin.collections.HashMap
 
 class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : BaseObject() {
 
     companion object {
-        const val PROTOCOL_VERSION = 0
-
-        fun convertDataToString(map: MutableMap<String, Any?>) {
-            for (key in map.keys) {
-                when (val value = map[key]) {
-                    is Map<*, *> -> convertDataToString(value as MutableMap<String, Any?>)
-                    is ByteArray -> map[key] = value.toBase64()
-                    is Identifier -> map[key] = value.toString()
-                }
-            }
-        }
-
-        fun convertIdentifierToByteArray(map: MutableMap<String, Any?>) {
-            for (key in map.keys) {
-                when (val value = map[key]) {
-                    is Map<*, *> -> convertIdentifierToByteArray(value as MutableMap<String, Any?>)
-                    is Identifier -> map[key] = value.toBuffer()
-                }
-            }
-        }
-
         fun deepCopy(map: Map<String, Any?>): MutableMap<String, Any?> {
             val copy = HashMap<String, Any?>(map.size)
             for (key in map.keys) {
@@ -70,10 +50,18 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
         this.type = data.remove("\$type") as String
         this.dataContractId = Identifier.from(data.remove("\$dataContractId")!!)
         this.ownerId = Identifier.from(data.remove("\$ownerId")!!)
-        this.revision = data.remove("\$revision") as Int
+        this.revision = if (data.containsKey("\$revision")) {
+            data.remove("\$revision") as Int
+        } else {
+            DocumentCreateTransition.INITIAL_REVISION
+        }
         this.createdAt = data.remove("\$createdAt")?.let { it as Long }
         this.updatedAt = data.remove("\$updatedAt")?.let { it as Long }
-        this.protocolVersion = data.remove("\$protocolVersion") as Int
+        this.protocolVersion = if (data.containsKey("\$protocolVersion")) {
+            data.remove("\$protocolVersion") as Int
+        } else {
+            ProtocolVersion.latestVersion
+        }
 
         this.data = data
     }
@@ -104,7 +92,7 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
             map["\$ownerId"] = ownerId.toBuffer()
 
             // change binary items items in data to ByteArray
-            convertIdentifierToByteArray(map)
+            Converters.convertIdentifierToByteArray(map)
         }
 
         return map
@@ -113,7 +101,7 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
     override fun toJSON(): Map<String, Any?> {
         val json = toObject(true)
         // change binary items in data to base64
-        convertDataToString(json)
+        Converters.convertDataToString(json)
         return json
     }
 
@@ -132,5 +120,10 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
 
     fun set(path: String, value: Any) {
         TODO("set field specified by path to the value")
+    }
+
+    fun setRevision(revision: Int): Document {
+        this.revision = revision
+        return this
     }
 }

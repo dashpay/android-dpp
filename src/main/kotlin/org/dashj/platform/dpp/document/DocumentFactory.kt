@@ -9,6 +9,7 @@ package org.dashj.platform.dpp.document
 
 import org.dashj.platform.dpp.DashPlatformProtocol
 import org.dashj.platform.dpp.Factory
+import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.StateRepository
 import org.dashj.platform.dpp.contract.DataContract
 import org.dashj.platform.dpp.document.errors.InvalidActionNameError
@@ -39,7 +40,7 @@ class DocumentFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         val id = HashUtils.generateDocumentId(dataContractId.toBuffer(), ownerId.toBuffer(), type, documentEntropy)
 
         val rawDocument = hashMapOf<String, Any?>()
-        rawDocument["\$protocolVersion"] = Document.PROTOCOL_VERSION
+        rawDocument["\$protocolVersion"] = ProtocolVersion.latestVersion
         rawDocument["\$id"] = id
         rawDocument["\$type"] = type
         rawDocument["\$dataContractId"] = dataContract.id
@@ -170,7 +171,7 @@ class DocumentFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         rawDocumentTransitions.addAll(rawDocumentDeleteTransitions)
 
         val rawBatchTransition = hashMapOf<String, Any?>(
-            "\$protocolVersion" to Document.PROTOCOL_VERSION,
+            "\$protocolVersion" to ProtocolVersion.latestVersion,
             "type" to StateTransition.Types.DOCUMENTS_BATCH.value,
             "ownerId" to ownerId,
             "transitions" to rawDocumentTransitions
