@@ -12,7 +12,7 @@ import org.bitcoinj.core.Sha256Hash
 import org.dashj.platform.dpp.identifier.errors.IdentifierError
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.Cbor
-import org.dashj.platform.dpp.util.HashUtils
+import org.dashj.platform.dpp.util.Converters
 import java.lang.IllegalStateException
 
 data class Identifier(private val buffer: ByteArray) {
@@ -27,7 +27,7 @@ data class Identifier(private val buffer: ByteArray) {
                 is String -> {
                     when (encoding) {
                         "base58" -> Identifier(Base58.decode(any))
-                        else -> Identifier(HashUtils.fromBase64(any))
+                        else -> Identifier(Converters.fromBase64(any))
                     }
                 }
                 is ByteArray -> {
@@ -90,13 +90,14 @@ data class Identifier(private val buffer: ByteArray) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
 
-        other as Identifier
-
-        if (!buffer.contentEquals(other.buffer)) return false
-
-        return true
+        return when (other) {
+            is Identifier -> buffer.contentEquals(other.buffer)
+            is ByteArray -> buffer.contentEquals(other)
+            is String -> toString() == other
+            is Sha256Hash -> buffer.contentEquals(other.bytes)
+            else -> false
+        }
     }
 
     override fun hashCode(): Int {
