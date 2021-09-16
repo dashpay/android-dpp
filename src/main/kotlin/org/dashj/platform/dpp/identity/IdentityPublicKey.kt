@@ -36,8 +36,12 @@ class IdentityPublicKey(
     constructor(rawIdentityPublicKey: Map<String, Any>) :
         this(
             rawIdentityPublicKey["id"] as Int,
-            TYPES.getByCode(rawIdentityPublicKey["type"] as Int),
-            byteArrayfromBase64orByteArray(rawIdentityPublicKey["data"] ?: error("data is missing"))
+            when (rawIdentityPublicKey["type"]) {
+                is TYPES -> rawIdentityPublicKey["type"] as TYPES
+                is Int -> TYPES.getByCode(rawIdentityPublicKey["type"] as Int)
+                else -> error("invalid type")
+            },
+            Converters.byteArrayFromBase64orByteArray(rawIdentityPublicKey["data"] ?: error("data is missing"))
         )
 
     override fun toObject(): Map<String, Any> {
