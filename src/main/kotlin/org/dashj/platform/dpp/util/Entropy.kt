@@ -8,26 +8,31 @@ package org.dashj.platform.dpp.util
 
 import org.bitcoinj.core.Utils
 import org.bitcoinj.crypto.LinuxSecureRandom
+import org.dashj.platform.dpp.identifier.Identifier
 import java.security.SecureRandom
 
-class Entropy {
-    companion object {
+object Entropy {
 
-        const val SEED_SIZE = 32
+    private const val SEED_SIZE = 32
 
+    // Init proper random number generator, as some old Android installations have bugs that make it unsecure.
+    private var secureRandom: SecureRandom
+
+    init {
         // Init proper random number generator, as some old Android installations have bugs that make it unsecure.
-        private var secureRandom: SecureRandom
-
-        init {
-            // Init proper random number generator, as some old Android installations have bugs that make it unsecure.
-            if (Utils.isAndroidRuntime()) {
-                LinuxSecureRandom()
-            }
-            secureRandom = SecureRandom()
+        if (Utils.isAndroidRuntime()) {
+            LinuxSecureRandom()
         }
+        secureRandom = SecureRandom()
+    }
 
-        fun generate(): ByteArray {
-            return secureRandom.generateSeed(SEED_SIZE)
-        }
+    @JvmStatic
+    fun generate(): ByteArray {
+        return secureRandom.generateSeed(SEED_SIZE)
+    }
+
+    @JvmStatic
+    fun generateRandomIdentifier(): Identifier {
+        return Identifier.from(generate())
     }
 }
