@@ -7,6 +7,8 @@
 
 package org.dashj.platform.dpp.document
 
+import org.dashj.platform.dpp.util.Converters
+
 abstract class DataDocumentTransition(rawStateTransition: MutableMap<String, Any?>) :
     DocumentTransition(rawStateTransition) {
 
@@ -28,7 +30,7 @@ abstract class DataDocumentTransition(rawStateTransition: MutableMap<String, Any
 
     override fun toJSON(): Map<String, Any?> {
         val json = super.toJSON().toMutableMap()
-        Document.convertDataToString(json)
+        Converters.convertDataToString(json)
         return json
     }
 }
