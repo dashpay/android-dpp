@@ -18,7 +18,10 @@ class HashUtilsTest {
         val ownerId = Base58.decode("23wdhodag")
         val entropy = Base58.decode("5dz916pTe1")
 
-        assertEquals("CnS7cz4z1qoPsNfEgpgyVnKdtH2u7bgzZXHLcCQt24US", HashUtils.generateDataContractId(ownerId, entropy).toBase58())
+        assertEquals(
+            "CnS7cz4z1qoPsNfEgpgyVnKdtH2u7bgzZXHLcCQt24US",
+            HashUtils.generateDataContractId(ownerId, entropy).toBase58()
+        )
     }
 
     @Test
@@ -26,6 +29,9 @@ class HashUtilsTest {
         val ownerId = Base58.decode("23wdhodag")
         val entropy = Base58.decode("5dz916pTe1")
 
-        assertEquals("CnS7cz4z1qoPsNfEgpgyVnKdtH2u7bgzZXHLcCQt24US", HashUtils.generateDataContractId(ownerId, entropy).toBase58())
+        assertEquals(
+            "CnS7cz4z1qoPsNfEgpgyVnKdtH2u7bgzZXHLcCQt24US",
+            HashUtils.generateDataContractId(ownerId, entropy).toBase58()
+        )
     }
 }
