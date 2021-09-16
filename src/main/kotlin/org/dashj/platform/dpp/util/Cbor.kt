@@ -79,11 +79,9 @@ object Cbor {
     ): CborBuilder {
         val sortedKeys = ArrayList<String>()
         sortedKeys.addAll(obj.keys)
-        sortedKeys.sortWith(
-            Comparator { a, b ->
-                ByteBuffer.wrap(a.toByteArray()).short.compareTo(ByteBuffer.wrap(b.toByteArray()).short)
-            }
-        )
+        sortedKeys.sortWith { a, b ->
+            ByteBuffer.wrap(a.toByteArray()).short.compareTo(ByteBuffer.wrap(b.toByteArray()).short)
+        }
 
         sortedKeys.forEach { key ->
             val value = obj[key]
