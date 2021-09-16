@@ -29,11 +29,11 @@ class DataContractTest {
 
     @Test
     fun testContract() {
-        var contract = Fixtures.getDataContractFixtures()
+        val contract = Fixtures.getDataContractFixture()
 
         assertEquals(DataContract.SCHEMA, contract.schema)
-        assertEquals(3, contract.documents.size)
-        assertEquals("9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX", contract.id.toString())
+        assertEquals(8, contract.documents.size)
+        // assertEquals("9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX", contract.id.toString())
     }
 
     /*@Test
@@ -62,7 +62,7 @@ class DataContractTest {
 
     @Test
     fun applyStateTransition() {
-        val dataContract = Fixtures.getDataContractFixtures()
+        val dataContract = Fixtures.getDataContractFixture()
         val stateTransition = DataContractCreateTransition(dataContract)
 
         val result = factory.createStateTransition(dataContract)

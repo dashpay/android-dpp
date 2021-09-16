@@ -31,7 +31,7 @@ class IdentityTest {
 
     @Test
     fun testIdentity() {
-        val identity = Fixtures.getIdentityFixture()
+        val identity = Fixtures.getIdentityFixtureTwo()
 
         assertEquals("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", identity.id.toString())
         assertEquals(2, identity.publicKeys.size)
@@ -41,7 +41,7 @@ class IdentityTest {
     @Test
     fun testIdentityFactory() {
 
-        val fixtureCreatedIdentity = Fixtures.getIdentityFixture()
+        val fixtureCreatedIdentity = Fixtures.getIdentityFixtureTwo()
 
         val publicKeys = ArrayList<IdentityPublicKey>(2)
         publicKeys.add(IdentityPublicKey(0, IdentityPublicKey.TYPES.ECDSA_SECP256K1, "AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di"))
@@ -163,7 +163,7 @@ class IdentityTest {
 
     @Test
     fun identityRoundTrip() {
-        val fromFixture = Fixtures.getIdentityFixture()
+        val fromFixture = Fixtures.getIdentityFixtureTwo()
 
         val serialized = fromFixture.toBuffer()
 

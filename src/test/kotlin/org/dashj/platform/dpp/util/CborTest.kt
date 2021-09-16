@@ -18,10 +18,10 @@ class CborTest {
     fun array2cborTest() {
         val where: List<List<String>> = listOf(listOf("message", "startsWith", "Tutorial"))
 
-        var array = JSONArray(where)
+        val array = JSONArray(where)
         assertEquals("[[\"message\",\"startsWith\",\"Tutorial\"]]", array.toString())
 
-        var bytes = Cbor.encode(where)
+        val bytes = Cbor.encode(where)
         assertEquals("8183676d6573736167656a73746172747357697468685475746f7269616c", bytes.toHexString())
     }
 
