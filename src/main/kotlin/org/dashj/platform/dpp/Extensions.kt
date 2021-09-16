@@ -8,7 +8,10 @@
 package org.dashj.platform.dpp
 
 import com.google.common.io.BaseEncoding
+import org.bitcoinj.core.AddressFormatException
 import org.bitcoinj.core.Base58
+import org.bitcoinj.core.Sha256Hash
+import org.dashj.platform.dpp.util.Converters
 import org.json.JSONObject
 
 fun JSONObject.append(jsonObject: JSONObject): JSONObject {
@@ -23,7 +26,7 @@ fun JSONObject.append(jsonObject: JSONObject): JSONObject {
  * @receiver ByteArray
  * @return String The HEX or Base16 representation of this
  */
-fun ByteArray.toHexString(): String {
+fun ByteArray.toHex(): String {
     return this.joinToString("") {
         java.lang.String.format("%02x", it)
     }
