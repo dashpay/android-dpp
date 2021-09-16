@@ -18,7 +18,7 @@ import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.identity.IdentityCreateTransition
 import org.dashj.platform.dpp.identity.IdentityTopupTransition
 import org.dashj.platform.dpp.util.Cbor
-import org.dashj.platform.dpp.util.HashUtils
+import org.dashj.platform.dpp.util.Converters
 
 class StateTransitionFactory(dpp: DashPlatformProtocol, stateRepository: StateRepository) : Factory(dpp, stateRepository) {
 
@@ -51,7 +51,7 @@ class StateTransitionFactory(dpp: DashPlatformProtocol, stateRepository: StateRe
         }
 
         stateTransition.signature = rawStateTransition["signature"]?.let {
-            HashUtils.byteArrayfromBase64orByteArray(it)
+            Converters.byteArrayFromBase64orByteArray(it)
         }
         if (rawStateTransition.containsKey("signaturePublicKeyId")) {
             stateTransition.signaturePublicKeyId = rawStateTransition["signaturePublicKeyId"] as Int

@@ -11,8 +11,8 @@ import org.dashj.platform.dpp.Fixtures
 import org.dashj.platform.dpp.StateRepositoryMock
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.util.Cbor
+import org.dashj.platform.dpp.util.Converters
 import org.dashj.platform.dpp.util.Entropy
-import org.dashj.platform.dpp.util.HashUtils
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -120,7 +120,7 @@ class DocumentTest {
     fun deepCopyTest() {
         val transitionString = "a6647479706501676f776e65724964582031c2604b7707f3d759dcde10fb38f504fa4dd0eeabbab334e65806310be9be9d697369676e6174757265f66b7472616e736974696f6e7381ab6324696458209e29fee8e7eb0220458987b4235804b695b881c993ee2843e853e1e9f981b82365247479706566646f6d61696e656c6162656c69782d686173682d32306724616374696f6e00677265636f726473a17464617368556e697175654964656e746974794964582031c2604b7707f3d759dcde10fb38f504fa4dd0eeabbab334e65806310be9be9d6824656e74726f70795820eedeb9fffc8e565805bd0699ae01d512c672d4f2bdfb7f27941439e51d5541576c7072656f7264657253616c74582035ee657a5fddc3e6e6aeddc1196086b0d9c2968c533f7bfe691fdf517b5778a76e737562646f6d61696e52756c6573a16f616c6c6f77537562646f6d61696e73f46f2464617461436f6e747261637449645820d837bcfd590cdf658cfb696ed31780aa41bc3408949a73b1c6d47907d4d10b186f6e6f726d616c697a65644c6162656c69782d686173682d3230781a6e6f726d616c697a6564506172656e74446f6d61696e4e616d6564646173686f70726f746f636f6c56657273696f6e00747369676e61747572655075626c69634b65794964f6"
 
-        val transition = DocumentsBatchTransition(Cbor.decode(HashUtils.fromHex(transitionString)))
+        val transition = DocumentsBatchTransition(Cbor.decode(Converters.fromHex(transitionString)))
 
         val records = (transition.transitions[0] as DocumentCreateTransition).data["records"] as MutableMap<String, Any>
 

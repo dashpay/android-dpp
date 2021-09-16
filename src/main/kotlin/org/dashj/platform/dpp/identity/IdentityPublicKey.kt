@@ -11,8 +11,7 @@ import org.bitcoinj.core.Utils
 import org.dashj.platform.dpp.BaseObject
 import org.dashj.platform.dpp.identity.errors.EmptyPublicKeyDataException
 import org.dashj.platform.dpp.toBase64
-import org.dashj.platform.dpp.util.HashUtils.byteArrayfromBase64orByteArray
-import org.dashj.platform.dpp.util.HashUtils.fromBase64
+import org.dashj.platform.dpp.util.Converters
 
 class IdentityPublicKey(
     val id: Int,
@@ -32,7 +31,7 @@ class IdentityPublicKey(
         }
     }
 
-    constructor(id: Int, type: TYPES, data: String) : this(id, type, fromBase64(data))
+    constructor(id: Int, type: TYPES, data: String) : this(id, type, Converters.fromBase64(data))
 
     constructor(rawIdentityPublicKey: Map<String, Any>) :
         this(

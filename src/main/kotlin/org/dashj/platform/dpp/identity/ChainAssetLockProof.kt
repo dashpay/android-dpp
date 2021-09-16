@@ -4,7 +4,7 @@ import org.bitcoinj.core.Sha256Hash
 import org.bitcoinj.core.TransactionOutPoint
 import org.bitcoinj.params.TestNet3Params
 import org.dashj.platform.dpp.toBase64
-import org.dashj.platform.dpp.util.HashUtils
+import org.dashj.platform.dpp.util.Converters
 
 class ChainAssetLockProof(
     val coreChainLockedHeight: Long,

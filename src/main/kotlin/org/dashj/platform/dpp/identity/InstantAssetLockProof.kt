@@ -7,7 +7,7 @@ import org.bitcoinj.core.TransactionOutput
 import org.bitcoinj.params.TestNet3Params
 import org.bitcoinj.quorums.InstantSendLock
 import org.dashj.platform.dpp.toBase64
-import org.dashj.platform.dpp.util.HashUtils
+import org.dashj.platform.dpp.util.Converters
 
 class InstantAssetLockProof(
     val outputIndex: Long,
@@ -25,13 +25,13 @@ class InstantAssetLockProof(
             rawAssetLockProof["outputIndex"].toString().toLong(),
             Transaction(
                 TestNet3Params.get(),
-                HashUtils.byteArrayfromBase64orByteArray(
+                Converters.byteArrayFromBase64orByteArray(
                     rawAssetLockProof["transaction"] ?: error("missing transaction field")
                 )
             ),
             InstantSendLock(
                 TestNet3Params.get(),
-                HashUtils.byteArrayfromBase64orByteArray(
+                Converters.byteArrayfromBase64orByteArray(
                     rawAssetLockProof["instantLock"] ?: error("missing instantLock field")
                 )
             )

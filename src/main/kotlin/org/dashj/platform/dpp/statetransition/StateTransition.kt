@@ -13,8 +13,9 @@ import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedError
 import org.dashj.platform.dpp.toBase64Padded
-import org.dashj.platform.dpp.util.HashUtils
-import java.lang.Exception
+import org.dashj.platform.dpp.toSha256Hash
+import org.dashj.platform.dpp.util.Converters
+import java.security.SignatureException
 
 abstract class StateTransition(
     var signature: ByteArray?,
@@ -47,7 +48,7 @@ abstract class StateTransition(
 
     constructor(rawStateTransition: MutableMap<String, Any?>) :
         this(
-            rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) },
+            rawStateTransition["signature"]?.let { Converters.byteArrayFromBase64orByteArray(it) },
             Types.getByCode(rawStateTransition["type"] as Int),
             rawStateTransition["protocolVersion"] as Int
         )
@@ -84,7 +85,7 @@ abstract class StateTransition(
 
     fun signByPrivateKey(privateKey: ECKey) {
         val data = toBuffer(true)
-        val hash = HashUtils.toSha256Hash(data)
+        val hash = data.toSha256Hash()
 
         signature = privateKey.signHash(hash)
     }
@@ -95,12 +96,12 @@ abstract class StateTransition(
         }
 
         val data = toBuffer(true)
-        val hash = HashUtils.toSha256Hash(data)
+        val hash = data.toSha256Hash()
 
         return try {
             val pubkeyFromSig = ECKey.signedMessageToKey(hash, signature)
             pubkeyFromSig.pubKey!!.contentEquals(publicKey.pubKey)
-        } catch (e: Exception) {
+        } catch (e: SignatureException) {
             false
         }
     }

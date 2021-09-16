@@ -9,7 +9,6 @@ package org.dashj.platform.dpp
 import org.bitcoinj.core.Sha256Hash
 import org.bitcoinj.core.Utils
 import org.dashj.platform.dpp.util.Cbor
-import org.dashj.platform.dpp.util.HashUtils
 
 /**
  * The abstract base class for Dash Platform objects that will handle
@@ -51,11 +50,11 @@ abstract class BaseObject(var protocolVersion: Int = ProtocolVersion.latestVersi
      *
      */
     open fun hash(): ByteArray {
-        return HashUtils.toHash(toBuffer())
+        return toBuffer().hashTwice()
     }
 
     open fun hashOnce(): ByteArray {
-        return Sha256Hash.hash(toBuffer())
+        return toBuffer().hashOnce()
     }
 
     override fun equals(other: Any?): Boolean {

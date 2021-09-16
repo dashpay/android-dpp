@@ -7,17 +7,13 @@
 
 package org.dashj.platform.dpp.util
 
-import com.google.common.io.BaseEncoding
-import org.bitcoinj.core.Base58
 import org.bitcoinj.core.Sha256Hash
+import org.dashj.platform.dpp.hashTwice
 import java.io.ByteArrayOutputStream
 import java.nio.charset.Charset
 import kotlin.math.floor
 
 object HashUtils {
-
-    private val BASE64 = BaseEncoding.base64()
-    private val HEX = BaseEncoding.base16().lowerCase()
 
     /**
      * Return a double SHA256 hash of a Schema object instance
@@ -26,7 +22,7 @@ object HashUtils {
      */
     private fun toHash(obj: Map<String, Any>): ByteArray {
         val byteArray = Cbor.encode(obj)
-        return toHash(byteArray)
+        return byteArray.hashTwice()
     }
 
     fun toHash(byteArray: ByteArray): ByteArray {
@@ -37,60 +33,43 @@ object HashUtils {
         return Sha256Hash.twiceOf(byteArray)
     }
 
+    @Deprecated("use the same method from the Converters object")
     fun fromBase64(base64: String): ByteArray {
-        return BASE64.decode(base64)
+        return Converters.fromBase64(base64)
     }
 
+    @Deprecated("use the same method from the Converters object")
     fun fromHex(base16: String): ByteArray {
-        return HEX.decode(base16)
+        return Converters.fromHex(base16)
     }
 
+    @Deprecated("use the same method from the Converters object")
     fun byteArrayfromBase64orByteArray(any: Any): ByteArray {
-        return byteArrayFromBase64orByteArray(any)
+        return Converters.byteArrayFromBase64orByteArray(any)
     }
 
+    @Deprecated("use the same method from the Converters object")
     fun byteArrayFromBase64orByteArray(any: Any): ByteArray {
-        return when (any) {
-            is String -> {
-                fromBase64(any)
-            }
-            is ByteArray -> any
-            else -> throw IllegalStateException("any is not String or ByteArray")
-        }
+        return Converters.byteArrayFromBase64orByteArray(any)
     }
 
+    @Deprecated("use the same method from the Converters object")
     fun byteArrayfromBase58orByteArray(any: Any): ByteArray {
-        return byteArrayFromBase58orByteArray(any)
+        return Converters.byteArrayFromBase58orByteArray(any)
     }
 
+    @Deprecated("use the same method from the Converters object")
     fun byteArrayFromBase58orByteArray(any: Any): ByteArray {
-        return when (any) {
-            is String -> {
-                Base58.decode(any)
-            }
-            is ByteArray -> any
-            else -> throw IllegalStateException("any is not String or ByteArray")
-        }
+        return Converters.byteArrayFromBase58orByteArray(any)
     }
 
     /**
      * Gets a byte array from a string by decoding from one of the
      * following formats: Base58, Base64, hex
      */
+    @Deprecated("use the same method from the Converters object")
     fun byteArrayFromString(string: String): ByteArray {
-        return try {
-            Base58.decode(string)
-        } catch (e: Exception) {
-            try {
-                fromHex(string)
-            } catch (e: Exception) {
-                try {
-                    fromBase64(string)
-                } catch (e: Exception) {
-                    throw IllegalArgumentException("string is not base58, base64 or hex: $string")
-                }
-            }
-        }
+        return Converters.byteArrayFromString(string)
     }
 
     fun toHash(objList: List<Map<String, Any>>): ByteArray {
@@ -98,7 +77,7 @@ object HashUtils {
         objList.forEach {
             bos.write(Sha256Hash.wrap(toHash(it)).bytes)
         }
-        return toHash(bos.toByteArray())
+        return bos.toByteArray().hashTwice()
     }
 
     fun getMerkleTree(hashes: List<ByteArray>): List<ByteArray> {
@@ -117,7 +96,7 @@ object HashUtils {
                 val a = tree[j + i]
                 val b = tree[j + i2]
                 val buf = a + b
-                tree.add(toHash(buf))
+                tree.add(buf.hashTwice())
             }
 
             j += size
@@ -137,13 +116,13 @@ object HashUtils {
         stream.write(ownerId)
         stream.write(type.toByteArray(utf8charset))
         stream.write(entropy)
-        return toHash(stream.toByteArray())
+        return stream.toByteArray().hashTwice()
     }
 
     fun generateDataContractId(ownerId: ByteArray, entropy: ByteArray): ByteArray {
         val stream = ByteArrayOutputStream()
         stream.write(ownerId)
         stream.write(entropy)
-        return toHash(stream.toByteArray())
+        return stream.toByteArray().hashTwice()
     }
 }

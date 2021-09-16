@@ -19,7 +19,7 @@ import org.dashj.platform.dpp.statetransition.errors.InvalidSignatureTypeError
 import org.dashj.platform.dpp.statetransition.errors.PublicKeyMismatchError
 import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedError
 import org.dashj.platform.dpp.toBase64
-import org.dashj.platform.dpp.util.HashUtils
+import org.dashj.platform.dpp.util.Converters
 
 abstract class StateTransitionIdentitySigned(
     var signaturePublicKeyId: Int?,
@@ -32,7 +32,7 @@ abstract class StateTransitionIdentitySigned(
     constructor(rawStateTransition: MutableMap<String, Any?>) :
         this(
             rawStateTransition["signaturePublicKeyId"] as? Int,
-            rawStateTransition["signature"]?.let { HashUtils.byteArrayfromBase64orByteArray(it) },
+            rawStateTransition["signature"]?.let { Converters.byteArrayFromBase64orByteArray(it) },
             Types.getByCode(rawStateTransition["type"] as Int),
             if (rawStateTransition.containsKey("protocolVersion")) {
                 rawStateTransition["protocolVersion"] as Int
@@ -60,7 +60,7 @@ abstract class StateTransitionIdentitySigned(
                 } catch (_: AddressFormatException.WrongNetwork) {
                     DumpedPrivateKey.fromBase58(MainNetParams.get(), privateKey).key
                 } catch (_: AddressFormatException) {
-                    ECKey.fromPrivate(HashUtils.fromHex(privateKey))
+                    ECKey.fromPrivate(Converters.fromHex(privateKey))
                 }
                 pubKeyBase = privateKeyModel.pubKey
                 if (!pubKeyBase.contentEquals(identityPublicKey.data)) {
