@@ -1,5 +1,17 @@
 package org.dashj.platform.dpp
 
+import org.bitcoinj.core.Base58
+import org.bitcoinj.core.Coin
+import org.bitcoinj.core.ECKey
+import org.bitcoinj.core.Sha256Hash
+import org.bitcoinj.core.Transaction
+import org.bitcoinj.core.TransactionOutPoint
+import org.bitcoinj.crypto.BLSLazySignature
+import org.bitcoinj.params.TestNet3Params
+import org.bitcoinj.quorums.InstantSendLock
+import org.bitcoinj.script.ScriptBuilder
+import org.bitcoinj.script.ScriptOpCodes.OP_RETURN
+import org.dashj.platform.dpp.contract.ContractFactory
 import org.dashj.platform.dpp.contract.DataContract
 import org.dashj.platform.dpp.contract.DataContractCreateTransition
 import org.dashj.platform.dpp.document.Document
@@ -7,49 +19,95 @@ import org.dashj.platform.dpp.document.DocumentFactory
 import org.dashj.platform.dpp.document.DocumentTransition
 import org.dashj.platform.dpp.document.DocumentsBatchTransition
 import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.identity.ChainAssetLockProof
 import org.dashj.platform.dpp.identity.Identity
 import org.dashj.platform.dpp.identity.IdentityCreateTransition
 import org.dashj.platform.dpp.identity.IdentityPublicKey
+import org.dashj.platform.dpp.identity.IdentityTopUpTransition
+import org.dashj.platform.dpp.identity.InstantAssetLockProof
 import org.dashj.platform.dpp.statetransition.StateTransition
 import org.dashj.platform.dpp.statetransition.StateTransitionFactory
+import org.dashj.platform.dpp.util.Converters
+import org.dashj.platform.dpp.util.Entropy
 import org.json.JSONObject
 import java.io.File
 
 object Fixtures {
 
-    private val userId = Identifier.from("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp")
+    private val ownerId = Identifier.from("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp")
     private val contractId = Identifier.from("9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX")
     private val stateRepository = StateRepositoryMock()
     val dpp = DashPlatformProtocol(stateRepository)
+    private val PARAMS = TestNet3Params.get()
+    val contractFactory = ContractFactory(dpp, stateRepository)
+    val documentFactory = DocumentFactory(dpp, stateRepository)
 
-    fun getDataContractFixtures(): DataContract {
-        val json = File("src/test/resources/data/documentsforcontract.json").readText()
+    fun loadFile(filename: String): MutableMap<String, Any?> {
+        val json = File(this::class.java.getResource("datacontract-fixture.json")!!.file).readText()
         val jsonObject = JSONObject(json)
-        val map = jsonObject.toMap()
-        val dataContract = DataContract(
-            contractId,
-            userId,
-            ProtocolVersion.latestVersion,
-            DataContract.SCHEMA,
-            map
-        )
+        return jsonObject.toMap()!!
+    }
 
+    fun getDataContractFixture(ownerId: Identifier = Entropy.generateRandomIdentifier()): DataContract {
+        val json = File(this::class.java.getResource("datacontract-fixture.json")!!.file).readText()
+        val jsonObject = JSONObject(json)
+        val documents = jsonObject.toMap()
+
+        val dataContract = contractFactory.create(ownerId, documents)
         dataContract.definitions = JSONObject("{lastName: { type: 'string', }, }").toMap()
 
         return dataContract
     }
 
-    fun getDocumentsFixture(): List<Document> {
-        val dataContract = getDataContractFixtures()
+    fun getDashPayContractFixture(): DataContract {
+        val dashPaySchema = loadFile("dashpay-contract.json")
+        return contractFactory.create(ownerId, dashPaySchema)
+    }
 
+    fun getContactRequestDocumentFixture(options: Map<String, Any?>): Document {
         val factory = DocumentFactory(dpp, stateRepository)
 
+        val data = hashMapOf<String, Any?>(
+            "toUserId" to Entropy.generateRandomIdentifier(),
+            "encryptedPublicKey" to ByteArray(96),
+            "senderKeyIndex" to 0,
+            "recipientKeyIndex" to 0,
+            "accountReference" to 0,
+        )
+        data.putAll(options)
+
+        return factory.create(getDashPayContractFixture(), ownerId, "contactRequest", data)
+    }
+
+    fun getDocumentsFixture(): List<Document> {
+        val dataContract = getDataContractFixture()
+
         return listOf(
-            factory.create(dataContract, userId, "niceDocument", JSONObject("{ name: 'Cutie' }").toMap()),
-            factory.create(dataContract, userId, "prettyDocument", JSONObject("{ lastName: 'Shiny' }").toMap()),
-            factory.create(dataContract, userId, "prettyDocument", JSONObject("{ lastName: 'Sweety' }").toMap()),
-            factory.create(dataContract, userId, "indexedDocument", JSONObject("{ firstName: 'William', lastName: 'Birkin' }").toMap()),
-            factory.create(dataContract, userId, "indexedDocument", JSONObject("{ firstName: 'Leon', lastName: 'Kennedy' }").toMap())
+            documentFactory.create(dataContract, ownerId, "niceDocument", JSONObject("{ name: 'Cutie' }").toMap()),
+            documentFactory.create(dataContract, ownerId, "prettyDocument", JSONObject("{ lastName: 'Shiny' }").toMap()),
+            documentFactory.create(dataContract, ownerId, "prettyDocument", JSONObject("{ lastName: 'Sweety' }").toMap()),
+            documentFactory.create(
+                dataContract, ownerId, "indexedDocument",
+                JSONObject("{ firstName: 'William', lastName: 'Birkin' }").toMap()
+            ),
+            documentFactory.create(
+                dataContract, ownerId, "indexedDocument",
+                JSONObject("{ firstName: 'Leon', lastName: 'Kennedy' }").toMap()
+            ),
+            documentFactory.create(dataContract, ownerId, "noTimeDocument", JSONObject("{ name: 'ImOutOfTime' }").toMap()),
+            documentFactory.create(dataContract, ownerId, "uniqueDates", JSONObject("{ firstName: 'John' }").toMap()),
+            documentFactory.create(
+                dataContract, ownerId, "indexedDocument",
+                JSONObject("{ firstName: 'Bill', lastName: 'Gates' }").toMap()
+            ),
+            documentFactory.create(
+                dataContract, ownerId, "withByteArrays",
+                JSONObject("{ byteArrayField: crypto.randomBytes(10), identifierField: generateRandomIdentifier().toBuffer() }").toMap()
+            ),
+            documentFactory.create(
+                dataContract, ownerId, "optionalUniqueIndexedDocument",
+                JSONObject("{ firstName: 'Jacques-Yves', lastName: 'Cousteau' }").toMap()
+            ),
         )
     }
 
@@ -74,12 +132,171 @@ object Fixtures {
         return stateTransition.transitions
     }
 
-    fun getIdentityFixture(): Identity {
+    fun getDpnsContractFixture(): DataContract {
+        val dashPaySchema = loadFile("dpns-contract.json")
+        return contractFactory.create(ownerId, dashPaySchema)
+    }
+
+    fun getFeatureFlagsContractFixture(): DataContract {
+        val dashPaySchema = loadFile("featureflags-contract.json")
+        return contractFactory.create(ownerId, dashPaySchema)
+    }
+
+    fun getFeatureFlagsDocumentsFixture(): List<Document> {
+        return listOf(
+            documentFactory.create(
+                getFeatureFlagsContractFixture(), ownerId, "fixCumulativeFeesBug",
+                JSONObject("{ enabled: true, enableAtHeight: 77) }").toMap()
+            )
+        )
+    }
+
+    fun getIdentityCreateTransitionFixture(oneTimePrivateKey: ECKey = ECKey()): IdentityCreateTransition {
+        val rawStateTransition = hashMapOf<String, Any?>(
+            "protocolVersion" to ProtocolVersion.latestVersion,
+            "type" to StateTransition.Types.IDENTITY_CREATE,
+            "assetLockProof" to getInstantAssetLockProofFixture(oneTimePrivateKey).toObject(),
+            "publicKeys" to listOf(
+                mapOf(
+                    "id" to 0,
+                    "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1,
+                    "data" to Converters.fromBase64("AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di"),
+                )
+            )
+        )
+
+        return IdentityCreateTransition(rawStateTransition)
+    }
+
+    fun getIdentityFixtureTwo(): Identity {
         val json = File("src/test/resources/data/identity.json").readText()
         val jsonObject = JSONObject(json)
         val rawIdentity = jsonObject.toMap()
 
         return Identity(rawIdentity)
+    }
+
+    fun getIdentityFixture(): Identity {
+
+        val id = Entropy.generateRandomIdentifier()
+
+        val rawIdentity = mapOf<String, Any?>(
+            "protocolVersion" to ProtocolVersion.latestVersion,
+            "id" to id.toBuffer(),
+            "balance" to 10,
+            "revision" to 0,
+            "publicKeys" to listOf(
+                mapOf<String, Any?>(
+                    "id" to 0,
+                    "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1,
+                    "data" to Converters.fromBase64("AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di"),
+                ),
+                mapOf(
+                    "id" to 1,
+                    "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1,
+                    "data" to Converters.fromBase64("A8AK95PYMVX5VQKzOhcVQRCUbc9pyg3RiL7jttEMDU+L"),
+                )
+            )
+        )
+
+        return Identity(rawIdentity)
+    }
+
+    fun getIdentityTopUpTransitionFixture(): IdentityTopUpTransition {
+        val rawStateTransition = hashMapOf<String, Any?>(
+            "protocolVersion" to ProtocolVersion.latestVersion,
+            "type" to StateTransition.Types.IDENTITY_CREATE,
+            "assetLockProof" to getInstantAssetLockProofFixture().toObject(),
+            "identityId" to Entropy.generateRandomIdentifier(),
+        )
+
+        return IdentityTopUpTransition(rawStateTransition);
+    }
+
+    fun getPreorderDocumentFixture(options: Map<String, Any?>) : Document {
+        val dataContract = getDpnsContractFixture();
+
+        val label = if(options.containsKey("label")) {
+            options["label"] as String
+        } else {
+            "Preorder"
+        }
+        val normalizedLabel = if(options.containsKey("normalizedLabel")) {
+            options["normalizedLabel"] as String
+        } else {
+            label.toLowerCase()
+        }
+
+        val data = hashMapOf<String, Any?>(
+                "label" to label,
+                "normalizedLabel" to normalizedLabel,
+                "parentDomainHash" to "",
+                "preorderSalt" to Entropy.generate(),
+                "records" to hashMapOf(
+                    "dashIdentity" to ownerId
+                )
+        )
+
+        data.putAll(options)
+        return documentFactory.create(dataContract, ownerId, "preorder", data);
+
+    }
+
+    fun getInstantAssetLockProofFixture(oneTimePrivateKey: ECKey = ECKey()): InstantAssetLockProof {
+        val privateKeyHex = "cSBnVM4xvxarwGQuAfQFwqDg9k5tErHUHzgWsEfD4zdwUasvqRVY"
+        val privateKey = ECKey.fromPrivate(Base58.decode(privateKeyHex))
+        // val fromAddress = Address.fromKey(PARAMS, privateKey)
+
+        // val oneTimePublicKey = oneTimePrivateKey.pubKey
+
+        val transaction = Transaction(PARAMS)
+        transaction.addInput(
+            Sha256Hash.wrapReversed(
+                Converters.fromHex("a477af6b2667c29670467e4e0728b685ee07b240235771862318e29ddbe58458")
+            ),
+            0, ScriptBuilder.createP2PKHOutputScript(privateKey)
+        )
+
+        transaction.addOutput(Coin.valueOf(90000), ScriptBuilder.createCreditBurnOutput(oneTimePrivateKey))
+        transaction.addOutput(Coin.valueOf(5000), ScriptBuilder().op(OP_RETURN).data(byteArrayOf(1, 2, 3)).build())
+        transaction.addSignedInput(
+            TransactionOutPoint(PARAMS, 0L, Sha256Hash.wrapReversed(Converters.fromHex("a477af6b2667c29670467e4e0728b685ee07b240235771862318e29ddbe58458"))),
+            ScriptBuilder.createP2PKHOutputScript(privateKey),
+            privateKey
+        )
+
+        val instantLock = InstantSendLock(
+            PARAMS,
+            arrayListOf(
+                TransactionOutPoint(
+                    PARAMS,
+                    0L,
+                    Sha256Hash.wrapReversed(Converters.fromHex("6e200d059fb567ba19e92f5c2dcd3dde522fd4e0a50af223752db16158dabb1d"))
+                )
+            ),
+            transaction.txId,
+            BLSLazySignature(
+                PARAMS,
+                Converters.fromHex(
+                    "8967c46529a967b3822e1ba8a173066296d02593f0f59b3a78a30a7eef9c8a120847729e62e4a32954339286b79fe7590221331cd28d576887a263f45b595d499272f656c3f5176987c976239cac16f972d796ad82931d532102a4f95eec7d80"
+                ),
+                0
+            )
+        )
+
+        return InstantAssetLockProof(
+            hashMapOf<String, Any?>(
+                "type" to 0,
+                "instantLock" to instantLock.bitcoinSerialize(),
+                "transaction" to transaction.bitcoinSerialize(),
+                "outputIndex" to 0,
+            )
+        )
+    }
+
+    fun getRawTransactionFixture(): Map<String, Any?> {
+        val transaction = loadFile("transaction.json")
+        return transaction
     }
 
     fun getIdentityForSignaturesFixture(): Identity {
@@ -139,5 +356,25 @@ object Fixtures {
         val jsonObject = JSONObject(File("src/test/resources/data/documents-transition.json").readText())
         val rawDocumentST = jsonObject.toMap()
         return StateTransitionFactory(dpp, stateRepository).createStateTransition(rawDocumentST) as DocumentsBatchTransition
+    }
+
+    fun getChainAssetLockProofFixture(): ChainAssetLockProof {
+        val outPoint = TransactionOutPoint(
+            PARAMS,
+            0,
+            Sha256Hash.wrapReversed(
+                Converters.fromHex(
+                    "6e200d059fb567ba19e92f5c2dcd3dde522fd4e0a50af223752db16158dabb1d"
+                )
+            )
+        )
+
+        return ChainAssetLockProof(
+            mapOf(
+                "type" to 1,
+                "coreChainLockedHeight" to 42,
+                "output" to outPoint
+            )
+        )
     }
 }

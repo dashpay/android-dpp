@@ -1,0 +1,117 @@
+{
+  "$schema": "https://schema.dash.org/dpp-0-4-0/meta/data-contract",
+  "ownerId": "7JfcC52iCLGi9euXa7Ng3reKDjAqaoWZNjDvA2zEBCnk",
+  "protocolVersion": 0,
+  "documents": {
+    "preorder": {
+      "indices": [{
+        "properties": [{"saltedDomainHash": "asc"}],
+        "unique": true
+      }],
+      "$comment": "Preorder documents are immutable: modification and deletion are restricted",
+      "additionalProperties": false,
+      "required": ["saltedDomainHash"],
+      "properties": {"saltedDomainHash": {
+        "pattern": "^([A-Za-z0-9+/])*$",
+        "description": "Double sha-256 of concatenated salt, `normalizedLabel` and `normalizedParentDomainName`. Salt should be 32 random bytes",
+        "contentEncoding": eEntropy..."base64",
+        "type": "string",
+        "maxLength": 43,
+        "minLength": 43
+      }}
+    },
+    "domain": {
+      "indices": [
+        {
+          "properties": [
+            {"normalizedParentDomainName": "asc"},
+            {"normalizedLabel": "asc"}
+          ],
+          "unique": true
+        },
+        {
+          "properties": [{"records.dashUniqueIdentityId": "asc"}],
+          "unique": true
+        }
+      ],
+      "$comment": "In order to register domain you need to create a preorder. The preorder step is needed to prevent man-in-the-middle attacks. normalizedLabel + '.' + normalizedParentDomain must not be longer than 253 chars length as defined by RFC 1035. Domain documents are immutable: modification and deletion are restricted",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "normalizedLabel",
+        "normalizedParentDomainName",
+        "preorderSalt",
+        "records",
+        "subdomainRules"
+      ],
+      "properties": {
+        "preorderSalt": {
+          "pattern": "^([A-Za-z0-9+/])*$",
+          "description": "Domain pre-order salt. 32 random bytes",
+          "contentEncoding": "base64",
+          "type": "string",
+          "maxLength": 43,
+          "minLength": 43
+        },
+        "normalizedParentDomainName": {
+          "pattern": "^$|^((?!-)[a-z0-9-\\.]{0,189}[a-z0-9])$",
+          "description": "A full parent domain name in lower case for case insensitive uniqueness validation. e.g. 'dash'",
+          "$comment": "Must be equal to existing domain or can be empty if you want to create a top level domain. Only the contract owner can create top level domains",
+          "type": "string",
+          "maxLength": 190,
+          "minLength": 0
+        },
+        "label": {
+          "pattern": "^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])$",
+          "description": "Domain label. e.g. 'Bob'.",
+          "type": "string",
+          "maxLength": 63,
+          "minLength": 3
+        },
+        "normalizedLabel": {
+          "pattern": "^((?!-)[a-z0-9-]{0,62}[a-z0-9])$",
+          "description": "Domain label in a lower case for case insensitive uniqueness validation. e.g. 'bob'",
+          "$comment": "This property will be deprecated due to case insensitive indices. Must be equal to label in lowercase",
+          "type": "string",
+          "maxLength": 63
+        },
+        "records": {
+          "$comment": "Constraint with max and min properties ensure that only one identity record is used either `dashUniqueIdentityId` or `dashAliasIdentityId`",
+          "maxProperties": 1,
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "dashAliasIdentityId": {
+              "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
+              "description": "Identity ID string should be used to create multiple alias names for Identity. base58 string",
+              "$comment": "Should be equal to the document owner",
+              "type": "string",
+              "maxLength": 44,
+              "minLength": 42
+            },
+            "dashUniqueIdentityId": {
+              "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
+              "description": "Identity ID string should be used to create a primary name for Identity. base58 string",
+              "$comment": "Should be equal to the document owner",
+              "type": "string",
+              "maxLength": 44,
+              "minLength": 42
+            }
+          },
+          "minProperties": 1
+        },
+        "subdomainRules": {
+          "description": "Subdomain rules allows to define rules for subdomains",
+          "additionalProperties": false,
+          "type": "object",
+          "required": ["allowSubdomains"],
+          "properties": {"allowSubdomains": {
+            "type": "boolean",
+            "description": "This option defines who can create subdomains"
+          }}
+        }
+      }
+    }
+  },
+  "$id": "566vcJkmebVCAb2Dkj2yVMSgGFcsshupnQqtsz1RFbcy"
+}
