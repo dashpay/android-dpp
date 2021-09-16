@@ -9,7 +9,7 @@ package org.dashj.platform.dpp.identity
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.AssetLockProofFactory
 
-class IdentityTopupTransition : IdentityStateTransition {
+class IdentityTopUpTransition : IdentityStateTransition {
 
     val identityId: Identifier
     var assetLock: AssetLockProof

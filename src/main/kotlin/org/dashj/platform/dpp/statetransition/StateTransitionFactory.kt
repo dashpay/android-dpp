@@ -16,7 +16,7 @@ import org.dashj.platform.dpp.document.DocumentsBatchTransition
 import org.dashj.platform.dpp.errors.InvalidStateTransitionTypeError
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.identity.IdentityCreateTransition
-import org.dashj.platform.dpp.identity.IdentityTopupTransition
+import org.dashj.platform.dpp.identity.IdentityTopUpTransition
 import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.Converters
 
@@ -30,8 +30,8 @@ class StateTransitionFactory(dpp: DashPlatformProtocol, stateRepository: StateRe
         when (StateTransition.Types.getByCode(rawStateTransition["type"] as Int)) {
             StateTransition.Types.DATA_CONTRACT_CREATE -> {
                 val rawDataContract = rawStateTransition["dataContract"] as MutableMap<String, Any?>
-                val dataContract = ContractFactory(dpp, stateRepository).createDataContract(
-                    Identifier.from(rawDataContract["ownerId"]).toBuffer(), rawDataContract
+                val dataContract = ContractFactory(dpp, stateRepository).create(
+                    Identifier.from(rawDataContract["ownerId"]), rawDataContract
                 )
 
                 stateTransition = DataContractCreateTransition(dataContract)
@@ -43,7 +43,7 @@ class StateTransitionFactory(dpp: DashPlatformProtocol, stateRepository: StateRe
                 stateTransition = IdentityCreateTransition(rawStateTransition)
             }
             StateTransition.Types.IDENTITY_TOP_UP -> {
-                stateTransition = IdentityTopupTransition(rawStateTransition)
+                stateTransition = IdentityTopUpTransition(rawStateTransition)
             }
             else -> {
                 throw InvalidStateTransitionTypeError(rawStateTransition["type"] as Int, rawStateTransition)
