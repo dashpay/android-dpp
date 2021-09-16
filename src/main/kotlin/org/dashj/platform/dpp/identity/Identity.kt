@@ -64,7 +64,7 @@ class Identity(
         return balance
     }
 
-    fun decreaseBalance(amount: Long): Long {
+    fun reduceBalance(amount: Long): Long {
         balance -= amount
         return balance
     }
