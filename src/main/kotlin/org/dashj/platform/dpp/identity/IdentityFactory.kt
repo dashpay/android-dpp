@@ -17,9 +17,7 @@ import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.StateRepository
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.AssetLockProofFactory
-import org.dashj.platform.dpp.util.CreditsConverter
 import org.dashj.platform.dpp.util.CreditsConverter.convertSatoshiToCredits
-import org.dashj.platform.dpp.util.HashUtils
 
 class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepository) : Factory(dpp, stateRepository) {
 
@@ -92,8 +90,8 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
     fun createIdentityTopupTransition(
         identityId: Identifier,
         assetLock: AssetLockProof
-    ): IdentityTopupTransition {
-        return IdentityTopupTransition(identityId, assetLock)
+    ): IdentityTopUpTransition {
+        return IdentityTopUpTransition(identityId, assetLock)
     }
 
     fun applyIdentityCreateStateTransition(stateTransition: IdentityStateTransition): Identity {
@@ -104,7 +102,7 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         )
         val outpoint = identityCreateTransition.assetLockProof.getOutPoint()
 
-        val creditsAmount = CreditsConverter.convertSatoshiToCredits(output.value)
+        val creditsAmount = convertSatoshiToCredits(output.value)
 
         val newIdentity = Identity(
             identityCreateTransition.identityId,
@@ -114,7 +112,7 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
             ProtocolVersion.latestVersion
         )
 
-        val publicKeyHashes = newIdentity.publicKeys.map { HashUtils.toHash(it.data) }
+        val publicKeyHashes = newIdentity.publicKeys.map { ECKey.fromPublicOnly(it.data).pubKeyHash }
 
         // store identity
         stateRepository.storeIdentity(newIdentity)
@@ -124,7 +122,7 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         return newIdentity
     }
 
-    fun applyIdentityTopUpTransition(stateTransition: IdentityTopupTransition) {
+    fun applyIdentityTopUpTransition(stateTransition: IdentityTopUpTransition) {
         val output = AssetLockProofFactory(stateRepository).fetchAssetLockTransactionOutput(stateTransition.assetLock)
         val outPoint = stateTransition.assetLock.getOutPoint()
 

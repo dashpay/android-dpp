@@ -22,7 +22,7 @@ class ChainAssetLockProof(
     constructor(rawAssetLockProof: Map<String, Any?>) :
         this(
             rawAssetLockProof["coreChainLockedHeight"] as Long,
-            HashUtils.byteArrayfromBase64orByteArray(
+            Converters.byteArrayFromBase64orByteArray(
                 rawAssetLockProof["outPoint"]
                     ?: error("missing outPoint field")
             )
