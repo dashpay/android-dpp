@@ -25,7 +25,7 @@ abstract class StateTransitionIdentitySigned(
     var signaturePublicKeyId: Int?,
     signature: ByteArray?,
     type: Types,
-    protocolVersion: Int = 0
+    protocolVersion: Int = ProtocolVersion.latestVersion
 ) :
     StateTransition(signature, type, protocolVersion) {
 

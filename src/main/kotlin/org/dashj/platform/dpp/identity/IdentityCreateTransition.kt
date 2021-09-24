@@ -6,6 +6,7 @@
  */
 package org.dashj.platform.dpp.identity
 
+import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.AssetLockProofFactory
 
@@ -21,7 +22,7 @@ class IdentityCreateTransition : IdentityStateTransition {
     constructor(
         assetLock: AssetLockProof,
         publicKeys: List<IdentityPublicKey>,
-        protocolVersion: Int = 0
+        protocolVersion: Int = ProtocolVersion.latestVersion
     ) :
         super(Types.IDENTITY_CREATE, protocolVersion) {
             this.assetLockProof = assetLock
