@@ -80,7 +80,9 @@ abstract class StateTransition(
     }
 
     fun toBuffer(skipSignature: Boolean): ByteArray {
-        return encodeProtocolEntity(toObject(skipSignature, false))
+        val serializedData = toObject(skipSignature, false)
+        serializedData.remove("protocolVersion")
+        return encodeProtocolEntity(serializedData)
     }
 
     fun signByPrivateKey(privateKey: ECKey) {

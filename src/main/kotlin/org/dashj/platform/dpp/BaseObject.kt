@@ -34,7 +34,9 @@ abstract class BaseObject(var protocolVersion: Int = ProtocolVersion.latestVersi
      *
      */
     fun toBuffer(): ByteArray {
-        return encodeProtocolEntity(toObject())
+        val serializedData = toObject().toMutableMap()
+        serializedData.remove("protocolVersion")
+        return encodeProtocolEntity(serializedData)
     }
 
     fun encodeProtocolEntity(payload: Map<String, Any?>): ByteArray {
@@ -53,7 +55,11 @@ abstract class BaseObject(var protocolVersion: Int = ProtocolVersion.latestVersi
         return toBuffer().hashTwice()
     }
 
-    open fun hashOnce(): ByteArray {
+    fun hashTwice(): ByteArray {
+        return toBuffer().hashTwice()
+    }
+
+    fun hashOnce(): ByteArray {
         return toBuffer().hashOnce()
     }
 
