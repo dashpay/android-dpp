@@ -45,6 +45,7 @@ abstract class StateTransition(
     }
 
     abstract val modifiedDataIds: List<Identifier>
+    var isSignatureVerified = false
 
     constructor(rawStateTransition: MutableMap<String, Any?>) :
         this(
@@ -53,7 +54,12 @@ abstract class StateTransition(
             rawStateTransition["protocolVersion"] as Int
         )
 
-    constructor(type: Types, protocolVersion: Int = 0) : this(null, type, protocolVersion)
+    constructor(type: Types, protocolVersion: Int = ProtocolVersion.latestVersion) : this(null, type, protocolVersion)
+
+    fun setSignature(signature: ByteArray): StateTransition {
+        this.signature = signature
+        return this
+    }
 
     override fun toObject(): MutableMap<String, Any?> {
         return toObject(skipSignature = false, skipIdentifiersConversion = false)
@@ -75,7 +81,9 @@ abstract class StateTransition(
 
     open fun toJSON(skipSignature: Boolean): MutableMap<String, Any?> {
         val json = toObject(skipSignature, true)
-        signature?.let { json["signature"] = it.toBase64Padded() }
+        if (!skipSignature) {
+            signature?.let { json["signature"] = it.toBase64Padded() }
+        }
         return json
     }
 
@@ -100,12 +108,13 @@ abstract class StateTransition(
         val data = toBuffer(true)
         val hash = data.toSha256Hash()
 
-        return try {
+        isSignatureVerified = try {
             val pubkeyFromSig = ECKey.signedMessageToKey(hash, signature)
             pubkeyFromSig.pubKey!!.contentEquals(publicKey.pubKey)
         } catch (e: SignatureException) {
             false
         }
+        return isSignatureVerified
     }
 
     fun calculateFee(): Long {
