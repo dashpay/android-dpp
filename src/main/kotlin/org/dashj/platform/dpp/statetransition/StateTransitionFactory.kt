@@ -17,7 +17,6 @@ import org.dashj.platform.dpp.errors.InvalidStateTransitionTypeError
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.identity.IdentityCreateTransition
 import org.dashj.platform.dpp.identity.IdentityTopUpTransition
-import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.Converters
 
 class StateTransitionFactory(dpp: DashPlatformProtocol, stateRepository: StateRepository) : Factory(dpp, stateRepository) {
