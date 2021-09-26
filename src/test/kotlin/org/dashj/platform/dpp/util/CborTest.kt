@@ -6,6 +6,7 @@
  */
 package org.dashj.platform.dpp.util
 
+import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.toHexString
 import org.json.JSONArray
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -37,7 +38,7 @@ class CborTest {
     fun encodeArrayInArrayTest() {
         val list = listOf(listOf("one", "two"), listOf("first", "second"))
         val map = hashMapOf(
-            "protocolVersion" to 0,
+            "protocolVersion" to ProtocolVersion.latestVersion,
             "listOfLists" to list,
             "identifier" to Entropy.generate()
         )
