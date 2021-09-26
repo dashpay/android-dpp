@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2020-present, Dash Core Team
+ *
+ * This source code is licensed under the MIT license found in the
+ * COPYING file in the root directory of this source tree.
+ */
 package org.dashj.platform.dpp
 
 import org.bitcoinj.core.Base58
@@ -39,11 +45,11 @@ object Fixtures {
     private val stateRepository = StateRepositoryMock()
     val dpp = DashPlatformProtocol(stateRepository)
     private val PARAMS = TestNet3Params.get()
-    val contractFactory = ContractFactory(dpp, stateRepository)
-    val documentFactory = DocumentFactory(dpp, stateRepository)
+    private val contractFactory = ContractFactory(dpp, stateRepository)
+    private val documentFactory = DocumentFactory(dpp, stateRepository)
 
-    fun loadFile(filename: String): MutableMap<String, Any?> {
-        val json = File(this::class.java.getResource("datacontract-fixture.json")!!.file).readText()
+    private fun loadFile(filename: String): MutableMap<String, Any?> {
+        val json = File(this::class.java.getResource(filename)!!.file).readText()
         val jsonObject = JSONObject(json)
         return jsonObject.toMap()!!
     }
@@ -83,9 +89,18 @@ object Fixtures {
         val dataContract = getDataContractFixture()
 
         return listOf(
-            documentFactory.create(dataContract, ownerId, "niceDocument", JSONObject("{ name: 'Cutie' }").toMap()),
-            documentFactory.create(dataContract, ownerId, "prettyDocument", JSONObject("{ lastName: 'Shiny' }").toMap()),
-            documentFactory.create(dataContract, ownerId, "prettyDocument", JSONObject("{ lastName: 'Sweety' }").toMap()),
+            documentFactory.create(
+                dataContract, ownerId, "niceDocument",
+                JSONObject("{ name: 'Cutie' }").toMap()
+            ),
+            documentFactory.create(
+                dataContract, ownerId, "prettyDocument",
+                JSONObject("{ lastName: 'Shiny' }").toMap()
+            ),
+            documentFactory.create(
+                dataContract, ownerId, "prettyDocument",
+                JSONObject("{ lastName: 'Sweety' }").toMap()
+            ),
             documentFactory.create(
                 dataContract, ownerId, "indexedDocument",
                 JSONObject("{ firstName: 'William', lastName: 'Birkin' }").toMap()
@@ -94,8 +109,14 @@ object Fixtures {
                 dataContract, ownerId, "indexedDocument",
                 JSONObject("{ firstName: 'Leon', lastName: 'Kennedy' }").toMap()
             ),
-            documentFactory.create(dataContract, ownerId, "noTimeDocument", JSONObject("{ name: 'ImOutOfTime' }").toMap()),
-            documentFactory.create(dataContract, ownerId, "uniqueDates", JSONObject("{ firstName: 'John' }").toMap()),
+            documentFactory.create(
+                dataContract, ownerId, "noTimeDocument",
+                JSONObject("{ name: 'ImOutOfTime' }").toMap()
+            ),
+            documentFactory.create(
+                dataContract, ownerId, "uniqueDates",
+                JSONObject("{ firstName: 'John' }").toMap()
+            ),
             documentFactory.create(
                 dataContract, ownerId, "indexedDocument",
                 JSONObject("{ firstName: 'Bill', lastName: 'Gates' }").toMap()
@@ -111,26 +132,27 @@ object Fixtures {
         )
     }
 
-    fun getDocumentTransitionFixture(documents: MutableMap<String, List<Document>> = hashMapOf()): List<DocumentTransition> {
-        var createDocuments = documents["create"] ?: listOf()
-        val replaceDocuments = documents["replace"] ?: listOf()
-        val deleteDocuments = documents["delete"] ?: listOf()
-        val fixtureDocuments = getDocumentsFixture()
-        if (createDocuments.isEmpty()) {
-            createDocuments = fixtureDocuments
+    fun getDocumentTransitionFixture(documents: MutableMap<String, List<Document>> = hashMapOf()):
+        List<DocumentTransition> {
+            var createDocuments = documents["create"] ?: listOf()
+            val replaceDocuments = documents["replace"] ?: listOf()
+            val deleteDocuments = documents["delete"] ?: listOf()
+            val fixtureDocuments = getDocumentsFixture()
+            if (createDocuments.isEmpty()) {
+                createDocuments = fixtureDocuments
+            }
+            val factory = DocumentFactory(dpp, stateRepository)
+
+            val documentsForTransition = hashMapOf(
+                "create" to createDocuments,
+                "replace" to replaceDocuments,
+                "delete" to deleteDocuments
+            )
+
+            val stateTransition = factory.createStateTransition(documentsForTransition)
+
+            return stateTransition.transitions
         }
-        val factory = DocumentFactory(dpp, stateRepository)
-
-        val documentsForTransition = hashMapOf(
-            "create" to createDocuments,
-            "replace" to replaceDocuments,
-            "delete" to deleteDocuments
-        )
-
-        val stateTransition = factory.createStateTransition(documentsForTransition)
-
-        return stateTransition.transitions
-    }
 
     fun getDpnsContractFixture(): DataContract {
         val dashPaySchema = loadFile("dpns-contract.json")
@@ -210,36 +232,35 @@ object Fixtures {
             "identityId" to Entropy.generateRandomIdentifier(),
         )
 
-        return IdentityTopUpTransition(rawStateTransition);
+        return IdentityTopUpTransition(rawStateTransition)
     }
 
-    fun getPreorderDocumentFixture(options: Map<String, Any?>) : Document {
-        val dataContract = getDpnsContractFixture();
+    fun getPreorderDocumentFixture(options: Map<String, Any?>): Document {
+        val dataContract = getDpnsContractFixture()
 
-        val label = if(options.containsKey("label")) {
+        val label = if (options.containsKey("label")) {
             options["label"] as String
         } else {
             "Preorder"
         }
-        val normalizedLabel = if(options.containsKey("normalizedLabel")) {
+        val normalizedLabel = if (options.containsKey("normalizedLabel")) {
             options["normalizedLabel"] as String
         } else {
             label.toLowerCase()
         }
 
         val data = hashMapOf<String, Any?>(
-                "label" to label,
-                "normalizedLabel" to normalizedLabel,
-                "parentDomainHash" to "",
-                "preorderSalt" to Entropy.generate(),
-                "records" to hashMapOf(
-                    "dashIdentity" to ownerId
-                )
+            "label" to label,
+            "normalizedLabel" to normalizedLabel,
+            "parentDomainHash" to "",
+            "preorderSalt" to Entropy.generate(),
+            "records" to hashMapOf(
+                "dashIdentity" to ownerId
+            )
         )
 
         data.putAll(options)
-        return documentFactory.create(dataContract, ownerId, "preorder", data);
-
+        return documentFactory.create(dataContract, ownerId, "preorder", data)
     }
 
     fun getInstantAssetLockProofFixture(oneTimePrivateKey: ECKey = ECKey()): InstantAssetLockProof {
@@ -260,7 +281,12 @@ object Fixtures {
         transaction.addOutput(Coin.valueOf(90000), ScriptBuilder.createCreditBurnOutput(oneTimePrivateKey))
         transaction.addOutput(Coin.valueOf(5000), ScriptBuilder().op(OP_RETURN).data(byteArrayOf(1, 2, 3)).build())
         transaction.addSignedInput(
-            TransactionOutPoint(PARAMS, 0L, Sha256Hash.wrapReversed(Converters.fromHex("a477af6b2667c29670467e4e0728b685ee07b240235771862318e29ddbe58458"))),
+            TransactionOutPoint(
+                PARAMS, 0L,
+                Sha256Hash.wrapReversed(
+                    Converters.fromHex("a477af6b2667c29670467e4e0728b685ee07b240235771862318e29ddbe58458")
+                )
+            ),
             ScriptBuilder.createP2PKHOutputScript(privateKey),
             privateKey
         )
@@ -271,7 +297,9 @@ object Fixtures {
                 TransactionOutPoint(
                     PARAMS,
                     0L,
-                    Sha256Hash.wrapReversed(Converters.fromHex("6e200d059fb567ba19e92f5c2dcd3dde522fd4e0a50af223752db16158dabb1d"))
+                    Sha256Hash.wrapReversed(
+                        Converters.fromHex("6e200d059fb567ba19e92f5c2dcd3dde522fd4e0a50af223752db16158dabb1d")
+                    )
                 )
             ),
             transaction.txId,
