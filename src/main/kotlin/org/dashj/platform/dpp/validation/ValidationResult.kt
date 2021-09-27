@@ -6,7 +6,7 @@
  */
 package org.dashj.platform.dpp.validation
 
-import org.dashj.platform.dpp.errors.ConcensusException
+import org.dashj.platform.dpp.errors.concensus.ConcensusException
 
 class ValidationResult(errors: List<ConcensusException>) {
     val errors = arrayListOf<ConcensusException>()
