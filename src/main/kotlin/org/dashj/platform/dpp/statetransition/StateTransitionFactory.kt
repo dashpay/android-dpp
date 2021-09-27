@@ -19,7 +19,8 @@ import org.dashj.platform.dpp.identity.IdentityCreateTransition
 import org.dashj.platform.dpp.identity.IdentityTopUpTransition
 import org.dashj.platform.dpp.util.Converters
 
-class StateTransitionFactory(dpp: DashPlatformProtocol, stateRepository: StateRepository) : Factory(dpp, stateRepository) {
+class StateTransitionFactory(dpp: DashPlatformProtocol, stateRepository: StateRepository) :
+    Factory(dpp, stateRepository) {
 
     fun createStateTransition(
         rawStateTransition: MutableMap<String, Any?>,
