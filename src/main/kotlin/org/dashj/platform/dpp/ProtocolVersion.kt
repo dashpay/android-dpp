@@ -9,6 +9,7 @@ package org.dashj.platform.dpp
 
 object ProtocolVersion {
     const val latestVersion = 1
+    const val SIZE = 4
 
     val compatibility = mapOf(1 to 1)
 }

@@ -41,9 +41,9 @@ abstract class BaseObject(var protocolVersion: Int = ProtocolVersion.latestVersi
 
     fun encodeProtocolEntity(payload: Map<String, Any?>): ByteArray {
         val encoded = Cbor.encode(payload)
-        val buffer = ByteArray(encoded.size + 4)
+        val buffer = ByteArray(encoded.size + ProtocolVersion.SIZE)
         Utils.uint32ToByteArrayLE(protocolVersion.toLong(), buffer, 0)
-        System.arraycopy(encoded, 0, buffer, 4, encoded.size)
+        System.arraycopy(encoded, 0, buffer, ProtocolVersion.SIZE, encoded.size)
         return buffer
     }
 
