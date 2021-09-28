@@ -8,6 +8,7 @@
 package org.dashj.platform.dpp.errors.concensus
 
 import org.dashj.platform.dpp.errors.DPPException
+import org.dashj.platform.dpp.errors.ErrorMetadata
 import org.dashj.platform.dpp.errors.concensus.basic.datacontract.InvalidDataContractIdException
 import org.dashj.platform.dpp.errors.concensus.basic.identity.IdentityAssetLockTransactionOutPointAlreadyExistsException
 import org.dashj.platform.dpp.errors.concensus.basic.identity.InvalidInstantAssetLockProofSignatureException
@@ -23,6 +24,7 @@ import org.dashj.platform.dpp.util.Cbor
 abstract class ConcensusException(message: String) : DPPException(message) {
 
     companion object {
+        @JvmStatic
         fun create(code: Int, arguments: List<Any>): ConcensusException {
             try {
                 val codeEnum = Codes.getByCode(code)
@@ -32,6 +34,7 @@ abstract class ConcensusException(message: String) : DPPException(message) {
             }
         }
 
+        @JvmStatic
         fun create(code: Codes, arguments: List<Any>): ConcensusException {
             try {
                 return createException(code, arguments)
@@ -40,12 +43,18 @@ abstract class ConcensusException(message: String) : DPPException(message) {
             }
         }
 
+        @JvmStatic
         fun create(code: Codes, driveErrorData: Map<String, Any>): ConcensusException {
             try {
                 return createException(code, driveErrorData)
             } catch (e: IllegalArgumentException) {
                 throw IllegalArgumentException("Error is not defined: $code", e)
             }
+        }
+
+        @JvmStatic
+        fun create(errorMetadata: ErrorMetadata): ConcensusException {
+            return create(errorMetadata.code, errorMetadata.arguments)
         }
 
         private fun createException(code: Codes, driveErrorData: Map<String, Any>): ConcensusException {
