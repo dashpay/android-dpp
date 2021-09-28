@@ -54,6 +54,7 @@ abstract class ConcensusException(message: String) : DPPException(message) {
 
         private fun createException(code: Codes, arguments: List<Any>): ConcensusException {
             return when (code) {
+                // remove unneeded errors
 //                Codes.ProtocolVersionParsingError -> ProtocolVersionParsingException(arguments)
 //                Codes.SerializedObjectParsingError -> SerializedObjectParsingException(arguments)
 //                Codes.UnsupportedProtocolVersionError -> UnsupportedProtocolVersionException(arguments)
