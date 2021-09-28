@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2020-present, Dash Core Team
+ *
+ * This source code is licensed under the MIT license found in the
+ * COPYING file in the root directory of this source tree.
+ */
 package org.dashj.platform.dpp.identity
 
 import org.bitcoinj.core.Sha256Hash
@@ -85,11 +91,12 @@ class IdentitySpec {
     fun `toBuffer should return serialized Identity`() {
         val result = identity.toBuffer()
 
-        val identityDataToEncode = identity.toObject()
+        val identityDataToEncode = identity.toObject().toMutableMap()
+        identityDataToEncode.remove("protocolVersion")
         val encoded = Cbor.encode(identityDataToEncode)
-        val buffer = ByteArray(encoded.size + 4)
+        val buffer = ByteArray(encoded.size + ProtocolVersion.SIZE)
         Utils.uint32ToByteArrayLE(identity.protocolVersion.toLong(), buffer, 0)
-        System.arraycopy(encoded, 0, buffer, 4, encoded.size)
+        System.arraycopy(encoded, 0, buffer, ProtocolVersion.SIZE, encoded.size)
 
         assertArrayEquals(result, buffer)
     }
@@ -98,11 +105,12 @@ class IdentitySpec {
     fun `#hash should return hex string of a buffer return by serialize`() {
         val result = identity.hash()
 
-        val identityDataToEncode = identity.toObject()
+        val identityDataToEncode = identity.toObject().toMutableMap()
+        identityDataToEncode.remove("protocolVersion")
         val encoded = Cbor.encode(identityDataToEncode)
-        val buffer = ByteArray(encoded.size + 4)
+        val buffer = ByteArray(encoded.size + ProtocolVersion.SIZE)
         Utils.uint32ToByteArrayLE(identity.protocolVersion.toLong(), buffer, 0)
-        System.arraycopy(encoded, 0, buffer, 4, encoded.size)
+        System.arraycopy(encoded, 0, buffer, ProtocolVersion.SIZE, encoded.size)
 
         assertArrayEquals(result, Sha256Hash.hashTwice(buffer))
     }

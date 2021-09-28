@@ -8,6 +8,7 @@ package org.dashj.platform.dpp.document
 
 import org.dashj.platform.dpp.DashPlatformProtocol
 import org.dashj.platform.dpp.Fixtures
+import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.StateRepositoryMock
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.util.Cbor
@@ -18,7 +19,6 @@ import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class DocumentTest {
@@ -40,7 +40,11 @@ class DocumentTest {
 
         val contract = Fixtures.getDataContractFixture()
 
-        val factoryCreatedDocument = factory.create(contract, Identifier.from("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp"), "niceDocument", JSONObject("{ name: 'Cutie' }").toMap())
+        val factoryCreatedDocument = factory.create(
+            contract,
+            Identifier.from("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp"), "niceDocument",
+            JSONObject("{ name: 'Cutie' }").toMap()
+        )
         val fixtureCreatedDocuments = Fixtures.getDocumentsFixture()
 
         // compare the first document
@@ -68,7 +72,7 @@ class DocumentTest {
             "\$ownerId" to Entropy.generate(),
             "\$dataContractId" to contract.id,
             "\$revision" to 0,
-            "\$protocolVersion" to 0,
+            "\$protocolVersion" to ProtocolVersion.latestVersion,
             "\$type" to "essay",
             "header" to "start-section",
             "body" to hashMapOf(
@@ -97,19 +101,6 @@ class DocumentTest {
         assertTrue(result.isDocumentStateTransition())
         assertFalse(result.isDataContractStateTransition())
         assertFalse(result.isIdentityStateTransition())
-    }
-
-    @Test @Disabled
-    fun verifySignedDocumentsSTTest() {
-        // TODO: This test is completely broken, getDocumentsSTSignedFixture() has bad data
-        val documentST = Fixtures.getDocumentsSTSignedFixture()
-        val identityST = Fixtures.getIdentityCreateSTSignedFixture()
-        val identity = Fixtures.getIdentityForSignaturesFixture()
-        assertTrue(documentST.verifySignature(identityST.publicKeys[0]))
-        assertTrue(documentST.verifySignature(identity.publicKeys[0]))
-
-        val documentSTTwo = Fixtures.getDocumentsSTSignedFixtureTwo()
-        assertEquals(documentST.transitions[0].toJSON(), documentSTTwo.transitions[0].toJSON())
     }
 
     @Test

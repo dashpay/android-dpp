@@ -15,6 +15,9 @@ object Entropy {
 
     private const val SEED_SIZE = 32
 
+    private var mockRandomIdentifier: Identifier? = null
+    private var mockEntroy: ByteArray? = null
+
     // Init proper random number generator, as some old Android installations have bugs that make it unsecure.
     private var secureRandom: SecureRandom
 
@@ -28,11 +31,26 @@ object Entropy {
 
     @JvmStatic
     fun generate(): ByteArray {
-        return secureRandom.generateSeed(SEED_SIZE)
+        return mockEntroy ?: secureRandom.generateSeed(SEED_SIZE)
+    }
+
+    @JvmStatic
+    fun setMockGenerate(mockEntroy: ByteArray?) {
+        this.mockEntroy = mockEntroy
     }
 
     @JvmStatic
     fun generateRandomIdentifier(): Identifier {
-        return Identifier.from(generate())
+        return mockRandomIdentifier ?: Identifier.from(generate())
+    }
+
+    fun setRandomIdentifier(mockRandomIdentifier: Identifier?) {
+        this.mockRandomIdentifier = mockRandomIdentifier
+    }
+
+    @JvmStatic
+    fun clearMock() {
+        mockEntroy = null
+        mockRandomIdentifier = null
     }
 }

@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2020-present, Dash Core Team
+ *
+ * This source code is licensed under the MIT license found in the
+ * COPYING file in the root directory of this source tree.
+ */
+
 package org.dashj.platform.dpp.contract
 
 import org.dashj.platform.dpp.DashPlatformProtocol
@@ -5,6 +12,7 @@ import org.dashj.platform.dpp.Fixtures.getDataContractFixture
 import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.StateRepository
 import org.dashj.platform.dpp.StateRepositoryMock
+import org.dashj.platform.dpp.util.Entropy
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -31,12 +39,16 @@ class DataContractFactorySpec {
     @Test
     fun `create should return new Data Contract with specified name and documents definition`() {
         // need to mock the entropy before this call
+        Entropy.setRandomIdentifier(dataContract.id)
+        Entropy.setMockGenerate(dataContract.entropy)
         val result = factory.create(
             dataContract.ownerId.toBuffer(),
             rawDataContract["documents"] as Map<String, Any?>
         )
+        result.definitions = dataContract.definitions
 
-        assertEquals(result.documents, dataContract.documents)
+        assertEquals(result.toJSON(), dataContract.toJSON())
+        Entropy.clearMock()
     }
 
     @Test
