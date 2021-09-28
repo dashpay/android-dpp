@@ -32,7 +32,6 @@ class DocumentTest {
 
         assertEquals(10, documents.size)
         assertEquals("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", documents[2].ownerId.toString())
-        // assertEquals("9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX", documents[3].dataContractId.toString())
     }
 
     @Test
@@ -45,19 +44,16 @@ class DocumentTest {
         val fixtureCreatedDocuments = Fixtures.getDocumentsFixture()
 
         // compare the first document
-        // assertEquals(fixtureCreatedDocuments[0].dataContractId, factoryCreatedDocument.dataContractId)
         assertEquals(fixtureCreatedDocuments[0].ownerId, factoryCreatedDocument.ownerId)
         assertEquals(fixtureCreatedDocuments[0].type, factoryCreatedDocument.type)
         assertEquals(fixtureCreatedDocuments[0].data["name"], factoryCreatedDocument.data["name"])
 
         val firstRawDocument = fixtureCreatedDocuments[0].toObject()
-        // assertArrayEquals(firstRawDocument["\$dataContractId"] as ByteArray, factoryCreatedDocument.dataContractId.toBuffer())
         assertArrayEquals(firstRawDocument["\$ownerId"] as ByteArray, factoryCreatedDocument.ownerId.toBuffer())
         assertEquals(firstRawDocument["\$type"], factoryCreatedDocument.type)
         assertEquals(firstRawDocument["name"], factoryCreatedDocument.data["name"])
 
         val firstRawDocumentJson = fixtureCreatedDocuments[0].toJSON()
-        // assertEquals(firstRawDocumentJson["\$dataContractId"] as String, factoryCreatedDocument.dataContractId.toString())
         assertEquals(firstRawDocumentJson["\$ownerId"] as String, factoryCreatedDocument.ownerId.toString())
 
         assertEquals(fixtureCreatedDocuments[0].get("name") as String, factoryCreatedDocument.data["name"])

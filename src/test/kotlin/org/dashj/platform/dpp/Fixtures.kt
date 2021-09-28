@@ -266,9 +266,6 @@ object Fixtures {
     fun getInstantAssetLockProofFixture(oneTimePrivateKey: ECKey = ECKey()): InstantAssetLockProof {
         val privateKeyHex = "cSBnVM4xvxarwGQuAfQFwqDg9k5tErHUHzgWsEfD4zdwUasvqRVY"
         val privateKey = ECKey.fromPrivate(Base58.decode(privateKeyHex))
-        // val fromAddress = Address.fromKey(PARAMS, privateKey)
-
-        // val oneTimePublicKey = oneTimePrivateKey.pubKey
 
         val transaction = Transaction(PARAMS)
         transaction.addInput(

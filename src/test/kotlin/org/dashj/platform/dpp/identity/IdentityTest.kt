@@ -14,6 +14,7 @@ import org.dashj.platform.dpp.StateRepositoryMock
 import org.dashj.platform.dpp.statetransition.StateTransition
 import org.dashj.platform.dpp.statetransition.errors.PublicKeyMismatchError
 import org.dashj.platform.dpp.toBase64
+import org.dashj.platform.dpp.toHex
 import org.dashj.platform.dpp.toHexString
 import org.dashj.platform.dpp.util.Cbor
 import org.junit.jupiter.api.Assertions.assertArrayEquals
@@ -122,11 +123,10 @@ class IdentityTest {
 
         val hash = stateTransition.hash()
 
-        assertEquals("a1a0bd256af8449969ab01684bcbfce95209a4d45efc74f1b58948facff67061", hash.toHexString())
+        assertEquals("60efcd3cdc3676ce9221f4e66435a2a4dce6d4d8e9bfe2817e073aa13bfdcf34", hash.toHex())
         assertEquals(
-            "00000000a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e6174757" +
-                "2655075626c69634b65794964f6",
-            serializedDataBytes.toHexString()
+            "01000000a3647479706500697369676e6174757265f6747369676e61747572655075626c69634b65794964f6",
+            serializedDataBytes.toHex()
         )
 
         // should return public key ID

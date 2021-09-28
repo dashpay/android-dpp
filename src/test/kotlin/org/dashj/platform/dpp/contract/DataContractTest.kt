@@ -33,32 +33,7 @@ class DataContractTest {
 
         assertEquals(DataContract.SCHEMA, contract.schema)
         assertEquals(8, contract.documents.size)
-        // assertEquals("9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX", contract.id.toString())
     }
-
-    /*@Test
-    fun testContactFactory() {
-        var factory = ContractFactory()
-
-        val json = File("src/test/resources/data/documentsforcontract.json").readText()//"{\r\n\"name\" : \"abc\" ,\r\n\"email id \" : [\"abc@gmail.com\",\"def@gmail.com\",\"ghi@gmail.com\"]\r\n}"
-        val jsonObject = JSONObject(json)
-        val map = jsonObject.toMap()
-
-        val rawContract = HashMap<String, Any?>()
-        rawContract["documents"] = map
-        rawContract["contractId"] = "9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX"
-        rawContract["\$schema"] = DataContract.SCHEMA
-        rawContract["definitions"] = JSONObject("{lastName: { type: 'string', }, }").toMap()
-
-        val factoryCreatedContract = factory.createDataContract(rawContract)
-        val fixtureCreatedContract = Fixtures.getDataContractFixtures()
-
-        assertEquals(fixtureCreatedContract.id, factoryCreatedContract.id)
-
-        val anotherFactoryCreatedContract = factory.createDataContract("9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX", map)
-
-        assertEquals(fixtureCreatedContract.id, anotherFactoryCreatedContract.id)
-    }*/
 
     @Test
     fun applyStateTransition() {
@@ -112,15 +87,4 @@ class DataContractTest {
         assertFalse(dataContractST.isDocumentStateTransition())
         assertFalse(dataContractST.isIdentityStateTransition())
     }
-
-//    @Test
-//    fun verifySignedDataContractSTTest() {
-//        val dataContractST = Fixtures.getDataContractSTSignedFixture()
-//        var identity = Fixtures.getIdentityForSignaturesFixture()
-//
-//        assertTrue(dataContractST.verifySignature(identity.publicKeys[0]))
-//
-//        val dataContractSTTwo = Fixtures.getDataContractSTSignedFixtureTwo();
-//        assertEquals(dataContractST.toJSON(), dataContractSTTwo.toJSON())
-//    }
 }
