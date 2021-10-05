@@ -319,6 +319,7 @@ object Cbor {
                     SimpleValueType.TRUE -> map[key] = true
                     SimpleValueType.FALSE -> map[key] = false
                     SimpleValueType.NULL -> map[key] = null
+                    SimpleValueType.UNDEFINED -> map[key] = "undefined"
                     else -> throw IllegalArgumentException("Unknown simple datatype")
                 }
             }
@@ -351,6 +352,7 @@ object Cbor {
                     SimpleValueType.TRUE -> array.add(true)
                     SimpleValueType.FALSE -> array.add(false)
                     SimpleValueType.NULL -> array.add(null)
+                    SimpleValueType.UNDEFINED -> array.add("undefined")
                     else -> throw IllegalArgumentException("Unknown simple datatype")
                 }
             }
