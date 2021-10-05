@@ -9,6 +9,7 @@ package org.dashj.platform.dpp.errors.concensus
 
 import org.dashj.platform.dpp.errors.DPPException
 import org.dashj.platform.dpp.errors.ErrorMetadata
+import org.dashj.platform.dpp.errors.concensus.basic.JsonSchemaException
 import org.dashj.platform.dpp.errors.concensus.basic.datacontract.InvalidDataContractIdException
 import org.dashj.platform.dpp.errors.concensus.basic.identity.IdentityAssetLockTransactionOutPointAlreadyExistsException
 import org.dashj.platform.dpp.errors.concensus.basic.identity.InvalidInstantAssetLockProofSignatureException
@@ -69,7 +70,7 @@ abstract class ConcensusException(message: String) : DPPException(message) {
 //                Codes.UnsupportedProtocolVersionError -> UnsupportedProtocolVersionException(arguments)
 //                Codes.IncompatibleProtocolVersionError -> IncompatibleProtocolVersionException(arguments)
 //                Codes.JsonSchemaCompilationError -> JsonSchemaCompilationException(arguments)
-//                Codes.JsonSchemaError -> JsonSchemaException(arguments)
+                Codes.JsonSchemaError -> JsonSchemaException(arguments)
 //                Codes.InvalidIdentifierError -> InvalidIdentifierException(arguments)
 //
 //                Codes.DataContractMaxDepthExceedError -> DataContractMaxDepthExceedException(arguments)
