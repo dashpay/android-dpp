@@ -26,7 +26,7 @@ class ErrorMetadata(metadata: String) {
     val data: Map<String, Any?>
     val arguments: List<Any>
         get() {
-            return if (data.containsKey("arguments")/* && data["arguments"] !is List<Any>*/) {
+            return if (data.containsKey("arguments") && data["arguments"] is List<*>) {
                 data["arguments"] as List<Any>
             } else {
                 listOf()

@@ -23,6 +23,22 @@ class ErrorsTest {
     }
 
     @Test
+    fun jsonSchemaErrorTest() {
+        val metadata = "Metadata(code=1005,drive-error-data-bin=oWlhcmd1bWVudHOGeD1tdXN0IG1hdGNoIHBhdHRlcm4gIl5bYS" +
+            "16QS1aXVthLXpBLVowLTktX117MSw2Mn1bYS16QS1aMC05XSQiZ3BhdHRlcm5qL2RvY3VtZW50c3gsIy9wcm9wZXJ0aWVzL2RvY3V" +
+            "tZW50cy9wcm9wZXJ0eU5hbWVzL3BhdHRlcm6hZ3BhdHRlcm54KF5bYS16QS1aXVthLXpBLVowLTktX117MSw2Mn1bYS16QS1aMC05" +
+            "XSRnJHNjaGVtYQ)"
+
+        val errorMetadata = ErrorMetadata(metadata)
+        assertEquals(Codes.JsonSchemaError, errorMetadata.code)
+        assertEquals("arguments", errorMetadata.data.keys.first())
+
+        val exception = ConcensusException.create(errorMetadata.code, errorMetadata.arguments)
+        assertEquals(Codes.JsonSchemaError.code, exception.getCode())
+        assertEquals("JsonSchemaError", exception.name)
+    }
+
+    @Test
     fun createCorrectExceptionClass() {
         val metadata = "Metadata(code=2002,drive-error-data-bin=oWlhcmd1bWVudHOA)"
 
