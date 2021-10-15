@@ -1,0 +1,20 @@
+name: Code coverage
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Code coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run coverage
+        run: |
+          ./gradlew build test --info -x ktlint
+          bash <(curl -s https://codecov.io/bash)
