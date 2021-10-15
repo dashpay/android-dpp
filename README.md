@@ -5,7 +5,7 @@
 
 | Branch | Tests                                                                                      | Coverage                                                                                                                             | Linting                                                                    |
 |--------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
-| master | [![Tests](https://github.com/dashevo/android-dpp/workflows/Tests/badge.svg?branch=test-improvements)](https://github.com/dashevo/android-dpp/actions) | [![codecov](https://codecov.io/gh/dashevo/android-dpp/branch/test-improvements/graph/badge.svg)](https://codecov.io/gh/dashevo/android-dpp) | ![Lint](https://github.com/dashevo/android-dpp/workflows/Kotlin%20Linter/badge.svg) |
+| master | [![Tests](https://github.com/dashevo/android-dpp/workflows/CI/badge.svg?branch=test-improvements)](https://github.com/dashevo/android-dpp/actions) | [![codecov](https://codecov.io/gh/dashevo/android-dpp/branch/test-improvements/graph/badge.svg)](https://codecov.io/gh/dashevo/android-dpp) | ![Lint](https://github.com/dashevo/android-dpp/workflows/Kotlin%20Linter/badge.svg) |
 
 
 # Build
