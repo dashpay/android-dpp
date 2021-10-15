@@ -16,5 +16,7 @@ jobs:
     steps:
       - name: Run coverage
         run: |
+          chmod +x gradlew
+          chmod +x gradle/wrapper/gradle-wrapper.jar
           ./gradlew build test --info -x ktlint
           bash <(curl -s https://codecov.io/bash)
