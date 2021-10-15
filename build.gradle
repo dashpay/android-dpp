@@ -67,6 +67,10 @@ test {
 }
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
+    reports {
+        xml.enabled true
+        xml.destination file("${rootProject.projectDir}/build/reports/jacoco/jacoco.xml")
+    }
 }
 
 task sourcesJar(type: Jar) {
