@@ -20,6 +20,7 @@ plugins {
     id 'maven'
     id 'signing'
     id('io.gitlab.arturbosch.detekt').version("1.1.1")
+    id 'jacoco'
 }
 apply plugin: 'kotlin'
 
@@ -59,6 +60,13 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+test {
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
 }
 
 task sourcesJar(type: Jar) {
