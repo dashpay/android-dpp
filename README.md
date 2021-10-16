@@ -1,7 +1,8 @@
 # Dash Platform Protocol (DPP) for JVM
 
-[![License](https://img.shields.io/github/license/dashevo/dashsync-iOS)](https://github.com/dashevo/dashsync-iOS/blob/master/LICENSE)
-[![dashevo/android-dpp](https://tokei.rs/b1/github/dashevo/android-dpp?category=lines)](https://github.com/dashevo/dashsync-iOS)
+[![License](https://img.shields.io/github/license/dashevo/android-dpp)](https://github.com/dashevo/android-dpp/blob/master/LICENSE)
+[![dashevo/android-dpp](https://tokei.rs/b1/github/dashevo/android-dpp?category=lines)](https://github.com/dashevo/android-dpp)
+[![dashevo/android-dpp](https://tokei.rs/b1/github/dashevo/android-dpp?category=code)](https://github.com/dashevo/android-dpp)
 
 | Branch | Tests                                                                                      | Coverage                                                                                                                             | Linting                                                                    |
 |--------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
