@@ -9,7 +9,6 @@ package org.dashj.platform.dpp.errors.concensus
 
 // remove unneeded errors
 
-@Suppress("MagicNumber")
 enum class Codes(val code: Int) {
     UnknownError(0),
     UnknownConcensusError(1),

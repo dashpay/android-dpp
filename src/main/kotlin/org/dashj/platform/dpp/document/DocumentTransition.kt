@@ -10,7 +10,6 @@ import org.dashj.platform.dpp.identifier.Identifier
 
 abstract class DocumentTransition {
 
-    @Suppress("MagicNumber")
     enum class Action(val value: Int) {
         CREATE(0),
         REPLACE(1),
