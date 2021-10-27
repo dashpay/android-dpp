@@ -49,4 +49,16 @@ class ErrorsTest {
         assertEquals(Codes.InvalidStateTransitionSignatureError.code, exception.getCode())
         assertEquals("InvalidStateTransitionSignatureError", exception.name)
     }
+
+    @Test
+    fun noDataCreateCorrectExceptionClass() {
+        val metadata = "Metadata(code=2002)"
+
+        val errorMetadata = ErrorMetadata(metadata)
+
+        val exception = ConcensusException.create(errorMetadata.code, errorMetadata.arguments)
+
+        assertEquals(Codes.InvalidStateTransitionSignatureError.code, exception.getCode())
+        assertEquals("InvalidStateTransitionSignatureError", exception.name)
+    }
 }

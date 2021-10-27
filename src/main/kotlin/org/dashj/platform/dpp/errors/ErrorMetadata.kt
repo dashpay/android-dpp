@@ -38,7 +38,11 @@ class ErrorMetadata(metadata: String) {
         if (metadata.startsWith("Metadata(")) {
             cursor += 9
             val codeStart = metadata.indexOf(codeField, cursor) + codeFieldSize
-            val codeEnd = metadata.indexOf(',', codeStart)
+            var codeEnd = metadata.indexOf(',', codeStart)
+
+            if (codeEnd < 0) {
+                codeEnd = metadata.indexOf(')', codeStart)
+            }
 
             val codeString = metadata.substring(codeStart, codeEnd)
             code = Codes.getByCodeNoException(codeString.toInt())
