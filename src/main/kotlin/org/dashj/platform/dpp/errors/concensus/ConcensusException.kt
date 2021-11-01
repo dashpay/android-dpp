@@ -19,6 +19,7 @@ import org.dashj.platform.dpp.errors.concensus.signature.InvalidStateTransitionS
 import org.dashj.platform.dpp.errors.concensus.state.document.DocumentAlreadyPresentException
 import org.dashj.platform.dpp.errors.concensus.state.document.InvalidDocumentRevisionException
 import org.dashj.platform.dpp.errors.concensus.state.identity.IdentityAlreadyExistsException
+import org.dashj.platform.dpp.errors.concensus.state.identity.IdentityPublicKeyAlreadyExistsException
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.Cbor
 
@@ -131,8 +132,8 @@ abstract class ConcensusException(message: String) : DPPException(message) {
 //                Codes.DuplicateUniqueIndexError -> DuplicateUniqueIndexException(arguments)
                 Codes.InvalidDocumentRevisionError -> InvalidDocumentRevisionException(arguments)
                 Codes.IdentityAlreadyExistsError -> IdentityAlreadyExistsException(arguments)
-//                Codes.IdentityPublicKeyAlreadyExistsError -> IdentityPublicKeyAlreadyExistsException(arguments)
-                else -> throw UnknownConcensusError(code.code, arguments)
+                Codes.IdentityPublicKeyAlreadyExistsError -> IdentityPublicKeyAlreadyExistsException(arguments)
+                else -> UnknownConcensusError(code.code, arguments)
             }
         }
     }
