@@ -9,13 +9,20 @@ package org.dashj.platform.dpp.errors.concensus
 
 import org.dashj.platform.dpp.errors.DPPException
 import org.dashj.platform.dpp.errors.ErrorMetadata
+import org.dashj.platform.dpp.errors.concensus.basic.IncompatibleProtocolVersionException
 import org.dashj.platform.dpp.errors.concensus.basic.JsonSchemaException
+import org.dashj.platform.dpp.errors.concensus.basic.UnsupportedProtocolVersionException
 import org.dashj.platform.dpp.errors.concensus.basic.datacontract.InvalidDataContractIdException
 import org.dashj.platform.dpp.errors.concensus.basic.identity.IdentityAssetLockTransactionOutPointAlreadyExistsException
 import org.dashj.platform.dpp.errors.concensus.basic.identity.InvalidInstantAssetLockProofSignatureException
+import org.dashj.platform.dpp.errors.concensus.basic.statetransition.InvalidStateTransitionTypeException
+import org.dashj.platform.dpp.errors.concensus.basic.statetransition.MissingStateTransitionTypeException
 import org.dashj.platform.dpp.errors.concensus.document.DataContractNotPresentException
 import org.dashj.platform.dpp.errors.concensus.fee.BalanceIsNotEnoughException
+import org.dashj.platform.dpp.errors.concensus.signature.IdentityNotFoundException
+import org.dashj.platform.dpp.errors.concensus.signature.InvalidIdentityPublicKeyTypeException
 import org.dashj.platform.dpp.errors.concensus.signature.InvalidStateTransitionSignatureException
+import org.dashj.platform.dpp.errors.concensus.signature.MissingPublicKeyException
 import org.dashj.platform.dpp.errors.concensus.state.document.DocumentAlreadyPresentException
 import org.dashj.platform.dpp.errors.concensus.state.document.InvalidDocumentRevisionException
 import org.dashj.platform.dpp.errors.concensus.state.identity.IdentityAlreadyExistsException
@@ -68,8 +75,8 @@ abstract class ConcensusException(message: String) : DPPException(message) {
                 // remove unneeded errors
 //                Codes.ProtocolVersionParsingError -> ProtocolVersionParsingException(arguments)
 //                Codes.SerializedObjectParsingError -> SerializedObjectParsingException(arguments)
-//                Codes.UnsupportedProtocolVersionError -> UnsupportedProtocolVersionException(arguments)
-//                Codes.IncompatibleProtocolVersionError -> IncompatibleProtocolVersionException(arguments)
+                Codes.UnsupportedProtocolVersionError -> UnsupportedProtocolVersionException(arguments)
+                Codes.IncompatibleProtocolVersionError -> IncompatibleProtocolVersionException(arguments)
 //                Codes.JsonSchemaCompilationError -> JsonSchemaCompilationException(arguments)
                 Codes.JsonSchemaError -> JsonSchemaException(arguments)
 //                Codes.InvalidIdentifierError -> InvalidIdentifierException(arguments)
@@ -112,15 +119,15 @@ abstract class ConcensusException(message: String) : DPPException(message) {
 //                Codes.InvalidInstantAssetLockProofError -> InvalidInstantAssetLockProofException(arguments)
                 Codes.InvalidInstantAssetLockProofSignatureError ->
                     InvalidInstantAssetLockProofSignatureException(arguments)
-//                Codes.InvalidStateTransitionTypeError -> InvalidStateTransitionTypeException(arguments)
-//                Codes.MissingStateTransitionTypeError -> MissingStateTransitionTypeException(arguments)
+                Codes.InvalidStateTransitionTypeError -> InvalidStateTransitionTypeException(arguments)
+                Codes.MissingStateTransitionTypeError -> MissingStateTransitionTypeException()
 //                Codes.StateTransitionMaxSizeExceededError -> StateTransitionMaxSizeExceededException(arguments)
-//                Codes.IdentityNotFoundError -> IdentityNotFoundException(arguments)
-//                Codes.InvalidIdentityPublicKeyTypeError -> InvalidIdentityPublicKeyTypeException(arguments)
+                Codes.IdentityNotFoundError -> IdentityNotFoundException(arguments)
+                Codes.InvalidIdentityPublicKeyTypeError -> InvalidIdentityPublicKeyTypeException(arguments)
                 Codes.InvalidStateTransitionSignatureError -> InvalidStateTransitionSignatureException()
-//                Codes.MissingPublicKeyError -> MissingPublicKeyException(arguments)
+                Codes.MissingPublicKeyError -> MissingPublicKeyException(arguments)
                 Codes.BalanceIsNotEnoughError -> BalanceIsNotEnoughException(arguments)
-//                Codes.DataContractAlreadyPresentError -> DataContractAlreadyPresentException(arguments) */
+//                Codes.DataContractAlreadyPresentError -> DataContractAlreadyPresentException(arguments)
 //                Codes.DataTriggerConditionError -> DataTriggerConditionException(arguments)
 //                Codes.DataTriggerExecutionError -> DataTriggerExecutionException(arguments)
 //                Codes.DataTriggerInvalidResultError -> DataTriggerInvalidResultException(arguments)
