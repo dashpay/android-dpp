@@ -11,8 +11,10 @@ import org.dashj.platform.dpp.errors.concensus.ConcensusException
 class IncompatibleProtocolVersionException(
     val parsedProtocolVersion: Int,
     val minimalProtocolVersion: Int
-) : ConcensusException("Protocol version $parsedProtocolVersion is not supported." +
-        "Minimal supported protocol version is $minimalProtocolVersion") {
+) : ConcensusException(
+    """Protocol version $parsedProtocolVersion is not supported.
+        Minimal supported protocol version is $minimalProtocolVersion"""
+) {
     constructor(arguments: List<Any>) : this(arguments[0] as Int, arguments[1] as Int) {
         setArguments(arguments)
     }

@@ -6,7 +6,8 @@
  */
 package org.dashj.platform.dpp.errors.concensus.signature
 
-class MissingPublicKeyException(val publicKeyId: ByteArray) : SignatureException("Public key $publicKeyId doesn't exist") {
+class MissingPublicKeyException(val publicKeyId: ByteArray) :
+    SignatureException("Public key $publicKeyId doesn't exist") {
     constructor(arguments: List<Any>) : this(arguments[0] as ByteArray) {
         setArguments(arguments)
     }
