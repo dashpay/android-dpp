@@ -18,4 +18,6 @@ jobs:
       - name: Run coverage
         run: |
           ./gradlew build test --info -x ktlint
-          bash <(curl -s https://codecov.io/bash)
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov -t ${CODECOV_TOKEN}
