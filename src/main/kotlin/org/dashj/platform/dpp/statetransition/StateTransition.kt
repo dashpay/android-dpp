@@ -24,7 +24,6 @@ abstract class StateTransition(
 ) :
     BaseObject(protocolVersion) {
 
-    @Suppress("MagicNumber")
     enum class Types(val value: Int) {
         DATA_CONTRACT_CREATE(0),
         DOCUMENTS_BATCH(1),
