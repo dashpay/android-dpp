@@ -33,7 +33,8 @@ class InstantAssetLockProof(
                 TestNet3Params.get(),
                 Converters.byteArrayfromBase64orByteArray(
                     rawAssetLockProof["instantLock"] ?: error("missing instantLock field")
-                )
+                ),
+                InstantSendLock.ISLOCK_VERSION // Core 0.17
             )
         )
 
