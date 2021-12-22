@@ -1,7 +1,7 @@
 buildscript {
     ext.kotlin_version = '1.4.32'
     ext.dashj_version = '0.18.0-SNAPSHOT'
-    ext.dpp_version = '0.21-SNAPSHOT'
+    ext.dpp_version = '0.22-SNAPSHOT'
     repositories {
         mavenCentral()
         mavenLocal()
