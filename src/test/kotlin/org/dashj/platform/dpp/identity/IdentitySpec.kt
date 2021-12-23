@@ -33,7 +33,10 @@ class IdentitySpec {
                 mapOf(
                     "id" to 0,
                     "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1.value,
-                    "data" to ByteArray(36) { 'a'.toByte() }
+                    "data" to ByteArray(36) { 'a'.toByte() },
+                    "purpose" to IdentityPublicKey.Purpose.AUTHENTICATION.value,
+                    "securityLevel" to IdentityPublicKey.SecurityLevel.MASTER.value,
+                    "readOnly" to false,
                 )
             ),
             "balance" to 0L,
@@ -133,7 +136,10 @@ class IdentitySpec {
                     mapOf(
                         "id" to 0,
                         "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1.value,
-                        "data" to (((rawIdentity["publicKeys"] as List<*>)[0] as Map<*, *>)["data"] as ByteArray).toBase64()
+                        "data" to (((rawIdentity["publicKeys"] as List<*>)[0] as Map<*, *>)["data"] as ByteArray).toBase64(),
+                        "purpose" to IdentityPublicKey.Purpose.AUTHENTICATION.value,
+                        "securityLevel" to IdentityPublicKey.SecurityLevel.MASTER.value,
+                        "readOnly" to false,
                     )
                 ),
                 "balance" to 0L,
