@@ -44,7 +44,14 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
             assetLockProof.createIdentifier(),
             publicKeys.mapIndexed {
                 index, it ->
-                IdentityPublicKey(index, IdentityPublicKey.TYPES.ECDSA_SECP256K1, it.pubKey)
+                IdentityPublicKey(
+                    index,
+                    IdentityPublicKey.TYPES.ECDSA_SECP256K1,
+                    IdentityPublicKey.Purpose.AUTHENTICATION,
+                    IdentityPublicKey.SecurityLevel.MASTER,
+                    it.pubKey,
+                    true
+                )
             },
             revision = 0,
             protocolVersion = ProtocolVersion.latestVersion

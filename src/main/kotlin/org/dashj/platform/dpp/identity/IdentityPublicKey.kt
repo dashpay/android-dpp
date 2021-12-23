@@ -16,12 +16,16 @@ import org.dashj.platform.dpp.util.Converters
 class IdentityPublicKey(
     val id: Int,
     val type: TYPES,
-    val data: ByteArray
+    val purpose: Purpose,
+    val securityLevel: SecurityLevel,
+    val data: ByteArray,
+    val readOnly: Boolean
 ) : BaseObject() {
 
     enum class TYPES(val value: Int) {
         ECDSA_SECP256K1(0),
-        BLS12_381(1);
+        BLS12_381(1),
+        ECDSA_HASH160(2);
 
         companion object {
             private val values = values()
@@ -31,7 +35,58 @@ class IdentityPublicKey(
         }
     }
 
-    constructor(id: Int, type: TYPES, data: String) : this(id, type, Converters.fromBase64(data))
+    enum class Purpose(val value: Int) {
+        AUTHENTICATION(0),
+        ENCRYPTION(1),
+        DECRYPTION(2);
+
+        companion object {
+            private val values = values()
+            fun getByCode(code: Int): Purpose {
+                return values.filter { it.value == code }[0]
+            }
+        }
+    }
+
+    enum class SecurityLevel(val value: Int) {
+        MASTER(0),
+        CRITICAL(1),
+        HIGH(2),
+        MEDIUM(3);
+
+        companion object {
+            private val values = values()
+            fun getByCode(code: Int): SecurityLevel {
+                return values.filter { it.value == code }[0]
+            }
+        }
+    }
+
+    companion object {
+        val allowedSecurityLevels = mapOf(
+            Purpose.AUTHENTICATION to listOf(
+                SecurityLevel.MASTER,
+                SecurityLevel.CRITICAL,
+                SecurityLevel.HIGH,
+                SecurityLevel.MEDIUM
+            ),
+            Purpose.DECRYPTION to listOf(
+                SecurityLevel.MEDIUM
+            ),
+            Purpose.ENCRYPTION to listOf(
+                SecurityLevel.MEDIUM
+            )
+        )
+    }
+
+    constructor(id: Int, type: TYPES, purpose: Purpose, securityLevel: SecurityLevel, data: String, readOnly: Boolean) :
+        this(id, type, purpose, securityLevel, Converters.fromBase64(data), readOnly)
+
+    constructor(id: Int, type: TYPES, data: String) :
+        this(id, type, Purpose.AUTHENTICATION, SecurityLevel.MASTER, Converters.fromBase64(data), true)
+
+    constructor(id: Int, type: TYPES, data: ByteArray) :
+        this(id, type, Purpose.AUTHENTICATION, SecurityLevel.MASTER, data, true)
 
     constructor(rawIdentityPublicKey: Map<String, Any>) :
         this(
@@ -41,14 +96,35 @@ class IdentityPublicKey(
                 is Int -> TYPES.getByCode(rawIdentityPublicKey["type"] as Int)
                 else -> error("invalid type")
             },
-            Converters.byteArrayFromBase64orByteArray(rawIdentityPublicKey["data"] ?: error("data is missing"))
+            when (rawIdentityPublicKey["purpose"]) {
+                is Purpose -> rawIdentityPublicKey["purpose"] as Purpose
+                is Int -> Purpose.getByCode(rawIdentityPublicKey["purpose"] as Int)
+                else -> Purpose.AUTHENTICATION
+            },
+            when (rawIdentityPublicKey["securityLevel"]) {
+                is SecurityLevel -> rawIdentityPublicKey["securityLevel"] as SecurityLevel
+                is Int -> SecurityLevel.getByCode(rawIdentityPublicKey["securityLevel"] as Int)
+                else -> SecurityLevel.MASTER
+            },
+            when (rawIdentityPublicKey["data"]) {
+                is String -> Converters.fromBase64(rawIdentityPublicKey["data"] as String)
+                is ByteArray -> rawIdentityPublicKey["data"] as ByteArray
+                else -> ByteArray(0)
+            },
+            when (rawIdentityPublicKey["readOnly"]) {
+                is Boolean -> rawIdentityPublicKey["readOnly"] as Boolean
+                else -> false
+            }
         )
 
     override fun toObject(): Map<String, Any> {
         return hashMapOf<String, Any>(
             "id" to id,
             "type" to type.value,
-            "data" to data
+            "purpose" to purpose.value,
+            "securityLevel" to securityLevel.value,
+            "data" to data,
+            "readOnly" to readOnly
         )
     }
 
@@ -56,7 +132,10 @@ class IdentityPublicKey(
         return hashMapOf(
             "id" to id,
             "type" to type.value,
-            "data" to data.toBase64()
+            "purpose" to purpose.value,
+            "securityLevel" to securityLevel.value,
+            "data" to data.toBase64(),
+            "readOnly" to readOnly
         )
     }
 
@@ -66,6 +145,8 @@ class IdentityPublicKey(
         }
         return other.id == id &&
             other.type == type &&
+            other.purpose == purpose &&
+            other.securityLevel == securityLevel &&
             other.data.contentEquals(data)
     }
 
@@ -82,6 +163,13 @@ class IdentityPublicKey(
         if (data.isEmpty()) {
             throw EmptyPublicKeyDataException()
         }
+        if (type == TYPES.ECDSA_HASH160) {
+            return data
+        }
         return super.hash()
+    }
+
+    override fun toString(): String {
+        return toJSON().toString()
     }
 }
