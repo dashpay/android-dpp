@@ -17,7 +17,9 @@ import org.dashj.platform.dpp.identity.IdentityPublicKey
 import org.dashj.platform.dpp.statetransition.errors.InvalidSignaturePublicKeyError
 import org.dashj.platform.dpp.statetransition.errors.InvalidSignatureTypeError
 import org.dashj.platform.dpp.statetransition.errors.PublicKeyMismatchError
+import org.dashj.platform.dpp.statetransition.errors.PublicKeySecurityLevelNotMetException
 import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedError
+import org.dashj.platform.dpp.statetransition.errors.WrongPublicKeyPurposeException
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.Converters
 
@@ -53,6 +55,9 @@ abstract class StateTransitionIdentitySigned(
     fun sign(identityPublicKey: IdentityPublicKey, privateKey: String) {
         val privateKeyModel: ECKey
         val pubKeyBase: ByteArray
+
+        verifyPublicKeyLevelAndPurpose(identityPublicKey)
+
         when (identityPublicKey.type) {
             IdentityPublicKey.TYPES.ECDSA_SECP256K1 -> {
                 privateKeyModel = try {
@@ -90,5 +95,37 @@ abstract class StateTransitionIdentitySigned(
         val publicKeyModel = ECKey.fromPublicOnly(publicKey.data)
 
         return verifySignatureByPublicKey(publicKeyModel)
+    }
+
+    /**
+     *
+     * Verifies that the supplied public key has the correct security level
+     * and purpose to sign this state transition
+     */
+
+    private fun verifyPublicKeyLevelAndPurpose(publicKey: IdentityPublicKey) {
+        if (getKeySecurityLevelRequirement() < publicKey.securityLevel) {
+            throw PublicKeySecurityLevelNotMetException(
+                publicKey.securityLevel,
+                this.getKeySecurityLevelRequirement(),
+            )
+        }
+
+        if (publicKey.purpose !== IdentityPublicKey.Purpose.AUTHENTICATION) {
+            throw WrongPublicKeyPurposeException(
+                publicKey.purpose,
+                IdentityPublicKey.Purpose.AUTHENTICATION,
+            )
+        }
+    }
+
+    /**
+     * Returns minimal key security level that can be used to sign this ST.
+     * Override this method if the ST requires a different security level.
+     *
+     * @return {number}
+     */
+    open fun getKeySecurityLevelRequirement(): IdentityPublicKey.SecurityLevel {
+        return IdentityPublicKey.SecurityLevel.MASTER
     }
 }
