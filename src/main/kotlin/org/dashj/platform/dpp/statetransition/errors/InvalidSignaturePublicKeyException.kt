@@ -6,6 +6,7 @@
  */
 package org.dashj.platform.dpp.statetransition.errors
 
-import java.lang.Exception
+import org.dashj.platform.dpp.errors.DPPException
 
-class InvalidSignaturePublicKeyError(val signaturePublicKey: String) : Exception("Invalid signature public key")
+class InvalidSignaturePublicKeyException(val signaturePublicKey: String) :
+    DPPException("Invalid signature public key: $signaturePublicKey")

@@ -13,8 +13,8 @@ import org.bitcoinj.core.ECKey
 import org.bitcoinj.core.NetworkParameters
 import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.identity.IdentityPublicKey
-import org.dashj.platform.dpp.statetransition.errors.InvalidSignaturePublicKeyError
-import org.dashj.platform.dpp.statetransition.errors.InvalidSignatureTypeError
+import org.dashj.platform.dpp.statetransition.errors.InvalidSignaturePublicKeyException
+import org.dashj.platform.dpp.statetransition.errors.InvalidSignatureTypeException
 import org.dashj.platform.dpp.statetransition.errors.PublicKeyMismatchError
 import org.dashj.platform.dpp.statetransition.errors.PublicKeySecurityLevelNotMetException
 import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedError
@@ -62,23 +62,24 @@ abstract class StateTransitionIdentitySigned(
         when (identityPublicKey.type) {
             IdentityPublicKey.TYPES.ECDSA_SECP256K1 -> {
                 privateKeyModel = try {
-                    DumpedPrivateKey.fromBase58(TestNet3Params.get(), privateKey).key
+                    DumpedPrivateKey.fromBase58(params, privateKey).key
                 } catch (_: AddressFormatException.WrongNetwork) {
-                    DumpedPrivateKey.fromBase58(MainNetParams.get(), privateKey).key
+                    // the WIF is on the wrong network
+                    throw InvalidSignaturePublicKeyException(identityPublicKey.data.toBase64())
                 } catch (_: AddressFormatException) {
                     ECKey.fromPrivate(Converters.fromHex(privateKey))
                 }
                 pubKeyBase = privateKeyModel.pubKey
                 if (!pubKeyBase.contentEquals(identityPublicKey.data)) {
-                    throw InvalidSignaturePublicKeyError(identityPublicKey.data.toBase64())
+                    throw InvalidSignaturePublicKeyException(identityPublicKey.data.toBase64())
                 }
                 signByPrivateKey(privateKeyModel)
             }
             IdentityPublicKey.TYPES.BLS12_381 -> {
-                throw InvalidSignatureTypeError(identityPublicKey.type)
+                throw InvalidSignatureTypeException(identityPublicKey.type)
             }
             else -> {
-                throw InvalidSignatureTypeError(identityPublicKey.type)
+                throw InvalidSignatureTypeException(identityPublicKey.type)
             }
         }
         signaturePublicKeyId = identityPublicKey.id
