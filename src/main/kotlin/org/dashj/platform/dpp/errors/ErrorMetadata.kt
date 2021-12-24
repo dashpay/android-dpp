@@ -17,6 +17,7 @@ import org.dashj.platform.dpp.util.Converters
 class ErrorMetadata(metadata: String) {
 
     companion object {
+        private const val metadataHeader = "Metadata("
         private const val codeField = "code="
         private const val dataField = "drive-error-data-bin="
         private const val codeFieldSize = codeField.length
@@ -35,8 +36,8 @@ class ErrorMetadata(metadata: String) {
 
     init {
         var cursor = 0
-        if (metadata.startsWith("Metadata(")) {
-            cursor += 9
+        if (metadata.startsWith(metadataHeader)) {
+            cursor += metadataHeader.length
             val codeStart = metadata.indexOf(codeField, cursor) + codeFieldSize
             var codeEnd = metadata.indexOf(',', codeStart)
 
