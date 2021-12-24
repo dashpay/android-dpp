@@ -65,7 +65,7 @@ class DocumentFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
     }
 
     fun createFromBuffer(payload: ByteArray, options: Options = Options()): Document {
-        val (protocolVersion, rawDocument) = decodeProtocolEntity(payload, dpp.protocolVersion)
+        val (protocolVersion, rawDocument) = decodeProtocolEntity(payload)
         rawDocument["\$protocolVersion"] = protocolVersion
         return createFromObject(rawDocument, options)
     }

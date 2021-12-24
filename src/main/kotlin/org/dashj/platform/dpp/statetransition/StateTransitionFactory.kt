@@ -69,7 +69,7 @@ class StateTransitionFactory(dpp: DashPlatformProtocol, stateRepository: StateRe
     }
 
     fun createFromBuffer(payload: ByteArray, options: Options = Options()): StateTransition {
-        val (protocolVersion, rawStateTransition) = decodeProtocolEntity(payload, dpp.protocolVersion)
+        val (protocolVersion, rawStateTransition) = decodeProtocolEntity(payload)
         rawStateTransition["protocolVersion"] = protocolVersion
         return createFromObject(rawStateTransition, options)
     }

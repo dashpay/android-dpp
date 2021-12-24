@@ -63,7 +63,7 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
     }
 
     fun createFromBuffer(payload: ByteArray, options: Options = Options()): Identity {
-        val (protocolVersion, rawIdentity) = decodeProtocolEntity(payload, dpp.protocolVersion)
+        val (protocolVersion, rawIdentity) = decodeProtocolEntity(payload)
         rawIdentity["protocolVersion"] = protocolVersion
         return createFromObject(rawIdentity, options)
     }

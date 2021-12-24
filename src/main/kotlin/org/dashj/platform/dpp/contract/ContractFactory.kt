@@ -42,7 +42,7 @@ class ContractFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
     }
 
     fun createFromBuffer(payload: ByteArray, options: Options = Options()): DataContract {
-        val (protocolVersion, rawDataContract) = decodeProtocolEntity(payload, dpp.protocolVersion)
+        val (protocolVersion, rawDataContract) = decodeProtocolEntity(payload)
         rawDataContract["protocolVersion"] = protocolVersion
         return createFromObject(rawDataContract, options)
     }
