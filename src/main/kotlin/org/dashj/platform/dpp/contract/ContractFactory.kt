@@ -48,6 +48,6 @@ class ContractFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
     }
 
     fun createStateTransition(dataContract: DataContract): DataContractCreateTransition {
-        return DataContractCreateTransition(dataContract)
+        return DataContractCreateTransition(dpp.getNetworkParameters(), dataContract)
     }
 }

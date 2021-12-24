@@ -187,7 +187,7 @@ object Fixtures {
             )
         )
 
-        return IdentityCreateTransition(rawStateTransition)
+        return IdentityCreateTransition(PARAMS, rawStateTransition)
     }
 
     fun getIdentityFixtureTwo(): Identity {
@@ -232,7 +232,7 @@ object Fixtures {
             "identityId" to Entropy.generateRandomIdentifier(),
         )
 
-        return IdentityTopUpTransition(rawStateTransition)
+        return IdentityTopUpTransition(PARAMS, rawStateTransition)
     }
 
     fun getPreorderDocumentFixture(options: Map<String, Any?>): Document {
@@ -310,6 +310,7 @@ object Fixtures {
         )
 
         return InstantAssetLockProof(
+            PARAMS,
             hashMapOf<String, Any?>(
                 "type" to 0,
                 "instantLock" to instantLock.bitcoinSerialize(),
@@ -343,7 +344,7 @@ object Fixtures {
         publicKeysMap.add(IdentityPublicKey(1, IdentityPublicKey.TYPES.ECDSA_SECP256K1, ByteArray(32)).toJSON())
         rawStateTransition["publicKeys"] = publicKeysMap
 
-        return IdentityCreateTransition(rawStateTransition)
+        return IdentityCreateTransition(PARAMS, rawStateTransition)
     }
 
     fun getIdentityCreateSTSignedFixture(): IdentityCreateTransition {
@@ -351,7 +352,7 @@ object Fixtures {
         val jsonObject = JSONObject(json)
         val rawIdentity = jsonObject.toMap()
 
-        return IdentityCreateTransition(rawIdentity)
+        return IdentityCreateTransition(PARAMS, rawIdentity)
     }
 
     fun getDataContractSTSignedFixture(): DataContractCreateTransition {
@@ -359,7 +360,7 @@ object Fixtures {
         val jsonObject = JSONObject(json)
         val rawContractST = jsonObject.toMap()
 
-        return DataContractCreateTransition(rawContractST)
+        return DataContractCreateTransition(PARAMS, rawContractST)
     }
 
     fun getDataContractSTSignedFixtureTwo(): DataContractCreateTransition {
@@ -374,7 +375,7 @@ object Fixtures {
         val jsonObject = JSONObject(File("src/test/resources/data/documents-transition.json").readText())
         val rawDocumentST = jsonObject.toMap()
 
-        return DocumentsBatchTransition(rawDocumentST)
+        return DocumentsBatchTransition(PARAMS, rawDocumentST)
     }
 
     fun getDocumentsSTSignedFixtureTwo(): DocumentsBatchTransition {
@@ -395,6 +396,7 @@ object Fixtures {
         )
 
         return ChainAssetLockProof(
+            PARAMS,
             mapOf(
                 "type" to 1,
                 "coreChainLockedHeight" to 42,

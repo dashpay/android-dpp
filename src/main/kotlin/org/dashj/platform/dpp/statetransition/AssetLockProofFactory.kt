@@ -1,5 +1,6 @@
 package org.dashj.platform.dpp.statetransition
 
+import org.bitcoinj.core.NetworkParameters
 import org.bitcoinj.core.TransactionOutput
 import org.dashj.platform.dpp.StateRepository
 import org.dashj.platform.dpp.identity.AssetLockProof
@@ -13,13 +14,16 @@ class AssetLockProofFactory(val stateRepository: StateRepository) {
 
     companion object {
         @JvmStatic
-        fun createAssetLockProofInstance(rawAssetLockProof: Map<String, Any?>): AssetLockProof {
+        fun createAssetLockProofInstance(
+            params: NetworkParameters,
+            rawAssetLockProof: Map<String, Any?>
+        ): AssetLockProof {
             return when (rawAssetLockProof["type"]) {
                 ChainAssetLockProof.TYPE -> {
-                    ChainAssetLockProof(rawAssetLockProof)
+                    ChainAssetLockProof(params, rawAssetLockProof)
                 }
                 InstantAssetLockProof.TYPE -> {
-                    InstantAssetLockProof(rawAssetLockProof)
+                    InstantAssetLockProof(params, rawAssetLockProof)
                 }
                 else -> throw IllegalStateException("Invalid type ${rawAssetLockProof["type"]}")
             }
@@ -29,7 +33,7 @@ class AssetLockProofFactory(val stateRepository: StateRepository) {
     fun fetchAssetLockTransactionOutput(assetLockProof: AssetLockProof): TransactionOutput {
         return when (assetLockProof) {
             is InstantAssetLockProof -> {
-                (assetLockProof as InstantAssetLockProof).output
+                assetLockProof.output
             }
             is ChainAssetLockProof -> {
                 val outPoint = assetLockProof.outPoint

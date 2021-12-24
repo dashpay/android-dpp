@@ -34,16 +34,16 @@ class StateTransitionFactory(dpp: DashPlatformProtocol, stateRepository: StateRe
                     Identifier.from(rawDataContract["ownerId"]), rawDataContract
                 )
 
-                stateTransition = DataContractCreateTransition(dataContract)
+                stateTransition = DataContractCreateTransition(dpp.getNetworkParameters(), dataContract)
             }
             StateTransition.Types.DOCUMENTS_BATCH -> {
-                stateTransition = DocumentsBatchTransition(rawStateTransition)
+                stateTransition = DocumentsBatchTransition(dpp.getNetworkParameters(), rawStateTransition)
             }
             StateTransition.Types.IDENTITY_CREATE -> {
-                stateTransition = IdentityCreateTransition(rawStateTransition)
+                stateTransition = IdentityCreateTransition(dpp.getNetworkParameters(), rawStateTransition)
             }
             StateTransition.Types.IDENTITY_TOP_UP -> {
-                stateTransition = IdentityTopUpTransition(rawStateTransition)
+                stateTransition = IdentityTopUpTransition(dpp.getNetworkParameters(), rawStateTransition)
             }
             else -> {
                 throw InvalidStateTransitionTypeError(rawStateTransition["type"] as Int, rawStateTransition)

@@ -6,6 +6,7 @@
  */
 
 package org.dashj.platform.dpp.contract
+import org.bitcoinj.params.TestNet3Params
 import org.dashj.platform.dpp.DashPlatformProtocol
 import org.dashj.platform.dpp.Fixtures
 import org.dashj.platform.dpp.StateRepositoryMock
@@ -23,7 +24,7 @@ class DataContractTest {
 
     companion object {
         private val stateRepository = StateRepositoryMock()
-        val dpp = DashPlatformProtocol(stateRepository)
+        val dpp = DashPlatformProtocol(stateRepository, TestNet3Params.get())
         val factory = ContractFactory(dpp, stateRepository)
     }
 
@@ -38,7 +39,7 @@ class DataContractTest {
     @Test
     fun applyStateTransition() {
         val dataContract = Fixtures.getDataContractFixture()
-        val stateTransition = DataContractCreateTransition(dataContract)
+        val stateTransition = DataContractCreateTransition(dpp.getNetworkParameters(), dataContract)
 
         val result = factory.createStateTransition(dataContract)
 

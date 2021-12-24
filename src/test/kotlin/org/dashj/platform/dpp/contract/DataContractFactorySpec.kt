@@ -7,6 +7,7 @@
 
 package org.dashj.platform.dpp.contract
 
+import org.bitcoinj.params.TestNet3Params
 import org.dashj.platform.dpp.DashPlatformProtocol
 import org.dashj.platform.dpp.Fixtures.getDataContractFixture
 import org.dashj.platform.dpp.ProtocolVersion
@@ -32,7 +33,7 @@ class DataContractFactorySpec {
         dataContract = getDataContractFixture()
         rawDataContract = dataContract.toObject()
         stateRepository = StateRepositoryMock()
-        dpp = DashPlatformProtocol(stateRepository)
+        dpp = DashPlatformProtocol(stateRepository, TestNet3Params.get())
         factory = ContractFactory(dpp, stateRepository)
     }
 

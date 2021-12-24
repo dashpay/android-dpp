@@ -10,8 +10,7 @@ package org.dashj.platform.dpp.statetransition
 import org.bitcoinj.core.AddressFormatException
 import org.bitcoinj.core.DumpedPrivateKey
 import org.bitcoinj.core.ECKey
-import org.bitcoinj.params.MainNetParams
-import org.bitcoinj.params.TestNet3Params
+import org.bitcoinj.core.NetworkParameters
 import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.identity.IdentityPublicKey
 import org.dashj.platform.dpp.statetransition.errors.InvalidSignaturePublicKeyError
@@ -24,6 +23,7 @@ import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.Converters
 
 abstract class StateTransitionIdentitySigned(
+    val params: NetworkParameters,
     var signaturePublicKeyId: Int?,
     signature: ByteArray?,
     type: Types,
@@ -31,8 +31,9 @@ abstract class StateTransitionIdentitySigned(
 ) :
     StateTransition(signature, type, protocolVersion) {
 
-    constructor(rawStateTransition: MutableMap<String, Any?>) :
+    constructor(params: NetworkParameters, rawStateTransition: MutableMap<String, Any?>) :
         this(
+            params,
             rawStateTransition["signaturePublicKeyId"] as? Int,
             rawStateTransition["signature"]?.let { Converters.byteArrayFromBase64orByteArray(it) },
             Types.getByCode(rawStateTransition["type"] as Int),
@@ -41,8 +42,8 @@ abstract class StateTransitionIdentitySigned(
             } else ProtocolVersion.latestVersion
         )
 
-    constructor(type: Types, protocolVersion: Int = ProtocolVersion.latestVersion) :
-        this(null, null, type, protocolVersion)
+    constructor(params: NetworkParameters, type: Types, protocolVersion: Int = ProtocolVersion.latestVersion) :
+        this(params, null, null, type, protocolVersion)
 
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
         val rawStateTransition = super.toObject(skipSignature, skipIdentifiersConversion)

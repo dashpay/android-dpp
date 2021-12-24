@@ -1,5 +1,6 @@
 package org.dashj.platform.dpp.contract
 
+import org.bitcoinj.core.NetworkParameters
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.StateTransitionIdentitySigned
 import org.dashj.platform.dpp.toBase64
@@ -11,7 +12,7 @@ class DataContractCreateTransition : StateTransitionIdentitySigned {
     var dataContract: DataContract
     var entropy: ByteArray
 
-    constructor(dataContract: DataContract) : super(Types.DATA_CONTRACT_CREATE) {
+    constructor(params: NetworkParameters, dataContract: DataContract) : super(params, Types.DATA_CONTRACT_CREATE) {
         this.dataContract = dataContract
 
         if (dataContract.entropy == null) {
@@ -23,10 +24,11 @@ class DataContractCreateTransition : StateTransitionIdentitySigned {
     override val modifiedDataIds: List<Identifier>
         get() = listOf(dataContract.id)
 
-    constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
-        dataContract = DataContract(rawStateTransition["dataContract"] as MutableMap<String, Any?>)
-        entropy = Converters.byteArrayFromBase64orByteArray(rawStateTransition["entropy"]!!)
-    }
+    constructor(params: NetworkParameters, rawStateTransition: MutableMap<String, Any?>) :
+        super(params, rawStateTransition) {
+            dataContract = DataContract(rawStateTransition["dataContract"] as MutableMap<String, Any?>)
+            entropy = Converters.byteArrayFromBase64orByteArray(rawStateTransition["entropy"]!!)
+        }
 
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
         val json = super.toObject(skipSignature, skipIdentifiersConversion)

@@ -1,10 +1,10 @@
 package org.dashj.platform.dpp.identity
 
+import org.bitcoinj.core.NetworkParameters
 import org.bitcoinj.core.Sha256Hash
 import org.bitcoinj.core.Transaction
 import org.bitcoinj.core.TransactionOutPoint
 import org.bitcoinj.core.TransactionOutput
-import org.bitcoinj.params.TestNet3Params
 import org.bitcoinj.quorums.InstantSendLock
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.Converters
@@ -20,18 +20,18 @@ class InstantAssetLockProof(
     }
     override val type: Int = TYPE
 
-    constructor(rawAssetLockProof: Map<String, Any?>) :
+    constructor(params: NetworkParameters, rawAssetLockProof: Map<String, Any?>) :
         this(
             rawAssetLockProof["outputIndex"].toString().toLong(),
             Transaction(
-                TestNet3Params.get(),
+                params,
                 Converters.byteArrayFromBase64orByteArray(
                     rawAssetLockProof["transaction"] ?: error("missing transaction field")
                 )
             ),
             InstantSendLock(
-                TestNet3Params.get(),
-                Converters.byteArrayfromBase64orByteArray(
+                params,
+                Converters.byteArrayFromBase64orByteArray(
                     rawAssetLockProof["instantLock"] ?: error("missing instantLock field")
                 ),
                 InstantSendLock.ISLOCK_VERSION // Core 0.17

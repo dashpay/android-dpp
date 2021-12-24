@@ -6,6 +6,7 @@
  */
 package org.dashj.platform.dpp.identity
 
+import org.bitcoinj.core.NetworkParameters
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.AssetLockProofFactory
 
@@ -18,18 +19,20 @@ class IdentityTopUpTransition : IdentityStateTransition {
         get() = listOf(identityId)
 
     constructor(
+        params: NetworkParameters,
         identityId: Identifier,
         assetLock: AssetLockProof,
         protocolVersion: Int = 0
     ) :
-        super(Types.IDENTITY_TOP_UP, protocolVersion) {
+        super(params, Types.IDENTITY_TOP_UP, protocolVersion) {
             this.assetLock = assetLock
             this.identityId = identityId
         }
 
-    constructor(rawStateTransition: MutableMap<String, Any?>) :
-        super(rawStateTransition) {
+    constructor(params: NetworkParameters, rawStateTransition: MutableMap<String, Any?>) :
+        super(params, rawStateTransition) {
             assetLock = AssetLockProofFactory.createAssetLockProofInstance(
+                params,
                 rawStateTransition["assetLock"] as Map<String, Any?>
             )
             identityId = Identifier.from(rawStateTransition["identityId"]!!)

@@ -1,8 +1,6 @@
 package org.dashj.platform.dpp
 
-import org.bitcoinj.core.Block
 import org.bitcoinj.core.Transaction
-import org.bitcoinj.params.TestNet3Params
 import org.bitcoinj.quorums.InstantSendLock
 import org.dashj.platform.dpp.contract.DataContract
 import org.dashj.platform.dpp.document.Document
@@ -46,8 +44,8 @@ class StateRepositoryMock : StateRepository {
         TODO("Not yet implemented")
     }
 
-    override fun fetchLatestPlatformBlockHeader(): Block {
-        return TestNet3Params.get().genesisBlock
+    override fun fetchLatestPlatformBlockHeader(): ByteArray {
+        TODO("Not yet implemented")
     }
 
     override fun verifyInstantLock(instantLock: InstantSendLock): Boolean {

@@ -6,11 +6,13 @@
  */
 package org.dashj.platform.dpp.identity
 
+import org.bitcoinj.params.TestNet3Params
 import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.StateTransitionIdentitySigned
 
-class StateTransitionMock(protocolVersion: Int = ProtocolVersion.latestVersion) : StateTransitionIdentitySigned(Types.DATA_CONTRACT_CREATE, protocolVersion) {
+class StateTransitionMock(protocolVersion: Int = ProtocolVersion.latestVersion) :
+    StateTransitionIdentitySigned(TestNet3Params.get(), Types.DATA_CONTRACT_CREATE, protocolVersion) {
     override val modifiedDataIds: List<Identifier>
         get() = TODO("Not yet implemented")
 

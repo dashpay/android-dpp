@@ -84,21 +84,26 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
     }
 
     fun createIdentityCreateTransition(identity: Identity): IdentityCreateTransition {
-        return IdentityCreateTransition(identity.assetLockProof!!, identity.publicKeys, ProtocolVersion.latestVersion)
+        return IdentityCreateTransition(
+            dpp.getNetworkParameters(),
+            identity.assetLockProof!!,
+            identity.publicKeys,
+            ProtocolVersion.latestVersion
+        )
     }
 
     fun createIdentityCreateTransition(
         assetLock: AssetLockProof,
         identityPublicKeys: List<IdentityPublicKey>
     ): IdentityCreateTransition {
-        return IdentityCreateTransition(assetLock, identityPublicKeys)
+        return IdentityCreateTransition(dpp.getNetworkParameters(), assetLock, identityPublicKeys)
     }
 
     fun createIdentityTopupTransition(
         identityId: Identifier,
         assetLock: AssetLockProof
     ): IdentityTopUpTransition {
-        return IdentityTopUpTransition(identityId, assetLock)
+        return IdentityTopUpTransition(dpp.getNetworkParameters(), identityId, assetLock)
     }
 
     fun applyIdentityCreateStateTransition(stateTransition: IdentityStateTransition): Identity {

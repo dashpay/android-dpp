@@ -6,6 +6,7 @@
  */
 package org.dashj.platform.dpp.document
 
+import org.bitcoinj.core.NetworkParameters
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.StateTransitionIdentitySigned
 import java.lang.IllegalStateException
@@ -19,22 +20,24 @@ class DocumentsBatchTransition : StateTransitionIdentitySigned {
     override val modifiedDataIds: List<Identifier>
         get() = transitions.map { it.id }
 
-    constructor(ownerId: Identifier, transitions: List<DocumentTransition>) : super(Types.DOCUMENTS_BATCH) {
-        this.ownerId = ownerId
-        this.transitions = transitions
-    }
+    constructor(params: NetworkParameters, ownerId: Identifier, transitions: List<DocumentTransition>) :
+        super(params, Types.DOCUMENTS_BATCH) {
+            this.ownerId = ownerId
+            this.transitions = transitions
+        }
 
-    constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
-        ownerId = Identifier.from(rawStateTransition["ownerId"])
-        transitions = (rawStateTransition["transitions"] as List<Any?>).map {
-            when (((it as MutableMap<String, Any?>)["\$action"] as Int)) {
-                DocumentTransition.Action.CREATE.value -> DocumentCreateTransition(it)
-                DocumentTransition.Action.REPLACE.value -> DocumentReplaceTransition(it)
-                DocumentTransition.Action.DELETE.value -> DocumentReplaceTransition(it)
-                else -> throw IllegalStateException("Invalid action")
+    constructor(params: NetworkParameters, rawStateTransition: MutableMap<String, Any?>) :
+        super(params, rawStateTransition) {
+            ownerId = Identifier.from(rawStateTransition["ownerId"])
+            transitions = (rawStateTransition["transitions"] as List<Any?>).map {
+                when (((it as MutableMap<String, Any?>)["\$action"] as Int)) {
+                    DocumentTransition.Action.CREATE.value -> DocumentCreateTransition(it)
+                    DocumentTransition.Action.REPLACE.value -> DocumentReplaceTransition(it)
+                    DocumentTransition.Action.DELETE.value -> DocumentReplaceTransition(it)
+                    else -> throw IllegalStateException("Invalid action")
+                }
             }
         }
-    }
 
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
         val map = super.toObject(skipSignature, skipIdentifiersConversion)

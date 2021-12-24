@@ -176,6 +176,6 @@ class DocumentFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
             "ownerId" to ownerId,
             "transitions" to rawDocumentTransitions
         )
-        return DocumentsBatchTransition(rawBatchTransition)
+        return DocumentsBatchTransition(dpp.getNetworkParameters(), rawBatchTransition)
     }
 }

@@ -6,21 +6,25 @@
  */
 package org.dashj.platform.dpp.identity
 
+import org.bitcoinj.core.NetworkParameters
 import org.dashj.platform.dpp.statetransition.StateTransitionIdentitySigned
 
 abstract class IdentityStateTransition : StateTransitionIdentitySigned {
 
     constructor(
+        params: NetworkParameters,
         signaturePublicKeyId: Int?,
         signature: ByteArray?,
         type: Types,
         protocolVersion: Int
     ) :
-        super(signaturePublicKeyId, signature, type, protocolVersion)
+        super(params, signaturePublicKeyId, signature, type, protocolVersion)
 
-    constructor(type: Types, protocolVersion: Int = 0) : this(null, null, type, protocolVersion)
+    constructor(params: NetworkParameters, type: Types, protocolVersion: Int = 0) :
+        this(params, null, null, type, protocolVersion)
 
-    constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition)
+    constructor(params: NetworkParameters, rawStateTransition: MutableMap<String, Any?>) :
+        super(params, rawStateTransition)
 
     override fun isDataContractStateTransition(): Boolean {
         return false

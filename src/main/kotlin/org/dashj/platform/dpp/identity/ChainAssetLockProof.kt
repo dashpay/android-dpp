@@ -1,8 +1,8 @@
 package org.dashj.platform.dpp.identity
 
+import org.bitcoinj.core.NetworkParameters
 import org.bitcoinj.core.Sha256Hash
 import org.bitcoinj.core.TransactionOutPoint
-import org.bitcoinj.params.TestNet3Params
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.Converters
 
@@ -16,11 +16,12 @@ class ChainAssetLockProof(
 
     override val type: Int = TYPE
 
-    constructor(coreChainLockedHeight: Long, outPoint: ByteArray) :
-        this(coreChainLockedHeight, TransactionOutPoint(TestNet3Params.get(), outPoint, 0))
+    constructor(params: NetworkParameters, coreChainLockedHeight: Long, outPoint: ByteArray) :
+        this(coreChainLockedHeight, TransactionOutPoint(params, outPoint, 0))
 
-    constructor(rawAssetLockProof: Map<String, Any?>) :
+    constructor(params: NetworkParameters, rawAssetLockProof: Map<String, Any?>) :
         this(
+            params,
             rawAssetLockProof["coreChainLockedHeight"] as Long,
             Converters.byteArrayFromBase64orByteArray(
                 rawAssetLockProof["outPoint"]

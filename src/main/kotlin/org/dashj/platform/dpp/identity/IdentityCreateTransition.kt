@@ -6,6 +6,7 @@
  */
 package org.dashj.platform.dpp.identity
 
+import org.bitcoinj.core.NetworkParameters
 import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.AssetLockProofFactory
@@ -20,19 +21,21 @@ class IdentityCreateTransition : IdentityStateTransition {
         get() = listOf(identityId)
 
     constructor(
+        params: NetworkParameters,
         assetLock: AssetLockProof,
         publicKeys: List<IdentityPublicKey>,
         protocolVersion: Int = ProtocolVersion.latestVersion
     ) :
-        super(Types.IDENTITY_CREATE, protocolVersion) {
+        super(params, Types.IDENTITY_CREATE, protocolVersion) {
             this.assetLockProof = assetLock
             this.identityId = assetLock.createIdentifier()
             this.publicKeys = publicKeys.toMutableList()
         }
 
-    constructor(rawStateTransition: MutableMap<String, Any?>) :
-        super(rawStateTransition) {
+    constructor(params: NetworkParameters, rawStateTransition: MutableMap<String, Any?>) :
+        super(params, rawStateTransition) {
             assetLockProof = AssetLockProofFactory.createAssetLockProofInstance(
+                params,
                 rawStateTransition["assetLockProof"] as Map<String, Any?>
             )
             publicKeys = (rawStateTransition["publicKeys"] as List<Any>).map {
