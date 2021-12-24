@@ -6,7 +6,6 @@
  */
 package org.dashj.platform.dpp
 
-import org.bitcoinj.core.Block
 import org.bitcoinj.core.Transaction
 import org.bitcoinj.quorums.InstantSendLock
 import org.dashj.platform.dpp.contract.DataContract
@@ -51,7 +50,7 @@ interface StateRepository {
 
     fun storeIdentityPublicKeyHashes(identity: Identifier, publicKeyHashes: List<ByteArray>)
 
-    fun fetchLatestPlatformBlockHeader(): Block
+    fun fetchLatestPlatformBlockHeader(): ByteArray
 
     fun verifyInstantLock(instantLock: InstantSendLock): Boolean
 
