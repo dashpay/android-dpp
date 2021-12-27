@@ -65,6 +65,11 @@ compileTestKotlin {
 test {
     finalizedBy jacocoTestReport // report is always generated after tests run
 }
+
+tasks.withType(Test) {
+    systemProperty "java.library.path", "src/main/jniLibs"
+}
+
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
     reports {
