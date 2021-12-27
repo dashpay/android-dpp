@@ -89,3 +89,66 @@ fun String.toByteArray(): ByteArray {
         }
     }
 }
+
+fun List<Any>.deepCopy(): List<Any> {
+    val copy = arrayListOf<Any>()
+    copy.addAll(this)
+    return copy
+}
+
+fun Map<String, Any?>.deepCopy(): Map<String, Any?> {
+    val copy = HashMap<String, Any?>(size)
+    for (key in keys) {
+        when (val value = get(key)) {
+            is Map<*, *> -> copy[key] = (value as Map<String, Any?>).deepCopy()
+            is List<*> -> copy[key] = (value as List<Any>).deepCopy()
+            else -> copy[key] = value
+        }
+    }
+    return copy
+}
+
+fun List<Any>.deepCompare(list: List<Any>): Boolean {
+    if (list.size != size)
+        return false
+    var equals = true
+    for (i in indices) {
+        val thisValue = get(i)
+        val value = list[i]
+        equals = when {
+            value is ByteArray && thisValue is ByteArray -> thisValue.contentEquals(value)
+            thisValue is Map<*, *> && value is Map<*, *> ->
+                (thisValue as Map<String, Any?>).deepCompare(value as Map<String, Any?>)
+            thisValue is List<*> && value is List<*> -> (thisValue as List<Any>).deepCompare(value as List<Any>)
+            else -> thisValue == value
+        }
+        if (!equals) {
+            break
+        }
+    }
+    return equals
+}
+
+fun Map<String, Any?>.deepCompare(map: Map<String, Any?>): Boolean {
+    if (map.size != size || map.keys != keys) {
+        return false
+    }
+    var equals = true
+    for (key in keys) {
+        val thisValue = get(key)
+        val value = map[key]
+        equals = when {
+            thisValue == null -> value == null
+            value == null -> false
+            value is ByteArray && thisValue is ByteArray -> thisValue.contentEquals(value)
+            thisValue is Map<*, *> && value is Map<*, *> ->
+                (thisValue as Map<String, Any?>).deepCompare(value as Map<String, Any?>)
+            thisValue is List<*> && value is List<*> -> (thisValue as List<Any>).deepCompare(value as List<Any>)
+            else -> thisValue == value
+        }
+        if (!equals) {
+            break
+        }
+    }
+    return equals
+}

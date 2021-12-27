@@ -3,6 +3,10 @@ package org.dashj.platform.dpp.util
 import org.bitcoinj.core.AddressFormatException
 import org.bitcoinj.core.Base58
 import org.bitcoinj.core.Sha256Hash
+import org.dashj.platform.dpp.assertMapEquals
+import org.dashj.platform.dpp.assertMapNotEquals
+import org.dashj.platform.dpp.deepCompare
+import org.dashj.platform.dpp.deepCopy
 import org.dashj.platform.dpp.hashTwice
 import org.dashj.platform.dpp.toBase58
 import org.dashj.platform.dpp.toBase64
@@ -12,8 +16,10 @@ import org.dashj.platform.dpp.toHex
 import org.dashj.platform.dpp.toSha256Hash
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.lang.IllegalArgumentException
 
@@ -89,5 +95,74 @@ class ExtensionTest {
         assertEquals(hashTwice.toHex(), data.toSha256Hash().toString())
         assertEquals(hashTwice.toHex(), Sha256Hash.wrap(hashTwice).toString())
         assertEquals(hashTwice.toHex(), Sha256Hash.twiceOf(data).toString())
+    }
+
+    @Test
+    fun deepCompareTest() {
+        val mapOne = mapOf(
+            "first" to 1,
+            "second" to 2.0f,
+            "third" to "3",
+            "four" to hashMapOf(
+                "fifth" to 5,
+                "6th" to listOf(6, 60, 600, 6000)
+            )
+        )
+        // hard coded copy
+        val mapTwo = mapOf(
+            "first" to 1,
+            "second" to 2.0f,
+            "third" to "3",
+            "four" to hashMapOf(
+                "fifth" to 5,
+                "6th" to listOf(6, 60, 600, 6000)
+            )
+        )
+        // deep copy
+        val mapThree = mapTwo.deepCopy()
+        // check that a map is equal to itself
+        assertMapEquals(mapOne, mapOne)
+        // check that a map is equal to a hard coded copy of itself
+        assertMapEquals(mapOne, mapTwo)
+        // check that a map is equal to a deep of itself
+        assertMapEquals(mapOne, mapThree)
+
+        // different value for one key
+        val mapFour = mapOf(
+            "first" to 1.1,
+            "second" to 2.0f,
+            "third" to "3",
+            "four" to hashMapOf(
+                "fifth" to 5,
+                "6th" to listOf(6, 60, 600, 6000)
+            )
+        )
+        assertMapNotEquals(mapOne, mapFour)
+        // missing a key
+        val mapFive = mapOf(
+            "first" to 1.1,
+            "second" to 2.0f,
+            "four" to hashMapOf(
+                "fifth" to 5,
+                "6th" to listOf(6, 60, 600, 6000)
+            )
+        )
+        assertMapNotEquals(mapOne, mapFive)
+        // extra value in the list
+        val mapSix = mapOf(
+            "first" to 1,
+            "second" to 2.0f,
+            "third" to "3",
+            "four" to hashMapOf(
+                "fifth" to 5,
+                "6th" to listOf(6, 60, 600, 6000, 60000)
+            )
+        )
+        assertMapNotEquals(mapOne, mapSix)
+
+        // test Lest.deepCompare
+        assertTrue(listOf(1, 3, 5, 7, 9).deepCompare(listOf(1, 3, 5, 7, 9)))
+        assertFalse(listOf(1, 3, 5, 7, 9).deepCompare(listOf(1, 3, 5, 7, 9, 11)))
+        assertFalse(listOf(1, 3, 5, 7, 9).deepCompare(listOf(1, 3, 5, 7, 11)))
     }
 }
