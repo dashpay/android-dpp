@@ -6,8 +6,8 @@
  */
 package org.dashj.platform.dpp
 
-import org.bitcoinj.core.Base58
 import org.bitcoinj.core.Coin
+import org.bitcoinj.core.DumpedPrivateKey
 import org.bitcoinj.core.ECKey
 import org.bitcoinj.core.Sha256Hash
 import org.bitcoinj.core.Transaction
@@ -212,11 +212,15 @@ object Fixtures {
                     "id" to 0,
                     "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1,
                     "data" to Converters.fromBase64("AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di"),
+                    "purpose" to IdentityPublicKey.Purpose.AUTHENTICATION,
+                    "securityLevel" to IdentityPublicKey.SecurityLevel.MASTER
                 ),
                 mapOf(
                     "id" to 1,
                     "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1,
                     "data" to Converters.fromBase64("A8AK95PYMVX5VQKzOhcVQRCUbc9pyg3RiL7jttEMDU+L"),
+                    "purpose" to IdentityPublicKey.Purpose.ENCRYPTION,
+                    "securityLevel" to IdentityPublicKey.SecurityLevel.MEDIUM
                 )
             )
         )
@@ -265,7 +269,7 @@ object Fixtures {
 
     fun getInstantAssetLockProofFixture(oneTimePrivateKey: ECKey = ECKey()): InstantAssetLockProof {
         val privateKeyHex = "cSBnVM4xvxarwGQuAfQFwqDg9k5tErHUHzgWsEfD4zdwUasvqRVY"
-        val privateKey = ECKey.fromPrivate(Base58.decode(privateKeyHex))
+        val privateKey = DumpedPrivateKey.fromBase58(PARAMS, privateKeyHex).key
 
         val transaction = Transaction(PARAMS)
         transaction.addInput(
@@ -400,7 +404,7 @@ object Fixtures {
             mapOf(
                 "type" to 1,
                 "coreChainLockedHeight" to 42,
-                "output" to outPoint
+                "outPoint" to outPoint.bitcoinSerialize()
             )
         )
     }
