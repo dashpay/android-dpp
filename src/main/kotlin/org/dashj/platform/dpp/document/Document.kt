@@ -11,24 +11,12 @@ import org.dashj.platform.dpp.BaseObject
 import org.dashj.platform.dpp.Metadata
 import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.contract.DataContract
+import org.dashj.platform.dpp.deepCopy
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.util.Converters
 import kotlin.collections.HashMap
 
 class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : BaseObject() {
-
-    companion object {
-        fun deepCopy(map: Map<String, Any?>): MutableMap<String, Any?> {
-            val copy = HashMap<String, Any?>(map.size)
-            for (key in map.keys) {
-                when (val value = map[key]) {
-                    is Map<*, *> -> copy[key] = deepCopy(value as MutableMap<String, Any?>)
-                    else -> copy[key] = value
-                }
-            }
-            return copy
-        }
-    }
 
     val dataContract: DataContract
     var id: Identifier
@@ -80,7 +68,7 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
             "\$revision" to revision
         )
 
-        val deepCopy = deepCopy(data)
+        val deepCopy = data.deepCopy()
         map.putAll(deepCopy)
 
         createdAt?.let { map["\$createdAt"] = it }

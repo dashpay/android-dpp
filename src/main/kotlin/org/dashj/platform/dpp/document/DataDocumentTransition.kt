@@ -7,6 +7,7 @@
 
 package org.dashj.platform.dpp.document
 
+import org.dashj.platform.dpp.deepCopy
 import org.dashj.platform.dpp.util.Converters
 
 abstract class DataDocumentTransition(rawStateTransition: MutableMap<String, Any?>) :
@@ -22,7 +23,7 @@ abstract class DataDocumentTransition(rawStateTransition: MutableMap<String, Any
     override fun toObject(skipIdentifierConversion: Boolean): MutableMap<String, Any?> {
         val map = super.toObject(skipIdentifierConversion)
 
-        val deepCopy = Document.deepCopy(data)
+        val deepCopy = data.deepCopy()
         map.putAll(deepCopy)
 
         return map
