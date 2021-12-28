@@ -176,12 +176,12 @@ object Fixtures {
     fun getIdentityCreateTransitionFixture(oneTimePrivateKey: ECKey = ECKey()): IdentityCreateTransition {
         val rawStateTransition = hashMapOf<String, Any?>(
             "protocolVersion" to ProtocolVersion.latestVersion,
-            "type" to StateTransition.Types.IDENTITY_CREATE,
+            "type" to StateTransition.Types.IDENTITY_CREATE.value,
             "assetLockProof" to getInstantAssetLockProofFixture(oneTimePrivateKey).toObject(),
             "publicKeys" to listOf(
                 mapOf(
                     "id" to 0,
-                    "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1,
+                    "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1.value,
                     "data" to Converters.fromBase64("AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di"),
                 )
             )
@@ -392,7 +392,7 @@ object Fixtures {
         val outPoint = TransactionOutPoint(
             PARAMS,
             0,
-            Sha256Hash.wrapReversed(
+            Sha256Hash.wrap(
                 Converters.fromHex(
                     "6e200d059fb567ba19e92f5c2dcd3dde522fd4e0a50af223752db16158dabb1d"
                 )
