@@ -7,6 +7,10 @@
 package org.dashj.platform.dpp.identity
 
 import org.bitcoinj.core.ECKey
+import org.bitcoinj.core.Sha256Hash
+import org.bitcoinj.core.Transaction
+import org.bitcoinj.core.TransactionOutPoint
+import org.bitcoinj.params.TestNet3Params
 import org.dashj.platform.dpp.DashPlatformProtocol
 import org.dashj.platform.dpp.Fixtures
 import org.dashj.platform.dpp.ProtocolVersion
@@ -17,6 +21,7 @@ import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.toHex
 import org.dashj.platform.dpp.toHexString
 import org.dashj.platform.dpp.util.Cbor
+import org.dashj.platform.dpp.util.Converters
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -170,5 +175,21 @@ class IdentityTest {
         val fromSerialized = IdentityFactory(dpp, stateRepository).createFromBuffer(serialized)
 
         assertEquals(fromFixture.toJSON(), fromSerialized.toJSON())
+    }
+
+    @Test
+    fun transactionIdentityIdTest() {
+        val txId = "365cf2ca42e08ba45da978b872c76bdb60f98c0202f535f401fd1175beb0adfd"
+        val txData = "0100000001be20a4fb4b1dc67f43f6679e1a6ad4e80e1783a99755ed7b97ae6809fd3036ef000000006b483045022100c4676acbf41257668e15b10fed03554e816a063e9e7c4a0c39b51421ae8d800c0220432b205b4717b99e14849ea441ffb216100d2c61657c9802d173c5bf6305e3340121035aa64482c28788dc1264111274ae8e0a032b037b9e614ff7aefdeb5ad559dfc6ffffffff0260410f00000000001976a914fcf52d2c425c5f736718505725890564452323c488ac40420f0000000000166a14b850573dd12769f4e286bafdd047d4ba64640f9800000000"
+        val tx = Transaction(TestNet3Params.get(), Converters.fromHex(txData), 0)
+
+        val proof = ChainAssetLockProof(0, tx.getOutput(1).outPointFor)
+
+        val reversed = TransactionOutPoint(TestNet3Params.get(), 1, Sha256Hash.wrapReversed(tx.txId.bytes))
+        val manual = Sha256Hash.twiceOf(reversed.bitcoinSerialize()).toStringBase58()
+        val manual2 = proof.createIdentifier().toString()
+
+        assertEquals("BxPnhFctj7iFguFnGnZNfdQT7YT6Acad3nGWT3ZJRsRv", manual)
+        assertEquals("BxPnhFctj7iFguFnGnZNfdQT7YT6Acad3nGWT3ZJRsRv", manual2)
     }
 }
