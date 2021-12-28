@@ -54,6 +54,14 @@ abstract class StateTransitionIdentitySigned(
     }
 
     fun sign(identityPublicKey: IdentityPublicKey, privateKey: String) {
+        sign(identityPublicKey, getPrivateECKey(privateKey, identityPublicKey))
+    }
+
+    fun sign(identityPublicKey: IdentityPublicKey, privateKey: ECKey) {
+        sign(identityPublicKey, privateKey.privKeyBytes)
+    }
+
+    fun sign(identityPublicKey: IdentityPublicKey, privateKey: ByteArray) {
         val privateKeyModel: ECKey
         val pubKeyBase: ByteArray
 
@@ -61,15 +69,16 @@ abstract class StateTransitionIdentitySigned(
 
         when (identityPublicKey.type) {
             IdentityPublicKey.TYPES.ECDSA_SECP256K1 -> {
-                privateKeyModel = try {
-                    DumpedPrivateKey.fromBase58(params, privateKey).key
-                } catch (_: AddressFormatException.WrongNetwork) {
-                    // the WIF is on the wrong network
-                    throw InvalidSignaturePublicKeyException(identityPublicKey.data.toBase64())
-                } catch (_: AddressFormatException) {
-                    ECKey.fromPrivate(Converters.fromHex(privateKey))
-                }
+                privateKeyModel = ECKey.fromPrivate(privateKey)
                 pubKeyBase = privateKeyModel.pubKey
+                if (!pubKeyBase.contentEquals(identityPublicKey.data)) {
+                    throw InvalidSignaturePublicKeyException(identityPublicKey.data.toBase64())
+                }
+                signByPrivateKey(privateKeyModel)
+            }
+            IdentityPublicKey.TYPES.ECDSA_HASH160 -> {
+                privateKeyModel = ECKey.fromPrivate(privateKey)
+                pubKeyBase = privateKeyModel.pubKeyHash
                 if (!pubKeyBase.contentEquals(identityPublicKey.data)) {
                     throw InvalidSignaturePublicKeyException(identityPublicKey.data.toBase64())
                 }
@@ -85,13 +94,35 @@ abstract class StateTransitionIdentitySigned(
         signaturePublicKeyId = identityPublicKey.id
     }
 
+    /**
+     * returns a ECKey for the private key associated with privateKey
+     * or throws an exception
+     */
+    private fun getPrivateECKey(
+        privateKey: String,
+        identityPublicKey: IdentityPublicKey
+    ) = try {
+        DumpedPrivateKey.fromBase58(params, privateKey).key
+    } catch (_: AddressFormatException.WrongNetwork) {
+        // the WIF is on the wrong network
+        throw InvalidSignaturePublicKeyException(identityPublicKey.data.toBase64())
+    } catch (_: AddressFormatException) {
+        ECKey.fromPrivate(Converters.fromHex(privateKey))
+    }
+
     fun verifySignature(publicKey: IdentityPublicKey): Boolean {
+        verifyPublicKeyLevelAndPurpose(publicKey)
+
         if (signature == null) {
             throw StateTransitionIsNotSignedError(this)
         }
 
         if (signaturePublicKeyId != publicKey.id) {
             throw PublicKeyMismatchError(publicKey)
+        }
+
+        if (publicKey.type == IdentityPublicKey.TYPES.ECDSA_HASH160) {
+            return verifySignatureByPublicKeyHash(publicKey.data)
         }
 
         val publicKeyModel = ECKey.fromPublicOnly(publicKey.data)

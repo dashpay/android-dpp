@@ -10,6 +10,7 @@ package org.dashj.platform.dpp.statetransition
 import org.bitcoinj.core.ECKey
 import org.dashj.platform.dpp.BaseObject
 import org.dashj.platform.dpp.ProtocolVersion
+import org.dashj.platform.dpp.hashTwice
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedError
 import org.dashj.platform.dpp.toBase64Padded
@@ -56,6 +57,10 @@ abstract class StateTransition(
 
     constructor(type: Types, protocolVersion: Int = ProtocolVersion.latestVersion) : this(null, type, protocolVersion)
 
+    fun setSignature(signature: String): StateTransition {
+        return setSignature(Converters.fromBase64(signature))
+    }
+
     fun setSignature(signature: ByteArray): StateTransition {
         this.signature = signature
         return this
@@ -87,10 +92,18 @@ abstract class StateTransition(
         return json
     }
 
+    fun hash(skipSignature: Boolean): ByteArray {
+        return toBuffer(skipSignature).hashTwice()
+    }
+
     fun toBuffer(skipSignature: Boolean): ByteArray {
         val serializedData = toObject(skipSignature, false)
         serializedData.remove("protocolVersion")
         return encodeProtocolEntity(serializedData)
+    }
+
+    fun signByPrivateKey(privateKey: String) {
+        signByPrivateKey(ECKey.fromPrivate(Converters.fromHex(privateKey)))
     }
 
     fun signByPrivateKey(privateKey: ECKey) {
@@ -111,6 +124,23 @@ abstract class StateTransition(
         isSignatureVerified = try {
             val pubkeyFromSig = ECKey.signedMessageToKey(hash, signature)
             pubkeyFromSig.pubKey!!.contentEquals(publicKey.pubKey)
+        } catch (e: SignatureException) {
+            false
+        }
+        return isSignatureVerified
+    }
+
+    fun verifySignatureByPublicKeyHash(publicKeyHash: ByteArray): Boolean {
+
+        if (signature == null) {
+            throw StateTransitionIsNotSignedError(this)
+        }
+
+        val hash = this.toBuffer(true).toSha256Hash()
+
+        isSignatureVerified = try {
+            val pubkeyFromSig = ECKey.signedMessageToKey(hash, signature)
+            pubkeyFromSig.pubKeyHash!!.contentEquals(publicKeyHash)
         } catch (e: SignatureException) {
             false
         }
