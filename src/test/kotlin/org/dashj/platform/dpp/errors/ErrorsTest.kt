@@ -8,7 +8,9 @@ package org.dashj.platform.dpp.errors
 
 import org.dashj.platform.dpp.errors.concensus.Codes
 import org.dashj.platform.dpp.errors.concensus.ConcensusException
+import org.dashj.platform.dpp.errors.concensus.basic.identity.InvalidInstantAssetLockProofException
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ErrorsTest {
@@ -60,5 +62,18 @@ class ErrorsTest {
 
         assertEquals(Codes.InvalidStateTransitionSignatureError.code, exception.getCode())
         assertEquals("InvalidStateTransitionSignatureError", exception.name)
+    }
+
+    @Test
+    fun invalidInstantAssetLockProofErrorTest() {
+        val metadata = "Metadata(code=1041,drive-error-data-bin=oWlhcmd1bWVudHOBeDpJbnZhbGlkIEFyZ3VtZW50OiBFeHBlY3RlZCBzaWduYXR1cmUgdG8gYmUgYSBibHMgc2lnbmF0dXJl)"
+
+        val errorMetadata = ErrorMetadata(metadata)
+
+        val exception = ConcensusException.create(errorMetadata.code, errorMetadata.arguments)
+
+        assertTrue(exception is InvalidInstantAssetLockProofException)
+        assertEquals(Codes.InvalidInstantAssetLockProofError.code, exception.getCode())
+        assertEquals("InvalidInstantAssetLockProofError", exception.name)
     }
 }

@@ -14,6 +14,7 @@ import org.dashj.platform.dpp.errors.concensus.basic.JsonSchemaException
 import org.dashj.platform.dpp.errors.concensus.basic.UnsupportedProtocolVersionException
 import org.dashj.platform.dpp.errors.concensus.basic.datacontract.InvalidDataContractIdException
 import org.dashj.platform.dpp.errors.concensus.basic.identity.IdentityAssetLockTransactionOutPointAlreadyExistsException
+import org.dashj.platform.dpp.errors.concensus.basic.identity.InvalidInstantAssetLockProofException
 import org.dashj.platform.dpp.errors.concensus.basic.identity.InvalidInstantAssetLockProofSignatureException
 import org.dashj.platform.dpp.errors.concensus.basic.statetransition.InvalidStateTransitionTypeException
 import org.dashj.platform.dpp.errors.concensus.basic.statetransition.MissingStateTransitionTypeException
@@ -116,7 +117,7 @@ abstract class ConcensusException(message: String) : DPPException(message) {
 //                Codes.InvalidIdentityAssetLockTransactionError -> InvalidIdentityAssetLockTransactionException(arguments)
 //                Codes.InvalidIdentityAssetLockTransactionOutputError -> InvalidIdentityAssetLockTransactionOutputException(arguments)
 //                Codes.InvalidIdentityPublicKeyDataError -> InvalidIdentityPublicKeyDataException(arguments)
-//                Codes.InvalidInstantAssetLockProofError -> InvalidInstantAssetLockProofException(arguments)
+                Codes.InvalidInstantAssetLockProofError -> InvalidInstantAssetLockProofException(arguments)
                 Codes.InvalidInstantAssetLockProofSignatureError ->
                     InvalidInstantAssetLockProofSignatureException(arguments)
                 Codes.InvalidStateTransitionTypeError -> InvalidStateTransitionTypeException(arguments)
