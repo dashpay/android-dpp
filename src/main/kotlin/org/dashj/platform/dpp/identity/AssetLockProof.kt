@@ -10,6 +10,10 @@ abstract class AssetLockProof : BaseObject() {
 
     abstract fun getOutPoint(): ByteArray
 
+    /**
+     * the identifier is the double SHA hash of the outPoint structure
+     * which is the txid in big endian followed by the output index in little Endian
+     */
     fun createIdentifier(): Identifier {
         return Identifier.from(Sha256Hash.twiceOf(getOutPoint()))
     }

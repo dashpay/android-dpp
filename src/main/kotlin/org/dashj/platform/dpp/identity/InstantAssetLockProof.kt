@@ -41,6 +41,7 @@ class InstantAssetLockProof(
     val output: TransactionOutput
         get() = transaction.getOutput(outputIndex)
 
+    // the outPoint format required must have the transaction hash in Big Endian Format
     override fun getOutPoint(): ByteArray {
         val outPoint = TransactionOutPoint(
             output.params, output.outPointFor.index,

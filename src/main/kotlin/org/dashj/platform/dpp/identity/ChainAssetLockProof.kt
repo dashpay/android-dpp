@@ -21,7 +21,8 @@ class ChainAssetLockProof(
             coreChainLockedHeight,
             TransactionOutPoint(
                 params,
-                outPoint.sliceArray(0 until 32).reversedArray().plus(outPoint.sliceArray(32 until 36)
+                outPoint.sliceArray(0 until 32).reversedArray().plus(
+                    outPoint.sliceArray(32 until 36)
                 ),
                 0
             )
@@ -37,6 +38,7 @@ class ChainAssetLockProof(
             )
         )
 
+    // the outPoint format required must have the transaction hash in Big Endian Format
     override fun getOutPoint(): ByteArray {
         val outPoint = TransactionOutPoint(
             outPoint.params,
