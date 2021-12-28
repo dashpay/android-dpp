@@ -1,6 +1,5 @@
 package org.dashj.platform.dpp.identity
 
-import jdk.nashorn.internal.ir.annotations.Ignore
 import org.bitcoinj.core.ECKey
 import org.bitcoinj.core.Transaction
 import org.bitcoinj.params.TestNet3Params
@@ -71,7 +70,7 @@ class IdentityFactorySpec {
         assertEquals(identity.toObject(), result.toObject())
     }
 
-    @Test @Ignore // This fails due to different list order of public keys?
+    @Test
     fun `#createFromBuffer should create Identity from string`() {
         val result = dpp.identity.createFromBuffer(identity.toBuffer())
         assertTrue(identity.toObject().deepCompare(result.toObject()))
