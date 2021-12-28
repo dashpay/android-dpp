@@ -11,8 +11,8 @@ import org.dashj.platform.dpp.errors.DPPException
 import org.dashj.platform.dpp.identity.IdentityPublicKey
 
 class PublicKeySecurityLevelNotMetException(
-    publicKeySecurityLevel: IdentityPublicKey.SecurityLevel,
-    requiredSecurityLevel: IdentityPublicKey.SecurityLevel
+    val publicKeySecurityLevel: IdentityPublicKey.SecurityLevel,
+    val requiredSecurityLevel: IdentityPublicKey.SecurityLevel
 ) : DPPException(
     "State transition is signed with a key with security level $publicKeySecurityLevel, but expected at least " +
         "$requiredSecurityLevel"
