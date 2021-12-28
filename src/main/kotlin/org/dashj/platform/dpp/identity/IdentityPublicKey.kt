@@ -88,7 +88,7 @@ class IdentityPublicKey(
     constructor(id: Int, type: TYPES, data: ByteArray) :
         this(id, type, Purpose.AUTHENTICATION, SecurityLevel.MASTER, data, true)
 
-    constructor(rawIdentityPublicKey: Map<String, Any>) :
+    constructor(rawIdentityPublicKey: Map<String, Any?>) :
         this(
             rawIdentityPublicKey["id"] as Int,
             when (rawIdentityPublicKey["type"]) {

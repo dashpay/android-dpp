@@ -32,7 +32,7 @@ class IdentityCreateTransition : IdentityStateTransition {
             this.publicKeys = publicKeys.toMutableList()
         }
 
-    constructor(params: NetworkParameters, rawStateTransition: MutableMap<String, Any?>) :
+    constructor(params: NetworkParameters, rawStateTransition: Map<String, Any?>) :
         super(params, rawStateTransition) {
             assetLockProof = AssetLockProofFactory.createAssetLockProofInstance(
                 params,

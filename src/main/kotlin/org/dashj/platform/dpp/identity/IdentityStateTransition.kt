@@ -23,7 +23,7 @@ abstract class IdentityStateTransition : StateTransitionIdentitySigned {
     constructor(params: NetworkParameters, type: Types, protocolVersion: Int = 0) :
         this(params, null, null, type, protocolVersion)
 
-    constructor(params: NetworkParameters, rawStateTransition: MutableMap<String, Any?>) :
+    constructor(params: NetworkParameters, rawStateTransition: Map<String, Any?>) :
         super(params, rawStateTransition)
 
     override fun isDataContractStateTransition(): Boolean {

@@ -31,7 +31,7 @@ abstract class StateTransitionIdentitySigned(
 ) :
     StateTransition(signature, type, protocolVersion) {
 
-    constructor(params: NetworkParameters, rawStateTransition: MutableMap<String, Any?>) :
+    constructor(params: NetworkParameters, rawStateTransition: Map<String, Any?>) :
         this(
             params,
             rawStateTransition["signaturePublicKeyId"] as? Int,
