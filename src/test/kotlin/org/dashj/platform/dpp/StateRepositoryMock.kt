@@ -7,7 +7,7 @@ import org.dashj.platform.dpp.document.Document
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.identity.Identity
 
-class StateRepositoryMock : StateRepository {
+open class StateRepositoryMock : StateRepository {
     override fun fetchDataContract(id: Identifier): DataContract? {
         return DataContract(id, id, 0, DataContract.SCHEMA, mutableMapOf())
     }
