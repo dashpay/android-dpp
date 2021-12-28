@@ -12,6 +12,8 @@ class ChainAssetLockProof(
 ) : AssetLockProof() {
     companion object {
         const val TYPE = 1
+        const val OUTPOINT_HASH_SIZE = 32
+        const val OUTPOINT_SIZE = 36
     }
 
     override val type: Int = TYPE
@@ -21,8 +23,8 @@ class ChainAssetLockProof(
             coreChainLockedHeight,
             TransactionOutPoint(
                 params,
-                outPoint.sliceArray(0 until 32).reversedArray().plus(
-                    outPoint.sliceArray(32 until 36)
+                outPoint.sliceArray(0 until OUTPOINT_HASH_SIZE).reversedArray().plus(
+                    outPoint.sliceArray(OUTPOINT_HASH_SIZE until OUTPOINT_SIZE)
                 ),
                 0
             )
