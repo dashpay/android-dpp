@@ -18,6 +18,7 @@ import org.dashj.platform.dpp.StateRepository
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.AssetLockProofFactory
 import org.dashj.platform.dpp.util.CreditsConverter.convertSatoshiToCredits
+import org.dashj.platform.dpp.validation.ValidationResult
 
 class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepository) : Factory(dpp, stateRepository) {
 
@@ -39,7 +40,7 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         return Identity(Identifier.from(id), publicKeys, revision, protocolVersion)
     }
 
-    fun create(assetLockProof: AssetLockProof, publicKeys: List<ECKey>): Identity {
+    /*fun create(assetLockProof: AssetLockProof, publicKeys: List<ECKey>): Identity {
         return Identity(
             assetLockProof.createIdentifier(),
             publicKeys.mapIndexed {
@@ -56,9 +57,23 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
             revision = 0,
             protocolVersion = ProtocolVersion.latestVersion
         )
+    }*/
+
+    fun create(assetLockProof: AssetLockProof, publicKeyConfigs: List<Map<String, Any>>): Identity {
+        var i = 0
+        val identity = Identity(
+            assetLockProof.createIdentifier(),
+            publicKeyConfigs.map { publicKey -> IdentityPublicKey(publicKey as Map<String, Any>) },
+            0,
+            ProtocolVersion.latestVersion
+        )
+
+        identity.assetLockProof = assetLockProof
+
+        return identity
     }
 
-    fun createFromObject(rawIdentity: MutableMap<String, Any?>, options: Options = Options()): Identity {
+    fun createFromObject(rawIdentity: Map<String, Any?>, options: Options = Options()): Identity {
         return Identity(rawIdentity)
     }
 
@@ -83,6 +98,13 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         return ChainAssetLockProof(coreChainLockedHeight, outPoint)
     }
 
+    fun createChainAssetLockProof(
+        coreChainLockedHeight: Long,
+        outPoint: ByteArray
+    ): ChainAssetLockProof {
+        return ChainAssetLockProof(dpp.getNetworkParameters(), coreChainLockedHeight, outPoint)
+    }
+
     fun createIdentityCreateTransition(identity: Identity): IdentityCreateTransition {
         return IdentityCreateTransition(
             dpp.getNetworkParameters(),
@@ -99,7 +121,7 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         return IdentityCreateTransition(dpp.getNetworkParameters(), assetLock, identityPublicKeys)
     }
 
-    fun createIdentityTopupTransition(
+    fun createIdentityTopUpTransition(
         identityId: Identifier,
         assetLock: AssetLockProof
     ): IdentityTopUpTransition {
@@ -147,5 +169,13 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         stateRepository.storeIdentity(identity)
 
         stateRepository.markAssetLockTransactionOutPointAsUsed(outPoint)
+    }
+
+    fun validate(identity: Identity): ValidationResult {
+        return validate(identity.toObject())
+    }
+
+    fun validate(rawIdentity: Map<String, Any?>): ValidationResult {
+        return ValidationResult(listOf())
     }
 }
