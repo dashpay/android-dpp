@@ -17,12 +17,20 @@ class ChainAssetLockProof(
     override val type: Int = TYPE
 
     constructor(params: NetworkParameters, coreChainLockedHeight: Long, outPoint: ByteArray) :
-        this(coreChainLockedHeight, TransactionOutPoint(params, outPoint, 0))
+        this(
+            coreChainLockedHeight,
+            TransactionOutPoint(
+                params,
+                outPoint.sliceArray(0 until 32).reversedArray().plus(outPoint.sliceArray(32 until 36)
+                ),
+                0
+            )
+        )
 
     constructor(params: NetworkParameters, rawAssetLockProof: Map<String, Any?>) :
         this(
             params,
-            rawAssetLockProof["coreChainLockedHeight"] as Long,
+            rawAssetLockProof["coreChainLockedHeight"].toString().toLong(),
             Converters.byteArrayFromBase64orByteArray(
                 rawAssetLockProof["outPoint"]
                     ?: error("missing outPoint field")
@@ -31,7 +39,9 @@ class ChainAssetLockProof(
 
     override fun getOutPoint(): ByteArray {
         val outPoint = TransactionOutPoint(
-            outPoint.params, outPoint.index, Sha256Hash.wrap(outPoint.hash.reversedBytes)
+            outPoint.params,
+            outPoint.index,
+            Sha256Hash.wrap(outPoint.hash.reversedBytes)
         )
         return outPoint.bitcoinSerialize()
     }
