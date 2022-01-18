@@ -4,6 +4,7 @@ import org.bitcoinj.params.TestNet3Params
 import org.dashj.platform.dpp.Fixtures
 import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.assertMapEquals
+import org.dashj.platform.dpp.deepCopy
 import org.dashj.platform.dpp.statetransition.StateTransition
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -51,26 +52,29 @@ class IdentityCreateTransitionSpec {
     }
 
     @Test
-    fun `#setPublicKeys should set public keys`() {
-        // val publicKeys = listOf(IdentityPublicKey(), IdentityPublicKey())
-
-        // stateTransition.publicKeys = publicKeys
-
-        // assertEquals(publicKeys, stateTransition)
-    }
-
-    @Test
     fun `#getPublicKeys should return set public keys`() {
         assertEquals((rawStateTransition["publicKeys"] as List<Any>).map { IdentityPublicKey(it as Map<String, Any?>) }, stateTransition.publicKeys)
     }
 
     @Test
     fun `#addPublicKeys should add more public keys`() {
-        // val publicKeys = listOf(IdentityPublicKey(), IdentityPublicKey())
+        val expected = stateTransition.publicKeys.deepCopy().toMutableList()
+        val publicKeys = listOf(
+            IdentityPublicKey(
+                0,
+                IdentityPublicKey.TYPES.ECDSA_SECP256K1,
+                ByteArray(32)
+            ),
+            IdentityPublicKey(
+                1,
+                IdentityPublicKey.TYPES.ECDSA_SECP256K1,
+                ByteArray(32)
+            )
+        )
 
-        // stateTransition.publicKeys = []
-        // stateTransition.addPublicKeys(publicKeys)
-        // assertEquals(publicKeys, stateTransition.publicKeys)
+        stateTransition.addPublicKeys(publicKeys)
+        expected.addAll(publicKeys)
+        assertEquals(expected, stateTransition.publicKeys)
     }
 
     @Test
