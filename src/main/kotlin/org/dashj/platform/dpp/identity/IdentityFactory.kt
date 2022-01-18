@@ -40,7 +40,7 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         return Identity(Identifier.from(id), publicKeys, revision, protocolVersion)
     }
 
-    /*fun create(assetLockProof: AssetLockProof, publicKeys: List<ECKey>): Identity {
+    fun createFromKeyList(assetLockProof: AssetLockProof, publicKeys: List<ECKey>): Identity {
         return Identity(
             assetLockProof.createIdentifier(),
             publicKeys.mapIndexed {
@@ -51,13 +51,13 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
                     IdentityPublicKey.Purpose.AUTHENTICATION,
                     IdentityPublicKey.SecurityLevel.MASTER,
                     it.pubKey,
-                    true
+                    false
                 )
             },
             revision = 0,
             protocolVersion = ProtocolVersion.latestVersion
         )
-    }*/
+    }
 
     fun create(assetLockProof: AssetLockProof, publicKeyConfigs: List<Map<String, Any>>): Identity {
         var i = 0
