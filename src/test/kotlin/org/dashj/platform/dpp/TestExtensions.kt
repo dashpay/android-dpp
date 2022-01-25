@@ -22,3 +22,10 @@ fun assertMapNotEquals(expected: Map<String, Any?>, actual: Map<String, Any?>) {
         throw AssertionFailedError(null, expected, actual)
     }
 }
+
+fun assertListEquals(expected: List<Any>, actual: List<Any>) {
+    val result = expected.deepCompare(actual)
+    if (!result) {
+        throw AssertionFailedError(null, expected, actual)
+    }
+}
