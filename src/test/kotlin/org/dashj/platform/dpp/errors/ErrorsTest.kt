@@ -18,7 +18,7 @@ class ErrorsTest {
     fun unauthenticatedTest() {
         val metadata = "Metadata(code=2002,drive-error-data-bin=oWlhcmd1bWVudHOA)"
 
-        val errorMetadata = ErrorMetadata(metadata)
+        val errorMetadata = ConcensusErrorMetadata(metadata)
 
         assertEquals(Codes.InvalidStateTransitionSignatureError, errorMetadata.code)
         assertEquals("arguments", errorMetadata.data.keys.first())
@@ -31,7 +31,7 @@ class ErrorsTest {
             "tZW50cy9wcm9wZXJ0eU5hbWVzL3BhdHRlcm6hZ3BhdHRlcm54KF5bYS16QS1aXVthLXpBLVowLTktX117MSw2Mn1bYS16QS1aMC05" +
             "XSRnJHNjaGVtYQ)"
 
-        val errorMetadata = ErrorMetadata(metadata)
+        val errorMetadata = ConcensusErrorMetadata(metadata)
         assertEquals(Codes.JsonSchemaError, errorMetadata.code)
         assertEquals("arguments", errorMetadata.data.keys.first())
 
@@ -44,7 +44,7 @@ class ErrorsTest {
     fun createCorrectExceptionClass() {
         val metadata = "Metadata(code=2002,drive-error-data-bin=oWlhcmd1bWVudHOA)"
 
-        val errorMetadata = ErrorMetadata(metadata)
+        val errorMetadata = ConcensusErrorMetadata(metadata)
 
         val exception = ConcensusException.create(errorMetadata.code, errorMetadata.arguments)
 
@@ -56,7 +56,7 @@ class ErrorsTest {
     fun noDataCreateCorrectExceptionClass() {
         val metadata = "Metadata(code=2002)"
 
-        val errorMetadata = ErrorMetadata(metadata)
+        val errorMetadata = ConcensusErrorMetadata(metadata)
 
         val exception = ConcensusException.create(errorMetadata.code, errorMetadata.arguments)
 
@@ -68,12 +68,32 @@ class ErrorsTest {
     fun invalidInstantAssetLockProofErrorTest() {
         val metadata = "Metadata(code=1041,drive-error-data-bin=oWlhcmd1bWVudHOBeDpJbnZhbGlkIEFyZ3VtZW50OiBFeHBlY3RlZCBzaWduYXR1cmUgdG8gYmUgYSBibHMgc2lnbmF0dXJl)"
 
-        val errorMetadata = ErrorMetadata(metadata)
+        val errorMetadata = ConcensusErrorMetadata(metadata)
 
         val exception = ConcensusException.create(errorMetadata.code, errorMetadata.arguments)
 
         assertTrue(exception is InvalidInstantAssetLockProofException)
         assertEquals(Codes.InvalidInstantAssetLockProofError.code, exception.getCode())
         assertEquals("InvalidInstantAssetLockProofError", exception.name)
+    }
+
+    @Test
+    fun notIndexedPropertiesInWhereConditionsErrorTest() {
+        val metaData = "Metadata(drive-error-data-bin=oWZlcnJvcnOBoWRuYW1leCpOb3RJbmRleGVkUHJvcGVydGllc0luV2hlcmVDb25kaXRpb25zRXJyb3I)"
+
+        val errorMetadata = DriveErrorMetadata(metaData)
+
+        println(errorMetadata)
+
+        assertEquals("NotIndexedPropertiesInWhereConditionsError", errorMetadata.getFirstError())
+    }
+
+    @Test
+    fun invalidPropertiesInOrderByErrorTest() {
+        val metaData = "Metadata(drive-error-data-bin=oWZlcnJvcnOBoWRuYW1leB9JbnZhbGlkUHJvcGVydGllc0luT3JkZXJCeUVycm9y)"
+
+        val errorMetadata = DriveErrorMetadata(metaData)
+
+        assertEquals("InvalidPropertiesInOrderByError", errorMetadata.getFirstError())
     }
 }

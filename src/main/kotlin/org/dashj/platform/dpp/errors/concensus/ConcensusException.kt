@@ -7,8 +7,8 @@
 
 package org.dashj.platform.dpp.errors.concensus
 
+import org.dashj.platform.dpp.errors.ConcensusErrorMetadata
 import org.dashj.platform.dpp.errors.DPPException
-import org.dashj.platform.dpp.errors.ErrorMetadata
 import org.dashj.platform.dpp.errors.concensus.basic.IncompatibleProtocolVersionException
 import org.dashj.platform.dpp.errors.concensus.basic.JsonSchemaException
 import org.dashj.platform.dpp.errors.concensus.basic.UnsupportedProtocolVersionException
@@ -63,7 +63,7 @@ abstract class ConcensusException(message: String) : DPPException(message) {
         }
 
         @JvmStatic
-        fun create(errorMetadata: ErrorMetadata): ConcensusException {
+        fun create(errorMetadata: ConcensusErrorMetadata): ConcensusException {
             return create(errorMetadata.code, errorMetadata.arguments)
         }
 
