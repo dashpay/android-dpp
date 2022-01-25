@@ -31,7 +31,7 @@ fun ByteArray.toHex(): String {
         java.lang.String.format("%02x", it)
     }
 }
-@Deprecated("Use toHex", replaceWith = ReplaceWith("toHex replaces toHexString", "org.dashj.platform.dpp.util"))
+@Deprecated("Use toHex", replaceWith = ReplaceWith("toHex()", "org.dashj.platform.dpp.util"))
 fun ByteArray.toHexString(): String {
     return toHex()
 }
