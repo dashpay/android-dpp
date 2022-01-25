@@ -28,6 +28,11 @@ import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.util.HashMap
 
+/**
+ * @author Sam Barbosa
+ * @author Eric Britten
+ */
+
 object Cbor {
 
     fun encode(obj: Map<String, Any?>): ByteArray {
@@ -48,10 +53,17 @@ object Cbor {
         return baos.toByteArray()
     }
 
-    fun decode(payload: ByteArray): MutableMap<String, Any?> {
-        val dataItems = CborDecoder.decode(payload)
+    /**
+     * decode a CBOR byte array as a Map
+     */
 
-        return readJSONObject(dataItems[0] as co.nstant.`in`.cbor.model.Map)
+    fun decode(payload: ByteArray): MutableMap<String, Any?> {
+        try {
+            val dataItems = CborDecoder.decode(payload)
+            return readJSONObject(dataItems[0] as co.nstant.`in`.cbor.model.Map)
+        } catch (e: ClassCastException) {
+            throw CborDecodeException("payload is not a map", e)
+        }
     }
 
     fun encode(s: String): ByteArray {
@@ -60,15 +72,49 @@ object Cbor {
         return baos.toByteArray()
     }
 
-    fun encode(bytes: ByteArray): ByteArray {
-        val baos = ByteArrayOutputStream(bytes.size)
-        CborEncoder(baos).encode(ByteString(bytes))
+    fun encode(payload: ByteArray): ByteArray {
+        val baos = ByteArrayOutputStream(payload.size)
+        CborEncoder(baos).encode(ByteString(payload))
         return baos.toByteArray()
     }
 
-    fun decodeString(bytes: ByteArray): String {
-        val decoded = CborDecoder.decode(bytes)
-        return decoded[0].toString()
+    /**
+     * decode a CBOR byte array as a String
+     */
+
+    fun decodeString(payload: ByteArray): String {
+        try {
+            val decoded = CborDecoder.decode(payload)
+            return (decoded[0] as UnicodeString).toString()
+        } catch (e: ClassCastException) {
+            throw CborDecodeException("payload is not a String", e)
+        }
+    }
+
+    /**
+     * decode a CBOR byte array as a ByteArray
+     */
+
+    fun decodeByteArray(payload: ByteArray): ByteArray {
+        try {
+            val decoded = CborDecoder.decode(payload)
+            return (decoded[0] as ByteString).bytes
+        } catch (e: ClassCastException) {
+            throw CborDecodeException("payload is not a ByteArray", e)
+        }
+    }
+
+    /**
+     * decode a CBOR byte array as a List
+     */
+
+    fun decodeList(payload: ByteArray): List<Any> {
+        try {
+            val dataItems = CborDecoder.decode(payload)
+            return readJSONArray(dataItems[0] as co.nstant.`in`.cbor.model.Array).filterNotNull()
+        } catch (e: ClassCastException) {
+            throw CborDecodeException("payload is not a ByteArray", e)
+        }
     }
 
     private fun writeJSONObject(
