@@ -14,11 +14,12 @@ import org.dashj.platform.dpp.errors.InvalidDocumentTypeError
 import org.dashj.platform.dpp.identifier.Identifier
 
 class DataContract(
+    protocolVersion: Int,
     val id: Identifier,
     val ownerId: Identifier,
-    protocolVersion: Int,
-    val schema: String,
-    val documents: MutableMap<String, Any?>,
+    var version: Int,
+    var schema: String,
+    var documents: MutableMap<String, Any?>,
     var definitions: MutableMap<String, Any?> = hashMapOf()
 ) : BaseObject(protocolVersion) {
 
@@ -30,38 +31,50 @@ class DataContract(
     var metadata: Metadata? = null
 
     constructor(
+        protocolVersion: Int,
         id: ByteArray,
         ownerId: ByteArray,
-        protocolVersion: Int,
+        version: Int,
         schema: String,
         documents: MutableMap<String, Any?>,
         definitions: MutableMap<String, Any?>
     ) : this(
+        protocolVersion,
         Identifier.from(id), Identifier.from(ownerId),
-        protocolVersion, schema,
+        version, schema,
         documents, definitions
     )
 
     constructor(rawContract: Map<String, Any?>) : this(
-        Identifier.from(rawContract["\$id"]!!),
-        Identifier.from(rawContract["ownerId"]!!),
         if (rawContract.containsKey("protocolVersion")) {
             rawContract["protocolVersion"] as Int
         } else {
             ProtocolVersion.latestVersion
         },
+        Identifier.from(rawContract["\$id"]!!),
+        Identifier.from(rawContract["ownerId"]!!),
+        if (rawContract.containsKey("version")) {
+            rawContract["version"] as Int
+        } else { 1 },
         if (rawContract.containsKey("\$schema")) {
             rawContract["\$schema"] as String
         } else {
             ""
         },
         rawContract["documents"] as MutableMap<String, Any?>,
-        if (rawContract.containsKey("\$defs")) {
+        if (rawContract.containsKey("\$defs") &&
+            rawContract["\$defs"] is MutableMap<*, *> &&
+            (rawContract["\$defs"] as MutableMap<String, Any?>).isNotEmpty()
+        ) {
             rawContract["\$defs"] as MutableMap<String, Any?>
         } else {
-            hashMapOf()
+            mutableMapOf()
         }
     )
+
+    fun incrementVersion() {
+        version += 1
+    }
 
     override fun toObject(): Map<String, Any> {
         return toObject(false)
@@ -72,6 +85,7 @@ class DataContract(
             "protocolVersion" to protocolVersion,
             "\$id" to id,
             "\$schema" to schema,
+            "version" to version,
             "ownerId" to ownerId,
             "documents" to documents
         )
@@ -108,12 +122,18 @@ class DataContract(
         return schema
     }
 
+    fun setJsonMetaSchema(schema: String): DataContract {
+        this.schema = schema
+        return this
+    }
+
     private fun checkContainsDocumentType(type: String) {
         if (!this.documents.contains(type)) {
             throw InvalidDocumentTypeError(this, type)
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun getDocumentSchema(type: String): Map<String, Any> {
         checkContainsDocumentType(type)
         return this.documents[type] as Map<String, Any>

@@ -25,9 +25,10 @@ class ContractFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         val dataContractId = HashUtils.generateDataContractId(ownerId.toBuffer(), dataContractEntropy)
 
         val dataContract = DataContract(
+            ProtocolVersion.latestVersion,
             Identifier.from(dataContractId),
             ownerId,
-            ProtocolVersion.latestVersion,
+            1,
             DataContract.SCHEMA,
             documents.toMutableMap()
         )
@@ -47,7 +48,11 @@ class ContractFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         return createFromObject(rawDataContract, options)
     }
 
-    fun createStateTransition(dataContract: DataContract): DataContractCreateTransition {
+    fun createDataContractCreateTransition(dataContract: DataContract): DataContractCreateTransition {
         return DataContractCreateTransition(dpp.getNetworkParameters(), dataContract)
+    }
+
+    fun createDataContractUpdateTransition(dataContract: DataContract): DataContractUpdateTransition {
+        return DataContractUpdateTransition(dpp.getNetworkParameters(), dataContract)
     }
 }
