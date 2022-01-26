@@ -113,7 +113,7 @@ object Cbor {
             val dataItems = CborDecoder.decode(payload)
             return readJSONArray(dataItems[0] as co.nstant.`in`.cbor.model.Array).filterNotNull()
         } catch (e: ClassCastException) {
-            throw CborDecodeException("payload is not a ByteArray", e)
+            throw CborDecodeException("payload is not a List<Any>", e)
         }
     }
 
