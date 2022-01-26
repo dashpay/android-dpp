@@ -1,11 +1,11 @@
 {
-  "protocolVersion": 0,
+  "protocolVersion": 1,
   "$schema": "https://schema.dash.org/dpp-0-4-0/meta/data-contract",
-  "ownerId": "9hfJ34gQx6fATjaaew29KtiL1yykxuydUSxdxicqknEJ",
   "documents": {
     "contactInfo": {
       "indices": [
         {
+          "name": "ownerIdAndKeys",
           "properties": [
             {"$ownerId": "asc"},
             {"rootEncryptionKeyIndex": "asc"},
@@ -13,12 +13,16 @@
           ],
           "unique": true
         },
-        {"properties": [
-          {"$ownerId": "asc"},
-          {"$updatedAt": "asc"}
-        ]}
+        {
+          "name": "ownerIdAndUpdatedAt",
+          "properties": [
+            {"$ownerId": "asc"},
+            {"$updatedAt": "asc"}
+          ]
+        }
       ],
       "additionalProperties": false,
+      "type": "object",
       "required": [
         "$createdAt",
         "$updatedAt",
@@ -54,6 +58,7 @@
     "contactRequest": {
       "indices": [
         {
+          "name": "ownerIdUserIdAndAccountRef",
           "properties": [
             {"$ownerId": "asc"},
             {"toUserId": "asc"},
@@ -61,28 +66,37 @@
           ],
           "unique": true
         },
-        {"properties": [
-          {"$ownerId": "asc"},
-          {"toUserId": "asc"}
-        ]},
-        {"properties": [
-          {"toUserId": "asc"},
-          {"$createdAt": "asc"}
-        ]},
-        {"properties": [
-          {"$ownerId": "asc"},
-          {"$createdAt": "asc"}
-        ]}
+        {
+          "name": "ownerIdUserId",
+          "properties": [
+            {"$ownerId": "asc"},
+            {"toUserId": "asc"}
+          ]
+        },
+        {
+          "name": "userIdCreatedAt",
+          "properties": [
+            {"toUserId": "asc"},
+            {"$createdAt": "asc"}
+          ]
+        },
+        {
+          "name": "ownerIdCreatedAt",
+          "properties": [
+            {"$ownerId": "asc"},
+            {"$createdAt": "asc"}
+          ]
+        }
       ],
       "additionalProperties": false,
+      "type": "object",
       "required": [
         "$createdAt",
         "toUserId",
         "encryptedPublicKey",
         "senderKeyIndex",
         "recipientKeyIndex",
-        "accountReference",
-        "coreHeightCreatedAt"
+        "accountReference"
       ],
       "properties": {
         "recipientKeyIndex": {
@@ -131,15 +145,20 @@
     "profile": {
       "indices": [
         {
+          "name": "ownerId",
           "properties": [{"$ownerId": "asc"}],
           "unique": true
         },
-        {"properties": [
-          {"$ownerId": "asc"},
-          {"$updatedAt": "asc"}
-        ]}
+        {
+          "name": "ownerIdAndUpdatedAt",
+          "properties": [
+            {"$ownerId": "asc"},
+            {"$updatedAt": "asc"}
+          ]
+        }
       ],
       "additionalProperties": false,
+      "type": "object",
       "required": [
         "$createdAt",
         "$updatedAt"
@@ -175,5 +194,4 @@
       }
     }
   },
-  "$id": "matk8g1YRpzZskecRfpG5GCAgRmWCGJfjUemrsLkFDg"
 }

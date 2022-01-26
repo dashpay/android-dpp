@@ -14,6 +14,7 @@ class CreateDataContractSpec {
             "\$id" to Entropy.generateRandomIdentifier().toBuffer(),
             "ownerId" to Entropy.generateRandomIdentifier().toBuffer(),
             "contractId" to Entropy.generateRandomIdentifier().toBuffer(),
+            "version" to 1,
             "documents" to mapOf(
                 "niceDocument" to mapOf(
                     "name" to mapOf(
