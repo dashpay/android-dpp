@@ -16,17 +16,16 @@ import org.dashj.platform.dpp.StateRepositoryMock
 import org.dashj.platform.dpp.util.Entropy
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class DataContractFactorySpec {
 
-    lateinit var dataContract: DataContract
-    lateinit var rawDataContract: Map<String, Any?>
+    private lateinit var dataContract: DataContract
+    private lateinit var rawDataContract: Map<String, Any?>
     lateinit var dpp: DashPlatformProtocol
-    lateinit var factory: ContractFactory
-    lateinit var stateRepository: StateRepository
+    private lateinit var factory: ContractFactory
+    private lateinit var stateRepository: StateRepository
 
     @BeforeEach
     fun beforeEach() {
@@ -61,13 +60,19 @@ class DataContractFactorySpec {
     }
 
     @Test
-    fun `createStateTransition should return new DataContractCreateTransition with passed DataContract`() {
-        val result = factory.createStateTransition(dataContract)
-
-        assertTrue(result is DataContractCreateTransition)
+    fun `createDataContractCreateTransition should return new DataContractCreateTransition with passed DataContract`() {
+        val result = factory.createDataContractCreateTransition(dataContract)
 
         assertEquals(result.protocolVersion, ProtocolVersion.latestVersion)
         assertArrayEquals(result.entropy, dataContract.entropy)
+        assertEquals(result.dataContract.toObject(), dataContract.toObject())
+    }
+
+    @Test
+    fun `createDataContractUpdateTransition should return new DataContractCreateTransition with passed DataContract`() {
+        val result = factory.createDataContractUpdateTransition(dataContract)
+
+        assertEquals(result.protocolVersion, ProtocolVersion.latestVersion)
         assertEquals(result.dataContract.toObject(), dataContract.toObject())
     }
 }
