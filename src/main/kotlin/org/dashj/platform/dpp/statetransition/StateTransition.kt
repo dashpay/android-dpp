@@ -30,8 +30,7 @@ abstract class StateTransition(
         DOCUMENTS_BATCH(1),
         IDENTITY_CREATE(2),
         IDENTITY_TOP_UP(3),
-        IDENTITY_UPDATEKEY(4),
-        IDENTITY_CLOSEACCOUNT(5);
+        DATA_CONTRACT_UPDATE(4);
 
         companion object {
             private val values = values()
