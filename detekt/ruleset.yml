@@ -1,5 +1,5 @@
 build:
-  maxIssues: 40 # break the build if more than ten weighted issues are found
+  maxIssues: 100 # break the build if more than ten weighted issues are found
 style:
   MagicNumber:
     ignoreEnums: true
