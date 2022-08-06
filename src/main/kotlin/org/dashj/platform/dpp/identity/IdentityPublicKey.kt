@@ -9,27 +9,32 @@ package org.dashj.platform.dpp.identity
 import org.bitcoinj.core.ECKey
 import org.bitcoinj.core.Utils
 import org.dashj.platform.dpp.BaseObject
+import org.dashj.platform.dpp.errors.concensus.signature.InvalidIdentityPublicKeyTypeException
 import org.dashj.platform.dpp.identity.errors.EmptyPublicKeyDataException
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.Converters
 
 class IdentityPublicKey(
     val id: Int,
-    val type: TYPES,
+    val type: Type,
     val purpose: Purpose,
     val securityLevel: SecurityLevel,
     val data: ByteArray,
-    val readOnly: Boolean
+    val readOnly: Boolean,
+    var disabledAt: Long? = null,
+    var signature: ByteArray? = null
 ) : BaseObject() {
 
-    enum class TYPES(val value: Int) {
+    enum class Type(val value: Int) {
         ECDSA_SECP256K1(0),
         BLS12_381(1),
-        ECDSA_HASH160(2);
+        ECDSA_HASH160(2),
+        BIP13_SCRIPT_HASH(3),
+        INVALID(30000); // for tests
 
         companion object {
             private val values = values()
-            fun getByCode(code: Int): TYPES {
+            fun getByCode(code: Int): Type {
                 return values.filter { it.value == code }[0]
             }
         }
@@ -38,7 +43,8 @@ class IdentityPublicKey(
     enum class Purpose(val value: Int) {
         AUTHENTICATION(0),
         ENCRYPTION(1),
-        DECRYPTION(2);
+        DECRYPTION(2),
+        WITHDRAW(3);
 
         companion object {
             private val values = values()
@@ -75,25 +81,28 @@ class IdentityPublicKey(
             ),
             Purpose.ENCRYPTION to listOf(
                 SecurityLevel.MEDIUM
+            ),
+            Purpose.WITHDRAW to listOf(
+                SecurityLevel.CRITICAL
             )
         )
     }
 
-    constructor(id: Int, type: TYPES, purpose: Purpose, securityLevel: SecurityLevel, data: String, readOnly: Boolean) :
+    constructor(id: Int, type: Type, purpose: Purpose, securityLevel: SecurityLevel, data: String, readOnly: Boolean) :
         this(id, type, purpose, securityLevel, Converters.fromBase64(data), readOnly)
 
-    constructor(id: Int, type: TYPES, data: String) :
+    constructor(id: Int, type: Type, data: String) :
         this(id, type, Purpose.AUTHENTICATION, SecurityLevel.MASTER, Converters.fromBase64(data), true)
 
-    constructor(id: Int, type: TYPES, data: ByteArray) :
+    constructor(id: Int, type: Type, data: ByteArray) :
         this(id, type, Purpose.AUTHENTICATION, SecurityLevel.MASTER, data, true)
 
     constructor(rawIdentityPublicKey: Map<String, Any?>) :
         this(
             rawIdentityPublicKey["id"] as Int,
             when (rawIdentityPublicKey["type"]) {
-                is TYPES -> rawIdentityPublicKey["type"] as TYPES
-                is Int -> TYPES.getByCode(rawIdentityPublicKey["type"] as Int)
+                is Type -> rawIdentityPublicKey["type"] as Type
+                is Int -> Type.getByCode(rawIdentityPublicKey["type"] as Int)
                 else -> error("invalid type")
             },
             when (rawIdentityPublicKey["purpose"]) {
@@ -104,7 +113,7 @@ class IdentityPublicKey(
             when (rawIdentityPublicKey["securityLevel"]) {
                 is SecurityLevel -> rawIdentityPublicKey["securityLevel"] as SecurityLevel
                 is Int -> SecurityLevel.getByCode(rawIdentityPublicKey["securityLevel"] as Int)
-                else -> SecurityLevel.MASTER
+                else -> SecurityLevel.CRITICAL
             },
             when (rawIdentityPublicKey["data"]) {
                 is String -> Converters.fromBase64(rawIdentityPublicKey["data"] as String)
@@ -118,7 +127,11 @@ class IdentityPublicKey(
         )
 
     override fun toObject(): Map<String, Any> {
-        return hashMapOf<String, Any>(
+        return toObject(false)
+    }
+
+    fun toObject(skipSignature: Boolean): Map<String, Any> {
+        val objMap = hashMapOf<String, Any>(
             "id" to id,
             "type" to type.value,
             "purpose" to purpose.value,
@@ -126,17 +139,26 @@ class IdentityPublicKey(
             "data" to data,
             "readOnly" to readOnly
         )
+        disabledAt?.run {
+            objMap.put("disabledAt", this)
+        }
+        if (signature != null && !skipSignature) {
+            objMap["signature"] = signature!!
+        }
+        return objMap
     }
 
     override fun toJSON(): Map<String, Any> {
-        return hashMapOf(
-            "id" to id,
-            "type" to type.value,
-            "purpose" to purpose.value,
-            "securityLevel" to securityLevel.value,
-            "data" to data.toBase64(),
-            "readOnly" to readOnly
-        )
+        val json = toObject().toMutableMap()
+        json["data"] = data.toBase64()
+        signature?.run {
+            json["signature"] = toBase64()
+        }
+        return json
+    }
+
+    fun isMaster(): Boolean {
+        return securityLevel == IdentityPublicKey.SecurityLevel.MASTER
     }
 
     override fun equals(other: Any?): Boolean {
@@ -163,13 +185,18 @@ class IdentityPublicKey(
         if (data.isEmpty()) {
             throw EmptyPublicKeyDataException()
         }
-        if (type == TYPES.ECDSA_HASH160) {
-            return data
+        return when (type) {
+            Type.ECDSA_HASH160, Type.BIP13_SCRIPT_HASH -> return data
+            Type.BLS12_381, Type.ECDSA_SECP256K1 -> Utils.sha256hash160(data)
+            else -> throw InvalidIdentityPublicKeyTypeException(type)
         }
-        return super.hash()
     }
 
     override fun toString(): String {
         return toJSON().toString()
+    }
+
+    fun copy(skipSignature: Boolean): IdentityPublicKey {
+        return IdentityPublicKey(id, type, purpose, securityLevel, data, readOnly, disabledAt, if (skipSignature) null else signature)
     }
 }
