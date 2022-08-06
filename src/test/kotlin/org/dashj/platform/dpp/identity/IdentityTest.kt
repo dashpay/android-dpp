@@ -45,22 +45,37 @@ class IdentityTest {
     }
 
     @Test
+    @Disabled
     fun testIdentityFactory() {
 
         val fixtureCreatedIdentity = Fixtures.getIdentityFixtureTwo()
 
         val publicKeys = ArrayList<IdentityPublicKey>(2)
-        publicKeys.add(IdentityPublicKey(0, IdentityPublicKey.TYPES.ECDSA_SECP256K1, "AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di"))
-        publicKeys.add(IdentityPublicKey(2, IdentityPublicKey.TYPES.ECDSA_SECP256K1, "A8AK95PYMVX5VQKzOhcVQRCUbc9pyg3RiL7jttEMDU+L"))
+        publicKeys.add(
+            IdentityPublicKey(
+                0,
+                IdentityPublicKey.Type.ECDSA_SECP256K1,
+                "AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di"
+            )
+        )
+        publicKeys.add(
+            IdentityPublicKey(
+                2,
+                IdentityPublicKey.Type.ECDSA_SECP256K1,
+                "A8AK95PYMVX5VQKzOhcVQRCUbc9pyg3RiL7jttEMDU+L"
+            )
+        )
 
-        val factoryCreatedIdentity = factory.create("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", publicKeys, 0, ProtocolVersion.latestVersion)
+        val factoryCreatedIdentity =
+            factory.create("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp", publicKeys, 0, ProtocolVersion.latestVersion)
 
         assertEquals(fixtureCreatedIdentity.id, factoryCreatedIdentity.id)
         assertArrayEquals(fixtureCreatedIdentity.publicKeys[0].data, factoryCreatedIdentity.publicKeys[0].data)
         assertEquals(fixtureCreatedIdentity.getPublicKeyById(2), factoryCreatedIdentity.getPublicKeyById(2))
     }
 
-    @Test @Disabled
+    @Test
+    @Disabled
     fun applyStateTransition() {
         val createTransition = Fixtures.getIdentityCreateSTFixture()
 
@@ -122,7 +137,14 @@ class IdentityTest {
 
         val stateTransition = StateTransitionMock()
 
-        val identityPublicKey = IdentityPublicKey(publicKeyId, IdentityPublicKey.TYPES.ECDSA_SECP256K1, publicKey)
+        val identityPublicKey = IdentityPublicKey(
+            publicKeyId,
+            IdentityPublicKey.Type.ECDSA_SECP256K1,
+            IdentityPublicKey.Purpose.AUTHENTICATION,
+            IdentityPublicKey.SecurityLevel.HIGH,
+            publicKey,
+            false
+        )
 
         val serializedDataBytes = stateTransition.toBuffer(false)
 
@@ -147,18 +169,33 @@ class IdentityTest {
         // trigger a failure to verify
         val incorrectKey = ECKey()
         val incorrectPublicKey = incorrectKey.pubKey.toBase64()
-        val incorrectOne = IdentityPublicKey(publicKeyId, IdentityPublicKey.TYPES.ECDSA_SECP256K1, incorrectPublicKey)
+        val incorrectOne = IdentityPublicKey(
+            publicKeyId,
+            IdentityPublicKey.Type.ECDSA_SECP256K1,
+            IdentityPublicKey.Purpose.AUTHENTICATION,
+            IdentityPublicKey.SecurityLevel.HIGH,
+            incorrectPublicKey,
+            false
+        )
 
         assertFalse(stateTransition.verifySignature(incorrectOne))
 
-        val incorrectTwo = IdentityPublicKey(8, IdentityPublicKey.TYPES.ECDSA_SECP256K1, incorrectPublicKey)
+        val incorrectTwo = IdentityPublicKey(
+            8,
+            IdentityPublicKey.Type.ECDSA_SECP256K1,
+            IdentityPublicKey.Purpose.AUTHENTICATION,
+            IdentityPublicKey.SecurityLevel.HIGH,
+            incorrectPublicKey,
+            false
+        )
 
         assertThrows(PublicKeyMismatchError::class.java) {
             stateTransition.verifySignature(incorrectTwo)
         }
     }
 
-    @Test @Disabled
+    @Test
+    @Disabled
     fun verifySignedIdentityTest() {
         val identityST = Fixtures.getIdentityCreateSTSignedFixture()
         assertEquals("A6AJAfRJyKuNoNvt33ygYfYh6OIYA8tF1s2BQcRA9RNg", identityST.publicKeys[0].data.toBase64())
@@ -180,7 +217,8 @@ class IdentityTest {
     @Test
     fun transactionIdentityIdTest() {
         val txId = "365cf2ca42e08ba45da978b872c76bdb60f98c0202f535f401fd1175beb0adfd"
-        val txData = "0100000001be20a4fb4b1dc67f43f6679e1a6ad4e80e1783a99755ed7b97ae6809fd3036ef000000006b483045022100c4676acbf41257668e15b10fed03554e816a063e9e7c4a0c39b51421ae8d800c0220432b205b4717b99e14849ea441ffb216100d2c61657c9802d173c5bf6305e3340121035aa64482c28788dc1264111274ae8e0a032b037b9e614ff7aefdeb5ad559dfc6ffffffff0260410f00000000001976a914fcf52d2c425c5f736718505725890564452323c488ac40420f0000000000166a14b850573dd12769f4e286bafdd047d4ba64640f9800000000"
+        val txData =
+            "0100000001be20a4fb4b1dc67f43f6679e1a6ad4e80e1783a99755ed7b97ae6809fd3036ef000000006b483045022100c4676acbf41257668e15b10fed03554e816a063e9e7c4a0c39b51421ae8d800c0220432b205b4717b99e14849ea441ffb216100d2c61657c9802d173c5bf6305e3340121035aa64482c28788dc1264111274ae8e0a032b037b9e614ff7aefdeb5ad559dfc6ffffffff0260410f00000000001976a914fcf52d2c425c5f736718505725890564452323c488ac40420f0000000000166a14b850573dd12769f4e286bafdd047d4ba64640f9800000000"
         val tx = Transaction(TestNet3Params.get(), Converters.fromHex(txData), 0)
 
         val proof = ChainAssetLockProof(0, tx.getOutput(1).outPointFor)

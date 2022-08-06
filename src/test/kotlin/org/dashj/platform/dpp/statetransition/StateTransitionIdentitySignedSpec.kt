@@ -8,25 +8,32 @@ package org.dashj.platform.dpp.statetransition
 
 import org.bitcoinj.core.ECKey
 import org.bitcoinj.core.Utils
+import org.bitcoinj.crypto.BLSSecretKey
 import org.bitcoinj.params.TestNet3Params
 import org.dashj.platform.dpp.assertMapEquals
+import org.dashj.platform.dpp.errors.concensus.signature.InvalidSignaturePublicKeySecurityLevelException
+import org.dashj.platform.dpp.errors.concensus.signature.PublicKeyIsDisabledException
 import org.dashj.platform.dpp.identity.IdentityPublicKey
 import org.dashj.platform.dpp.identity.StateTransitionMock
 import org.dashj.platform.dpp.statetransition.errors.InvalidSignaturePublicKeyException
 import org.dashj.platform.dpp.statetransition.errors.InvalidSignatureTypeException
 import org.dashj.platform.dpp.statetransition.errors.PublicKeyMismatchError
 import org.dashj.platform.dpp.statetransition.errors.PublicKeySecurityLevelNotMetException
-import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedError
+import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedException
 import org.dashj.platform.dpp.statetransition.errors.WrongPublicKeyPurposeException
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.toHex
 import org.dashj.platform.dpp.util.Converters
+import org.dashj.platform.dpp.util.Entropy
+import org.easymock.EasyMock
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.Date
 
 class StateTransitionIdentitySignedSpec {
     private val PARAMS = TestNet3Params.get()
@@ -37,6 +44,8 @@ class StateTransitionIdentitySignedSpec {
     lateinit var privateKeyHex: String
     private var publicKeyId: Int = 1
     private lateinit var identityPublicKey: IdentityPublicKey
+    private lateinit var blsPrivateKey: BLSSecretKey
+    private lateinit var blsPrivateKeyHex: String
 
     @BeforeEach
     fun beforeEach() {
@@ -45,13 +54,18 @@ class StateTransitionIdentitySignedSpec {
         privateKeyHex = privateKey.privateKeyAsHex
         protocolVersion = 1
         publicKeyId = 1
-        stateTransition = StateTransitionMock(protocolVersion) // EasyMock.createMock(StateTransitionIdentitySigned::class.java)
+        stateTransition = StateTransitionMock(protocolVersion)
+
+        val bytesForPrivateKey = Entropy.generateRandomBytes(BLSSecretKey.BLS_CURVE_SECKEY_SIZE)
+        bytesForPrivateKey[0] = 0x14.toByte() // not any random number gives a valid BLS private key
+        blsPrivateKey = BLSSecretKey(bytesForPrivateKey)
+        blsPrivateKeyHex = blsPrivateKey.toStringHex()
 
         identityPublicKey = IdentityPublicKey(
             publicKeyId,
-            IdentityPublicKey.TYPES.ECDSA_SECP256K1,
+            IdentityPublicKey.Type.ECDSA_SECP256K1,
             IdentityPublicKey.Purpose.AUTHENTICATION,
-            IdentityPublicKey.SecurityLevel.MASTER,
+            IdentityPublicKey.SecurityLevel.HIGH,
             privateKey.pubKey,
             false
         )
@@ -65,8 +79,8 @@ class StateTransitionIdentitySignedSpec {
 
             fail<Nothing>("should throw StateTransitionIsNotSignedError")
         } catch (e: Exception) {
-            assertTrue(e is StateTransitionIsNotSignedError)
-            assertEquals((e as StateTransitionIsNotSignedError).stateTransition, stateTransition)
+            assertTrue(e is StateTransitionIsNotSignedException)
+            assertEquals((e as StateTransitionIsNotSignedException).stateTransition, stateTransition)
         }
     }
 
@@ -143,6 +157,7 @@ class StateTransitionIdentitySignedSpec {
         assertEquals(publicKeyId, keyId)
     }
 
+    // sign tests
     @Test
     fun `#sign should sign data and validate signature with private key in hex format`() {
         stateTransition.sign(identityPublicKey, privateKeyHex)
@@ -165,7 +180,7 @@ class StateTransitionIdentitySignedSpec {
     fun `#sign should sign data and validate signature with ECDSA_HASH160 identityPublicKey`() {
         val newIdentityPublicKey = IdentityPublicKey(
             identityPublicKey.id,
-            IdentityPublicKey.TYPES.ECDSA_HASH160,
+            IdentityPublicKey.Type.ECDSA_HASH160,
             identityPublicKey.purpose,
             identityPublicKey.securityLevel,
             Utils.sha256hash160(identityPublicKey.data),
@@ -185,7 +200,7 @@ class StateTransitionIdentitySignedSpec {
 
         val newIdentityPublicKey = IdentityPublicKey(
             identityPublicKey.id,
-            IdentityPublicKey.TYPES.ECDSA_HASH160,
+            IdentityPublicKey.Type.ECDSA_HASH160,
             identityPublicKey.purpose,
             identityPublicKey.securityLevel,
             publicKey,
@@ -206,7 +221,7 @@ class StateTransitionIdentitySignedSpec {
 
         val newIdentityPublicKey = IdentityPublicKey(
             identityPublicKey.id,
-            IdentityPublicKey.TYPES.BLS12_381,
+            IdentityPublicKey.Type.INVALID,
             identityPublicKey.purpose,
             identityPublicKey.securityLevel,
             identityPublicKey.data,
@@ -223,9 +238,11 @@ class StateTransitionIdentitySignedSpec {
 
     @Test
     fun `#sign should throw an error if the key security level is not met`() {
-        // EasyMock.expect(stateTransition.getRequiredKeySecurityLevel()).andReturn(
-        //    IdentityPublicKey.SecurityLevel.MASTER
-        // )
+        val stateTransitionInternal: StateTransitionMock = EasyMock.createMock(StateTransitionMock::class.java)
+        stateTransitionInternal.protocolVersion = protocolVersion
+        EasyMock.expect(stateTransitionInternal.getKeySecurityLevelRequirement()).andReturn(
+            IdentityPublicKey.SecurityLevel.MASTER
+        )
 
         val newIdentityPublicKey = IdentityPublicKey(
             identityPublicKey.id,
@@ -242,7 +259,7 @@ class StateTransitionIdentitySignedSpec {
             fail("Should throw PublicKeySecurityLevelNotMetError")
         } catch (e: PublicKeySecurityLevelNotMetException) {
             assertEquals(newIdentityPublicKey.securityLevel, e.publicKeySecurityLevel)
-            assertEquals(IdentityPublicKey.SecurityLevel.MASTER, e.requiredSecurityLevel)
+            assertEquals(IdentityPublicKey.SecurityLevel.HIGH, e.requiredSecurityLevel)
         }
     }
 
@@ -252,7 +269,7 @@ class StateTransitionIdentitySignedSpec {
             identityPublicKey.id,
             identityPublicKey.type,
             IdentityPublicKey.Purpose.ENCRYPTION,
-            IdentityPublicKey.SecurityLevel.MASTER,
+            identityPublicKey.securityLevel,
             identityPublicKey.data,
             identityPublicKey.readOnly
         )
@@ -267,11 +284,69 @@ class StateTransitionIdentitySignedSpec {
         }
     }
 
+    // signByPrivateKey tests
+    @Test
+    fun `#signByPrivateKey should sign data and validate signature with BLS12_381 identityPublicKey`() {
+        val blsIdentityPublicKey = IdentityPublicKey(
+            identityPublicKey.id,
+            IdentityPublicKey.Type.BLS12_381,
+            identityPublicKey.purpose,
+            identityPublicKey.securityLevel,
+            blsPrivateKey.GetPublicKey().bitcoinSerialize(),
+            identityPublicKey.readOnly
+        )
+
+        stateTransition.sign(blsIdentityPublicKey, blsPrivateKeyHex)
+
+        assertNotNull(stateTransition.signature)
+
+        val isValid = stateTransition.verifySignature(blsIdentityPublicKey)
+
+        assertTrue(isValid)
+    }
+
+    @Test
+    fun `#sign should throw PublicKeyIsDisabledError if public key is disabled`() {
+        identityPublicKey.disabledAt = Date().time
+
+        try {
+            stateTransition.sign(identityPublicKey, privateKeyHex)
+
+            fail("Should throw PublicKeyIsDisabledException")
+        } catch (e: PublicKeyIsDisabledException) {
+            assertEquals(e.publicKey, identityPublicKey)
+        } catch (e: Exception) {
+            fail("Should throw PublicKeyIsDisabledException: $e")
+        }
+    }
+
     @Test
     fun `#signByPrivateKey should sign and validate with private key`() {
         privateKeyHex = "9b67f852093bc61cea0eeca38599dbfba0de28574d2ed9b99d10d33dc1bde7b2"
-        stateTransition.signByPrivateKey(privateKeyHex)
+        stateTransition.signByPrivateKey(privateKeyHex, IdentityPublicKey.Type.ECDSA_SECP256K1)
         assertTrue(stateTransition.signature != null)
+    }
+
+    @Test
+    fun `#signByPrivateKey should sign and validate with BLS private key`() {
+        val blsIdentityPublicKey = IdentityPublicKey(
+            identityPublicKey.id,
+            IdentityPublicKey.Type.BLS12_381,
+            identityPublicKey.purpose,
+            identityPublicKey.securityLevel,
+            blsPrivateKey.GetPublicKey().bitcoinSerialize(),
+            identityPublicKey.readOnly
+        )
+
+        stateTransition.signByPrivateKey(blsPrivateKeyHex, IdentityPublicKey.Type.BLS12_381)
+
+        assertNotNull(stateTransition.signature)
+
+        val isValid = stateTransition.verifyBLSSignatureByPublicKey(
+            blsPrivateKey.GetPublicKey().bitcoinSerialize(),
+        )
+
+        assertTrue(isValid)
     }
 
     @Test
@@ -288,7 +363,7 @@ class StateTransitionIdentitySignedSpec {
             stateTransition.verifySignature(identityPublicKey)
 
             fail("should throw StateTransitionIsNotSignedError")
-        } catch (e: StateTransitionIsNotSignedError) {
+        } catch (e: StateTransitionIsNotSignedException) {
             assertEquals(stateTransition, e.stateTransition)
         }
     }
@@ -354,7 +429,7 @@ class StateTransitionIdentitySignedSpec {
             fail("Should throw PublicKeySecurityLevelNotMetError")
         } catch (e: PublicKeySecurityLevelNotMetException) {
             assertEquals(newIdentityPublicKey.securityLevel, e.publicKeySecurityLevel)
-            assertEquals(IdentityPublicKey.SecurityLevel.MASTER, e.requiredSecurityLevel)
+            assertEquals(IdentityPublicKey.SecurityLevel.HIGH, e.requiredSecurityLevel)
         }
     }
 
@@ -383,11 +458,70 @@ class StateTransitionIdentitySignedSpec {
     }
 
     @Test
-    fun `#verifySignatureByPublicKeyHash should validate sign by public key hash`() {
+    fun `#verifySignature should validate BLS signature`() {
+        val blsIdentityPublicKey = IdentityPublicKey(
+            identityPublicKey.id,
+            IdentityPublicKey.Type.BLS12_381,
+            identityPublicKey.purpose,
+            identityPublicKey.securityLevel,
+            blsPrivateKey.GetPublicKey().bitcoinSerialize(),
+            identityPublicKey.readOnly
+        )
+
+        stateTransition.sign(blsIdentityPublicKey, blsPrivateKeyHex)
+
+        assertNotNull(stateTransition.signature)
+
+        val isValid = stateTransition.verifySignature(blsIdentityPublicKey)
+
+        assertTrue(isValid)
+    }
+
+    @Test
+    fun `#verifySignature should throw PublicKeyIsDisabledError if public key is disabled`() {
+        identityPublicKey.disabledAt = Date().time
+
+        try {
+            stateTransition.sign(identityPublicKey, privateKeyHex)
+
+            fail("Should throw PublicKeyIsDisabledException")
+        } catch (e: PublicKeyIsDisabledException) {
+            assertEquals(e.publicKey, identityPublicKey)
+        } catch (e: Exception) {
+            fail("Should throw PublicKeyIsDisabledException: $e")
+        }
+    }
+
+    @Test
+    fun `#verifySignature should throw InvalidSignaturePublicKeySecurityLevelError if public key with master level is using to sign non update state transition`() {
+        val newIdentityPublicKey = IdentityPublicKey(
+            identityPublicKey.id,
+            identityPublicKey.type,
+            identityPublicKey.purpose,
+            IdentityPublicKey.SecurityLevel.MASTER,
+            identityPublicKey.data,
+            identityPublicKey.readOnly
+        )
+        stateTransition.type = StateTransition.Types.DATA_CONTRACT_CREATE
+
+        try {
+            stateTransition.sign(newIdentityPublicKey, privateKeyHex)
+
+            fail("Should throw InvalidSignaturePublicKeySecurityLevelException")
+        } catch (e: InvalidSignaturePublicKeySecurityLevelException) {
+            assertEquals(e.publicKeySecurityLevel, IdentityPublicKey.SecurityLevel.MASTER)
+            assertEquals(e.keySecurityLevelRequirement, IdentityPublicKey.SecurityLevel.HIGH)
+        } catch (e: Exception) {
+            fail("Should throw PublicKeyIsDisabledError, but threw $e instead")
+        }
+    }
+
+    @Test
+    fun `#verifyESDSAHash160SignatureByPublicKeyHash should validate sign by public key hash`() {
         privateKeyHex = "fdfa0d878967ac17ca3e6fa6ca7f647fea51cffac85e41424c6954fcbe97721c"
         val publicKey = "dLfavDCp+ARA3O0AXsOFJ0W//mg="
 
-        stateTransition.signByPrivateKey(privateKeyHex)
+        stateTransition.signByPrivateKey(privateKeyHex, IdentityPublicKey.Type.ECDSA_SECP256K1)
 
         val isValid = stateTransition.verifySignatureByPublicKeyHash(Converters.fromBase64(publicKey))
 
@@ -395,23 +529,23 @@ class StateTransitionIdentitySignedSpec {
     }
 
     @Test
-    fun `#verifySignatureByPublicKeyHash should throw an StateTransitionIsNotSignedError error if transition is not signed`() {
+    fun `#verifyESDSAHash160SignatureByPublicKeyHash should throw an StateTransitionIsNotSignedError error if transition is not signed`() {
         val publicKey = "dLfavDCp+ARA3O0AXsOFJ0W//mg="
         try {
             stateTransition.verifySignatureByPublicKeyHash(Converters.fromBase64(publicKey))
 
             fail("should throw StateTransitionIsNotSignedError")
-        } catch (e: StateTransitionIsNotSignedError) {
+        } catch (e: StateTransitionIsNotSignedException) {
             assertEquals(stateTransition, e.stateTransition)
         }
     }
 
     @Test
-    fun `#verifySignatureByPublicKey should validate sign by public key`() {
+    fun `#verifyECDSASignatureByPublicKey should validate sign by public key`() {
         privateKeyHex = "9b67f852093bc61cea0eeca38599dbfba0de28574d2ed9b99d10d33dc1bde7b2"
         val publicKey = "A1eUrJ7lM6F1m6dbIyk+vXimKfzki+QRMHMwoAmggt6L"
 
-        stateTransition.signByPrivateKey(privateKeyHex)
+        stateTransition.signByPrivateKey(privateKeyHex, IdentityPublicKey.Type.ECDSA_SECP256K1)
 
         val isValid = stateTransition.verifySignatureByPublicKey(ECKey.fromPublicOnly(Converters.fromBase64(publicKey)))
 
@@ -419,18 +553,19 @@ class StateTransitionIdentitySignedSpec {
     }
 
     @Test
-    fun `#verifySignatureByPublicKey should throw an StateTransitionIsNotSignedError error if transition is not signed`() {
+    fun `#verifyECDSASignatureByPublicKey should throw an StateTransitionIsNotSignedError error if transition is not signed`() {
         val publicKey = "A1eUrJ7lM6F1m6dbIyk+vXimKfzki+QRMHMwoAmggt6L"
         try {
             stateTransition.verifySignatureByPublicKey(ECKey.fromPublicOnly(Converters.fromBase64(publicKey)))
 
             fail("should throw StateTransitionIsNotSignedError")
-        } catch (e: StateTransitionIsNotSignedError) {
+        } catch (e: StateTransitionIsNotSignedException) {
             assertEquals(stateTransition, e.stateTransition)
         }
     }
 
-    @Test fun `#setSignature should set signature`() {
+    @Test
+    fun `#setSignature should set signature`() {
         val signature = "A1eUrA"
         stateTransition.setSignature(signature)
 
@@ -438,8 +573,19 @@ class StateTransitionIdentitySignedSpec {
     }
 
     @Test
+    fun `#setSignaturePublicKeyId should set signature public key id`() {
+        val signaturePublicKeyId = 1
+        stateTransition.signaturePublicKeyId = signaturePublicKeyId
+
+        assertEquals(stateTransition.signaturePublicKeyId, signaturePublicKeyId)
+    }
+
+    @Test
     fun `#calculateFee should calculate fee`() {
         val result = stateTransition.calculateFee()
-        assertEquals(11, result)
+
+        // val fee = calculateStateTransitionFee(stateTransition)
+
+        // assertEquals(result, fee);
     }
 }

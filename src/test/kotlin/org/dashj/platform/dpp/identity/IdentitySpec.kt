@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.Collections.max
 
 class IdentitySpec {
 
@@ -32,7 +33,7 @@ class IdentitySpec {
             "publicKeys" to listOf(
                 mapOf(
                     "id" to 0,
-                    "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1.value,
+                    "type" to IdentityPublicKey.Type.ECDSA_SECP256K1.value,
                     "data" to ByteArray(36) { 'a'.toByte() },
                     "purpose" to IdentityPublicKey.Purpose.AUTHENTICATION.value,
                     "securityLevel" to IdentityPublicKey.SecurityLevel.MASTER.value,
@@ -135,7 +136,7 @@ class IdentitySpec {
                 "publicKeys" to listOf(
                     mapOf(
                         "id" to 0,
-                        "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1.value,
+                        "type" to IdentityPublicKey.Type.ECDSA_SECP256K1.value,
                         "data" to (((rawIdentity["publicKeys"] as List<*>)[0] as Map<*, *>)["data"] as ByteArray).toBase64(),
                         "purpose" to IdentityPublicKey.Purpose.AUTHENTICATION.value,
                         "securityLevel" to IdentityPublicKey.SecurityLevel.MASTER.value,
@@ -188,5 +189,35 @@ class IdentitySpec {
     @Test
     fun `#getMetadata should get metadata`() {
         assertEquals(identity.metadata, metadataFixture)
+    }
+
+    @Test
+    fun `getPublicKeyMaxId should get the biggest public key ID`() {
+        identity.publicKeys.addAll(
+            listOf(
+                IdentityPublicKey(
+                    99,
+                    IdentityPublicKey.Type.ECDSA_SECP256K1,
+                    IdentityPublicKey.Purpose.AUTHENTICATION,
+                    IdentityPublicKey.SecurityLevel.MASTER,
+                    ByteArray(36) { 'a'.toByte() },
+                    false
+                ),
+                IdentityPublicKey(
+                    50,
+                    IdentityPublicKey.Type.ECDSA_SECP256K1,
+                    IdentityPublicKey.Purpose.AUTHENTICATION,
+                    IdentityPublicKey.SecurityLevel.MASTER,
+                    ByteArray(36) { 'a'.toByte() },
+                    false
+                )
+            )
+        )
+
+        val maxId = identity.getPublicKeyMaxId()
+
+        val publicKeyIds = identity.publicKeys.map { publicKey -> publicKey.id }
+
+        assertEquals(max(publicKeyIds), maxId)
     }
 }

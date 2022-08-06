@@ -62,12 +62,12 @@ class IdentityCreateTransitionSpec {
         val publicKeys = listOf(
             IdentityPublicKey(
                 0,
-                IdentityPublicKey.TYPES.ECDSA_SECP256K1,
+                IdentityPublicKey.Type.ECDSA_SECP256K1,
                 ByteArray(32)
             ),
             IdentityPublicKey(
                 1,
-                IdentityPublicKey.TYPES.ECDSA_SECP256K1,
+                IdentityPublicKey.Type.ECDSA_SECP256K1,
                 ByteArray(32)
             )
         )

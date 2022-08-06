@@ -8,6 +8,7 @@ import org.dashj.platform.dpp.Fixtures.getChainAssetLockProofFixture
 import org.dashj.platform.dpp.Fixtures.getIdentityFixture
 import org.dashj.platform.dpp.Fixtures.getInstantAssetLockProofFixture
 import org.dashj.platform.dpp.StateRepositoryMock
+import org.dashj.platform.dpp.assertListEquals
 import org.dashj.platform.dpp.assertMapEquals
 import org.dashj.platform.dpp.deepCompare
 import org.dashj.platform.dpp.util.Converters
@@ -15,6 +16,7 @@ import org.easymock.EasyMock.createMock
 import org.easymock.EasyMock.expect
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -49,7 +51,7 @@ class IdentityFactorySpec {
     }
 
     @Test
-    fun `#create should create Identity`() {
+    fun `#create should create Identity from asset lock transaction, output index, proof and public keys`() {
         val publicKeys = identity.publicKeys.map {
             val map = it.toObject().toMutableMap()
             map["key"] = ECKey.fromPublicOnly(it.data)
@@ -134,5 +136,36 @@ class IdentityFactorySpec {
         )
         assertMapEquals(instantAssetLockProof.toObject(), stateTransition.assetLock.toObject())
         assertEquals(identity.id, stateTransition.identityId)
+    }
+
+    @Test
+    fun `#createIdentityUpdateTransition should create IdentityUpdateTransition from identity id and public keys`() {
+        val publicKeys = mapOf(
+            "add" to listOf(
+                mapOf(
+                    "id" to 3,
+                    "type" to IdentityPublicKey.Type.ECDSA_SECP256K1.value,
+                    "data" to Converters.fromBase64("AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di"),
+                    "purpose" to IdentityPublicKey.Purpose.AUTHENTICATION.value,
+                    "securityLevel" to IdentityPublicKey.SecurityLevel.CRITICAL.value,
+                    "readOnly" to false
+                )
+            )
+        )
+
+        val stateTransition = dpp.identity.createIdentityUpdateTransition(
+            identity,
+            publicKeys,
+        )
+
+        assertEquals(stateTransition.identityId, identity.id)
+        assertEquals(stateTransition.revision, identity.revision + 1)
+        assertListEquals(
+            stateTransition.addPublicKeys!!.map { pk -> pk.toObject() },
+            publicKeys["add"] as List<Any>
+        )
+
+        assertNull(stateTransition.disablePublicKeys)
+        assertNull(stateTransition.publicKeysDisabledAt)
     }
 }

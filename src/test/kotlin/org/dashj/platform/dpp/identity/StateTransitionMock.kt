@@ -11,7 +11,7 @@ import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.StateTransitionIdentitySigned
 
-class StateTransitionMock(protocolVersion: Int = ProtocolVersion.latestVersion) :
+open class StateTransitionMock(protocolVersion: Int = ProtocolVersion.latestVersion) :
     StateTransitionIdentitySigned(TestNet3Params.get(), Types.DATA_CONTRACT_CREATE, protocolVersion) {
     override val modifiedDataIds: List<Identifier>
         get() = TODO("Not yet implemented")

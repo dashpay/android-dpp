@@ -23,7 +23,6 @@ import org.dashj.platform.dpp.contract.DataContractCreateTransition
 import org.dashj.platform.dpp.document.Document
 import org.dashj.platform.dpp.document.DocumentFactory
 import org.dashj.platform.dpp.document.DocumentTransition
-import org.dashj.platform.dpp.document.DocumentsBatchTransition
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.identity.ChainAssetLockProof
 import org.dashj.platform.dpp.identity.Identity
@@ -181,7 +180,7 @@ object Fixtures {
             "publicKeys" to listOf(
                 mapOf(
                     "id" to 0,
-                    "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1.value,
+                    "type" to IdentityPublicKey.Type.ECDSA_SECP256K1.value,
                     "data" to Converters.fromBase64("AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di"),
                 )
             )
@@ -210,14 +209,14 @@ object Fixtures {
             "publicKeys" to listOf(
                 mapOf<String, Any?>(
                     "id" to 0,
-                    "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1,
+                    "type" to IdentityPublicKey.Type.ECDSA_SECP256K1,
                     "data" to Converters.fromBase64("AuryIuMtRrl/VviQuyLD1l4nmxi9ogPzC9LT7tdpo0di"),
                     "purpose" to IdentityPublicKey.Purpose.AUTHENTICATION,
                     "securityLevel" to IdentityPublicKey.SecurityLevel.MASTER
                 ),
                 mapOf(
                     "id" to 1,
-                    "type" to IdentityPublicKey.TYPES.ECDSA_SECP256K1,
+                    "type" to IdentityPublicKey.Type.ECDSA_SECP256K1,
                     "data" to Converters.fromBase64("A8AK95PYMVX5VQKzOhcVQRCUbc9pyg3RiL7jttEMDU+L"),
                     "purpose" to IdentityPublicKey.Purpose.ENCRYPTION,
                     "securityLevel" to IdentityPublicKey.SecurityLevel.MEDIUM
@@ -345,7 +344,7 @@ object Fixtures {
         rawStateTransition["lockedOutPoint"] = ByteArray(36).toBase64()
 
         val publicKeysMap = ArrayList<Any>(1)
-        publicKeysMap.add(IdentityPublicKey(1, IdentityPublicKey.TYPES.ECDSA_SECP256K1, ByteArray(32)).toJSON())
+        publicKeysMap.add(IdentityPublicKey(1, IdentityPublicKey.Type.ECDSA_SECP256K1, ByteArray(32)).toJSON())
         rawStateTransition["publicKeys"] = publicKeysMap
 
         return IdentityCreateTransition(PARAMS, rawStateTransition)
@@ -375,7 +374,7 @@ object Fixtures {
         return StateTransitionFactory(dpp, stateRepository).createStateTransition(rawContractST) as DataContractCreateTransition
     }
 
-    fun getDocumentsSTSignedFixture(): DocumentsBatchTransition {
+    /*fun getDocumentsSTSignedFixture(): DocumentsBatchTransition {
         val jsonObject = JSONObject(File("src/test/resources/data/documents-transition.json").readText())
         val rawDocumentST = jsonObject.toMap()
 
@@ -386,7 +385,7 @@ object Fixtures {
         val jsonObject = JSONObject(File("src/test/resources/data/documents-transition.json").readText())
         val rawDocumentST = jsonObject.toMap()
         return StateTransitionFactory(dpp, stateRepository).createStateTransition(rawDocumentST) as DocumentsBatchTransition
-    }
+    }*/
 
     fun getChainAssetLockProofFixture(): ChainAssetLockProof {
         val outPoint = TransactionOutPoint(
