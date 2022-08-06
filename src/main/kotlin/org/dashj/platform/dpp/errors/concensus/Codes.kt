@@ -35,6 +35,13 @@ enum class Codes(val code: Int) {
     SystemPropertyIndexAlreadyPresentError(1015),
     UndefinedIndexPropertyError(1016),
     UniqueIndicesLimitReachedError(1017),
+    DuplicateIndexNameError(1048),
+    InvalidDataContractVersionError(1050),
+    IncompatibleDataContractSchemaError(1051),
+    DataContractImmutablePropertiesUpdateError(1052),
+    DataContractIndicesChangedError(1053),
+    DataContractInvalidIndexDefinitionUpdateError(1054),
+    DataContractHaveNewUniqueIndexError(1055),
 
     // Document
     DataContractNotPresentError(1018),
@@ -58,22 +65,31 @@ enum class Codes(val code: Int) {
     IdentityAssetLockTransactionOutputNotFoundError(1034),
     InvalidAssetLockProofCoreChainHeightError(1035),
     InvalidAssetLockProofTransactionHeightError(1036),
-    InvalidAssetLockTransactionOutputReturnSize(1037),
+    InvalidAssetLockTransactionOutputReturnSizeError(1037),
     InvalidIdentityAssetLockTransactionError(1038),
     InvalidIdentityAssetLockTransactionOutputError(1039),
     InvalidIdentityPublicKeyDataError(1040),
     InvalidInstantAssetLockProofError(1041),
     InvalidInstantAssetLockProofSignatureError(1042),
+    MissingMasterPublicKeyError(1046),
+    InvalidIdentityKeySignatureError(1056),
 
     // State Transition
     InvalidStateTransitionTypeError(1043),
     MissingStateTransitionTypeError(1044),
     StateTransitionMaxSizeExceededError(1045),
 
+    /**
+     * Signature
+     */
     IdentityNotFoundError(2000),
     InvalidIdentityPublicKeyTypeError(2001),
     InvalidStateTransitionSignatureError(2002),
     MissingPublicKeyError(2003),
+    InvalidSignaturePublicKeySecurityLevelError(2004),
+    WrongPublicKeyPurposeError(2005),
+    PublicKeyIsDisabledError(2006),
+    PublicKeySecurityLevelNotMetError(2007),
 
     BalanceIsNotEnoughError(3000),
 
@@ -94,7 +110,13 @@ enum class Codes(val code: Int) {
 
     // Identity
     IdentityAlreadyExistsError(4011),
-    IdentityPublicKeyAlreadyExistsError(4012);
+    IdentityPublicKeyDisabledAtWindowViolationError(4012),
+    IdentityPublicKeyIsReadOnlyError(4017),
+    InvalidIdentityPublicKeyIdError(4018),
+    InvalidIdentityRevisionError(4019),
+    StateMaxIdentityPublicKeyLimitReachedError(4020),
+    DuplicatedIdentityPublicKeyStateError(4021),
+    DuplicatedIdentityPublicKeyIdStateError(4022);
 
     companion object {
 

@@ -9,4 +9,4 @@ package org.dashj.platform.dpp.identifier.errors
 
 import java.lang.Exception
 
-class IdentifierError(message: String) : Exception(message)
+class IdentifierException(message: String) : Exception(message)

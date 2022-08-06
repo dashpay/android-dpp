@@ -13,7 +13,9 @@ import org.dashj.platform.dpp.errors.concensus.basic.IncompatibleProtocolVersion
 import org.dashj.platform.dpp.errors.concensus.basic.JsonSchemaException
 import org.dashj.platform.dpp.errors.concensus.basic.UnsupportedProtocolVersionException
 import org.dashj.platform.dpp.errors.concensus.basic.datacontract.InvalidDataContractIdException
+import org.dashj.platform.dpp.errors.concensus.basic.document.MissingDataContractIdException
 import org.dashj.platform.dpp.errors.concensus.basic.identity.IdentityAssetLockTransactionOutPointAlreadyExistsException
+import org.dashj.platform.dpp.errors.concensus.basic.identity.InvalidIdentityKeySignatureException
 import org.dashj.platform.dpp.errors.concensus.basic.identity.InvalidInstantAssetLockProofException
 import org.dashj.platform.dpp.errors.concensus.basic.identity.InvalidInstantAssetLockProofSignatureException
 import org.dashj.platform.dpp.errors.concensus.basic.statetransition.InvalidStateTransitionTypeException
@@ -22,12 +24,14 @@ import org.dashj.platform.dpp.errors.concensus.document.DataContractNotPresentEx
 import org.dashj.platform.dpp.errors.concensus.fee.BalanceIsNotEnoughException
 import org.dashj.platform.dpp.errors.concensus.signature.IdentityNotFoundException
 import org.dashj.platform.dpp.errors.concensus.signature.InvalidIdentityPublicKeyTypeException
+import org.dashj.platform.dpp.errors.concensus.signature.InvalidSignaturePublicKeySecurityLevelException
 import org.dashj.platform.dpp.errors.concensus.signature.InvalidStateTransitionSignatureException
 import org.dashj.platform.dpp.errors.concensus.signature.MissingPublicKeyException
+import org.dashj.platform.dpp.errors.concensus.signature.PublicKeyIsDisabledException
 import org.dashj.platform.dpp.errors.concensus.state.document.DocumentAlreadyPresentException
 import org.dashj.platform.dpp.errors.concensus.state.document.InvalidDocumentRevisionException
+import org.dashj.platform.dpp.errors.concensus.state.identity.DuplicatedIdentityPublicKeyException
 import org.dashj.platform.dpp.errors.concensus.state.identity.IdentityAlreadyExistsException
-import org.dashj.platform.dpp.errors.concensus.state.identity.IdentityPublicKeyAlreadyExistsException
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.Cbor
 
@@ -100,11 +104,11 @@ abstract class ConcensusException(message: String) : DPPException(message) {
 //                Codes.InvalidDocumentTransitionActionError -> InvalidDocumentTransitionActionException(arguments)
 //                Codes.InvalidDocumentTransitionIdError -> InvalidDocumentTransitionIdException(arguments)
 //                Codes.InvalidDocumentTypeError -> InvalidDocumentTypeException(arguments)
-//                Codes.MissingDataContractIdError -> MissingDataContractIdException(arguments)
+                Codes.MissingDataContractIdError -> MissingDataContractIdException(arguments)
 //                Codes.MissingDocumentTransitionActionError -> MissingDocumentTransitionActionException(arguments)
 //                Codes.MissingDocumentTransitionTypeError -> MissingDocumentTransitionTypeException(arguments)
 //                Codes.MissingDocumentTypeError -> MissingDocumentTypeException(arguments)
-//                Codes.DuplicatedIdentityPublicKeyError -> DuplicatedIdentityPublicKeyException(arguments)
+                Codes.DuplicatedIdentityPublicKeyError -> DuplicatedIdentityPublicKeyException(arguments)
 //                Codes.DuplicatedIdentityPublicKeyIdError -> DuplicatedIdentityPublicKeyIdException(arguments)
 //                Codes.IdentityAssetLockProofLockedTransactionMismatchError -> IdentityAssetLockProofLockedTransactionMismatchException(arguments)
 //                Codes.IdentityAssetLockTransactionIsNotFoundError -> IdentityAssetLockTransactionIsNotFoundException(arguments)
@@ -113,7 +117,7 @@ abstract class ConcensusException(message: String) : DPPException(message) {
 //                Codes.IdentityAssetLockTransactionOutputNotFoundError -> IdentityAssetLockTransactionOutputNotFoundException(arguments)
 //                Codes.InvalidAssetLockProofCoreChainHeightError -> InvalidAssetLockProofCoreChainHeightException(arguments)
 //                Codes.InvalidAssetLockProofTransactionHeightError -> InvalidAssetLockProofTransactionHeightException(arguments)
-//
+                Codes.InvalidIdentityKeySignatureError -> InvalidIdentityKeySignatureException(arguments)
 //                Codes.InvalidIdentityAssetLockTransactionError -> InvalidIdentityAssetLockTransactionException(arguments)
 //                Codes.InvalidIdentityAssetLockTransactionOutputError -> InvalidIdentityAssetLockTransactionOutputException(arguments)
 //                Codes.InvalidIdentityPublicKeyDataError -> InvalidIdentityPublicKeyDataException(arguments)
@@ -127,6 +131,8 @@ abstract class ConcensusException(message: String) : DPPException(message) {
                 Codes.InvalidIdentityPublicKeyTypeError -> InvalidIdentityPublicKeyTypeException(arguments)
                 Codes.InvalidStateTransitionSignatureError -> InvalidStateTransitionSignatureException()
                 Codes.MissingPublicKeyError -> MissingPublicKeyException(arguments)
+                Codes.PublicKeyIsDisabledError -> PublicKeyIsDisabledException(arguments)
+                Codes.InvalidSignaturePublicKeySecurityLevelError -> InvalidSignaturePublicKeySecurityLevelException(arguments)
                 Codes.BalanceIsNotEnoughError -> BalanceIsNotEnoughException(arguments)
 //                Codes.DataContractAlreadyPresentError -> DataContractAlreadyPresentException(arguments)
 //                Codes.DataTriggerConditionError -> DataTriggerConditionException(arguments)
@@ -140,7 +146,6 @@ abstract class ConcensusException(message: String) : DPPException(message) {
 //                Codes.DuplicateUniqueIndexError -> DuplicateUniqueIndexException(arguments)
                 Codes.InvalidDocumentRevisionError -> InvalidDocumentRevisionException(arguments)
                 Codes.IdentityAlreadyExistsError -> IdentityAlreadyExistsException(arguments)
-                Codes.IdentityPublicKeyAlreadyExistsError -> IdentityPublicKeyAlreadyExistsException(arguments)
                 else -> UnknownConcensusError(code.code, arguments)
             }
         }

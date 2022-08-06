@@ -9,5 +9,5 @@ package org.dashj.platform.dpp.statetransition.errors
 import org.dashj.platform.dpp.statetransition.StateTransition
 import java.lang.Exception
 
-class StateTransitionIsNotSignedError(val stateTransition: StateTransition) :
+class StateTransitionIsNotSignedException(val stateTransition: StateTransition) :
     Exception("State transition is not signed")
