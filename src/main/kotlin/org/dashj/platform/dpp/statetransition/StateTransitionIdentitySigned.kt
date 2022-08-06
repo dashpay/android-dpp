@@ -11,13 +11,17 @@ import org.bitcoinj.core.AddressFormatException
 import org.bitcoinj.core.DumpedPrivateKey
 import org.bitcoinj.core.ECKey
 import org.bitcoinj.core.NetworkParameters
+import org.bitcoinj.crypto.BLSSecretKey
 import org.dashj.platform.dpp.ProtocolVersion
+import org.dashj.platform.dpp.errors.concensus.signature.InvalidIdentityPublicKeyTypeException
+import org.dashj.platform.dpp.errors.concensus.signature.InvalidSignaturePublicKeySecurityLevelException
+import org.dashj.platform.dpp.errors.concensus.signature.PublicKeyIsDisabledException
 import org.dashj.platform.dpp.identity.IdentityPublicKey
 import org.dashj.platform.dpp.statetransition.errors.InvalidSignaturePublicKeyException
 import org.dashj.platform.dpp.statetransition.errors.InvalidSignatureTypeException
 import org.dashj.platform.dpp.statetransition.errors.PublicKeyMismatchError
 import org.dashj.platform.dpp.statetransition.errors.PublicKeySecurityLevelNotMetException
-import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedError
+import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedException
 import org.dashj.platform.dpp.statetransition.errors.WrongPublicKeyPurposeException
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.Converters
@@ -62,30 +66,37 @@ abstract class StateTransitionIdentitySigned(
     }
 
     fun sign(identityPublicKey: IdentityPublicKey, privateKey: ByteArray) {
-        val privateKeyModel: ECKey
         val pubKeyBase: ByteArray
 
         verifyPublicKeyLevelAndPurpose(identityPublicKey)
+        verifyPublicKeyIsEnabled(identityPublicKey)
 
         when (identityPublicKey.type) {
-            IdentityPublicKey.TYPES.ECDSA_SECP256K1 -> {
-                privateKeyModel = ECKey.fromPrivate(privateKey)
+            IdentityPublicKey.Type.ECDSA_SECP256K1 -> {
+                val privateKeyModel = ECKey.fromPrivate(privateKey)
                 pubKeyBase = privateKeyModel.pubKey
                 if (!pubKeyBase.contentEquals(identityPublicKey.data)) {
                     throw InvalidSignaturePublicKeyException(identityPublicKey.data.toBase64())
                 }
                 signByPrivateKey(privateKeyModel)
             }
-            IdentityPublicKey.TYPES.ECDSA_HASH160 -> {
-                privateKeyModel = ECKey.fromPrivate(privateKey)
+            IdentityPublicKey.Type.ECDSA_HASH160 -> {
+                val privateKeyModel = ECKey.fromPrivate(privateKey)
                 pubKeyBase = privateKeyModel.pubKeyHash
                 if (!pubKeyBase.contentEquals(identityPublicKey.data)) {
                     throw InvalidSignaturePublicKeyException(identityPublicKey.data.toBase64())
                 }
                 signByPrivateKey(privateKeyModel)
             }
-            IdentityPublicKey.TYPES.BLS12_381 -> {
-                throw InvalidSignatureTypeException(identityPublicKey.type)
+            IdentityPublicKey.Type.BLS12_381 -> {
+                val privateKeyModel = BLSSecretKey(privateKey)
+                pubKeyBase = privateKeyModel.GetPublicKey().bitcoinSerialize()
+
+                if (!pubKeyBase.contentEquals(identityPublicKey.data)) {
+                    throw InvalidSignaturePublicKeyException(identityPublicKey.data.toBase64())
+                }
+
+                signByPrivateKey(privateKeyModel.toStringHex(), identityPublicKey.type)
             }
             else -> {
                 throw InvalidSignatureTypeException(identityPublicKey.type)
@@ -112,22 +123,26 @@ abstract class StateTransitionIdentitySigned(
 
     fun verifySignature(publicKey: IdentityPublicKey): Boolean {
         verifyPublicKeyLevelAndPurpose(publicKey)
+        verifyPublicKeyIsEnabled(publicKey)
 
         if (signature == null) {
-            throw StateTransitionIsNotSignedError(this)
+            throw StateTransitionIsNotSignedException(this)
         }
 
         if (signaturePublicKeyId != publicKey.id) {
             throw PublicKeyMismatchError(publicKey)
         }
 
-        if (publicKey.type == IdentityPublicKey.TYPES.ECDSA_HASH160) {
-            return verifySignatureByPublicKeyHash(publicKey.data)
+        return when (publicKey.type) {
+            IdentityPublicKey.Type.ECDSA_HASH160 -> verifySignatureByPublicKeyHash(publicKey.data)
+            IdentityPublicKey.Type.ECDSA_SECP256K1 -> {
+                val publicKeyModel = ECKey.fromPublicOnly(publicKey.data)
+                verifySignatureByPublicKey(publicKeyModel)
+            }
+
+            IdentityPublicKey.Type.BLS12_381 -> verifyBLSSignatureByPublicKey(publicKey.data)
+            else -> throw InvalidIdentityPublicKeyTypeException(publicKey.type)
         }
-
-        val publicKeyModel = ECKey.fromPublicOnly(publicKey.data)
-
-        return verifySignatureByPublicKey(publicKeyModel)
     }
 
     /**
@@ -158,6 +173,12 @@ abstract class StateTransitionIdentitySigned(
                 publicKey.purpose,
                 IdentityPublicKey.Purpose.AUTHENTICATION,
             )
+        }
+    }
+
+    private fun verifyPublicKeyIsEnabled(publicKey: IdentityPublicKey) {
+        if (publicKey.disabledAt != null) {
+            throw PublicKeyIsDisabledException(publicKey)
         }
     }
 

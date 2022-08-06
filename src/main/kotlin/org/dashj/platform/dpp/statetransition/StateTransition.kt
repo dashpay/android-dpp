@@ -8,11 +8,20 @@
 package org.dashj.platform.dpp.statetransition
 
 import org.bitcoinj.core.ECKey
+import org.bitcoinj.core.HashSigner
+import org.bitcoinj.core.MasternodeSignature
+import org.bitcoinj.core.Sha256Hash
+import org.bitcoinj.core.SignatureDecodeException
+import org.bitcoinj.crypto.BLSPublicKey
+import org.bitcoinj.crypto.BLSSecretKey
+import org.bitcoinj.crypto.BLSSignature
 import org.dashj.platform.dpp.BaseObject
 import org.dashj.platform.dpp.ProtocolVersion
+import org.dashj.platform.dpp.errors.concensus.signature.InvalidIdentityPublicKeyTypeException
 import org.dashj.platform.dpp.hashTwice
 import org.dashj.platform.dpp.identifier.Identifier
-import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedError
+import org.dashj.platform.dpp.identity.IdentityPublicKey
+import org.dashj.platform.dpp.statetransition.errors.StateTransitionIsNotSignedException
 import org.dashj.platform.dpp.toBase64Padded
 import org.dashj.platform.dpp.toSha256Hash
 import org.dashj.platform.dpp.util.Converters
@@ -20,7 +29,7 @@ import java.security.SignatureException
 
 abstract class StateTransition(
     var signature: ByteArray?,
-    val type: Types,
+    var type: Types,
     protocolVersion: Int = ProtocolVersion.latestVersion
 ) :
     BaseObject(protocolVersion) {
@@ -30,7 +39,8 @@ abstract class StateTransition(
         DOCUMENTS_BATCH(1),
         IDENTITY_CREATE(2),
         IDENTITY_TOP_UP(3),
-        DATA_CONTRACT_UPDATE(4);
+        DATA_CONTRACT_UPDATE(4),
+        IDENTITY_UPDATE(5);
 
         companion object {
             private val values = values()
@@ -101,8 +111,26 @@ abstract class StateTransition(
         return encodeProtocolEntity(serializedData)
     }
 
-    fun signByPrivateKey(privateKey: String) {
-        signByPrivateKey(ECKey.fromPrivate(Converters.fromHex(privateKey)))
+    fun signByPrivateKey(privateKey: String, keyType: IdentityPublicKey.Type) {
+        signByPrivateKey(Converters.byteArrayFromString(privateKey), keyType)
+    }
+    fun signByPrivateKey(privateKey: ByteArray, keyType: IdentityPublicKey.Type) {
+        val data = hash(skipSignature = true)
+
+        when (keyType) {
+            IdentityPublicKey.Type.ECDSA_SECP256K1,
+            IdentityPublicKey.Type.ECDSA_HASH160 -> {
+                val privateKeyModel = ECKey.fromPrivate(privateKey)
+                signature = privateKeyModel.signHash(Sha256Hash.wrap(data))
+            }
+            IdentityPublicKey.Type.BLS12_381 -> {
+                val privateKeyModel = BLSSecretKey(privateKey)
+                val blsSignature = privateKeyModel.Sign(Sha256Hash.wrap(data))
+
+                signature = blsSignature.bitcoinSerialize()
+            }
+            else -> throw InvalidIdentityPublicKeyTypeException(keyType)
+        }
     }
 
     fun signByPrivateKey(privateKey: ECKey) {
@@ -112,9 +140,56 @@ abstract class StateTransition(
         signature = privateKey.signHash(hash)
     }
 
+    fun verifyByPublicKey(publicKey: ByteArray, publicKeyType: IdentityPublicKey.Type): Boolean {
+        return when (publicKeyType) {
+            IdentityPublicKey.Type.ECDSA_SECP256K1 -> verifyECDSASignatureByPublicKey(publicKey)
+            IdentityPublicKey.Type.ECDSA_HASH160 -> verifyESDSAHash160SignatureByPublicKeyHash(publicKey)
+            IdentityPublicKey.Type.BLS12_381 -> verifyBLSSignatureByPublicKey(publicKey)
+            else -> throw InvalidIdentityPublicKeyTypeException(publicKeyType)
+        }
+    }
+
+    fun verifyESDSAHash160SignatureByPublicKeyHash(publicKeyHash: ByteArray): Boolean {
+        if (signature == null) {
+            throw StateTransitionIsNotSignedException(this)
+        }
+        val hash = hash(skipSignature = true)
+        return try {
+            val errorMessage = StringBuilder()
+            HashSigner.verifyHash(Sha256Hash.wrap(hash), publicKeyHash, MasternodeSignature(signature), errorMessage)
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    fun verifyECDSASignatureByPublicKey(publicKey: ByteArray): Boolean {
+        if (signature == null) {
+            throw StateTransitionIsNotSignedException(this)
+        }
+        val hash = hash(skipSignature = true)
+        val publicKeyModel = ECKey.fromPublicOnly(publicKey)
+        return try {
+            publicKeyModel.verify(hash, signature)
+        } catch (e: SignatureDecodeException) {
+            false
+        }
+    }
+    /**
+     * Verify signature with public key
+     */
+    fun verifyBLSSignatureByPublicKey(publicKey: ByteArray): Boolean {
+
+        if (signature == null) {
+            throw StateTransitionIsNotSignedException(this)
+        }
+        val hash = hash(skipSignature = true)
+        val publicKeyModel = BLSPublicKey(publicKey)
+        val blsSignature = BLSSignature(signature)
+        return blsSignature.verifyInsecure(publicKeyModel, Sha256Hash.wrap(hash))
+    }
     fun verifySignatureByPublicKey(publicKey: ECKey): Boolean {
         if (signature == null) {
-            throw StateTransitionIsNotSignedError(this)
+            throw StateTransitionIsNotSignedException(this)
         }
 
         val data = toBuffer(true)
@@ -132,7 +207,7 @@ abstract class StateTransition(
     fun verifySignatureByPublicKeyHash(publicKeyHash: ByteArray): Boolean {
 
         if (signature == null) {
-            throw StateTransitionIsNotSignedError(this)
+            throw StateTransitionIsNotSignedException(this)
         }
 
         val hash = this.toBuffer(true).toSha256Hash()
