@@ -137,6 +137,15 @@ abstract class StateTransitionIdentitySigned(
      */
 
     private fun verifyPublicKeyLevelAndPurpose(publicKey: IdentityPublicKey) {
+        // If state transition requires MASTER security level it must be sign only with MASTER key
+        if (publicKey.isMaster() && getKeySecurityLevelRequirement() != IdentityPublicKey.SecurityLevel.MASTER) {
+            throw InvalidSignaturePublicKeySecurityLevelException(
+                IdentityPublicKey.SecurityLevel.MASTER,
+                this.getKeySecurityLevelRequirement(),
+            )
+        }
+
+        // Otherwise, key security level should be less than MASTER but more or equal than required
         if (getKeySecurityLevelRequirement() < publicKey.securityLevel) {
             throw PublicKeySecurityLevelNotMetException(
                 publicKey.securityLevel,
@@ -144,7 +153,7 @@ abstract class StateTransitionIdentitySigned(
             )
         }
 
-        if (publicKey.purpose !== IdentityPublicKey.Purpose.AUTHENTICATION) {
+        if (publicKey.purpose != IdentityPublicKey.Purpose.AUTHENTICATION) {
             throw WrongPublicKeyPurposeException(
                 publicKey.purpose,
                 IdentityPublicKey.Purpose.AUTHENTICATION,
@@ -159,6 +168,6 @@ abstract class StateTransitionIdentitySigned(
      * @return {number}
      */
     open fun getKeySecurityLevelRequirement(): IdentityPublicKey.SecurityLevel {
-        return IdentityPublicKey.SecurityLevel.MASTER
+        return IdentityPublicKey.SecurityLevel.HIGH
     }
 }

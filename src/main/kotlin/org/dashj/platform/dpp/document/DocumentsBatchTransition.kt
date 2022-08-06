@@ -87,4 +87,34 @@ class DocumentsBatchTransition : StateTransitionIdentitySigned {
     override fun isIdentityStateTransition(): Boolean {
         return false
     }
+
+    /**
+     * Returns minimal key security level that can be used to sign this ST
+     */
+    override fun getKeySecurityLevelRequirement(): IdentityPublicKey.SecurityLevel {
+        val defaultSecurityLevel = IdentityPublicKey.SecurityLevel.HIGH
+
+        // Step 1: Get all document types for the ST
+        // Step 2: Get document schema for every type
+        // If schema has security level, use that, if not, use the default security level
+        // Find the highest level (lowest int value) of all documents - the ST's signature
+        // requirement is the highest level across all documents affected by the ST.
+        val documentTransitions = this.transitions
+        var highestSecurityLevel: IdentityPublicKey.SecurityLevel? = null
+        documentTransitions.forEach { documentTransition ->
+            val documentType = documentTransition.type
+            val dataContract = documentTransition.dataContract
+            val documentSchema = dataContract.getDocumentSchema(documentType)
+
+            val documentKeySecurityLevelRequirement = IdentityPublicKey.SecurityLevel.getByCode(
+                (documentSchema["signatureSecurityLevelRequirement"] as? Int) ?: defaultSecurityLevel.value
+            )
+
+            if (highestSecurityLevel == null || highestSecurityLevel!! > documentKeySecurityLevelRequirement) {
+                highestSecurityLevel = documentKeySecurityLevelRequirement
+            }
+        }
+
+        return highestSecurityLevel!!
+    }
 }
