@@ -7,7 +7,9 @@
 package org.dashj.platform.dpp.document
 
 import org.bitcoinj.core.NetworkParameters
+import org.dashj.platform.dpp.contract.DataContract
 import org.dashj.platform.dpp.identifier.Identifier
+import org.dashj.platform.dpp.identity.IdentityPublicKey
 import org.dashj.platform.dpp.statetransition.StateTransitionIdentitySigned
 import java.lang.IllegalStateException
 
@@ -26,14 +28,31 @@ class DocumentsBatchTransition : StateTransitionIdentitySigned {
             this.transitions = transitions
         }
 
-    constructor(params: NetworkParameters, rawStateTransition: MutableMap<String, Any?>) :
+    constructor(
+        params: NetworkParameters,
+        rawStateTransition: MutableMap<String, Any?>,
+        dataContracts: List<DataContract>
+    ) :
         super(params, rawStateTransition) {
             ownerId = Identifier.from(rawStateTransition["ownerId"])
-            transitions = (rawStateTransition["transitions"] as List<Any?>).map {
-                when (((it as MutableMap<String, Any?>)["\$action"] as Int)) {
-                    DocumentTransition.Action.CREATE.value -> DocumentCreateTransition(it)
-                    DocumentTransition.Action.REPLACE.value -> DocumentReplaceTransition(it)
-                    DocumentTransition.Action.DELETE.value -> DocumentReplaceTransition(it)
+            val dataContractsMap = dataContracts.associateBy({ it.id }, { it })
+            transitions = (rawStateTransition["transitions"] as List<Any?>).map { rawDocumentTransition ->
+                when (((rawDocumentTransition as MutableMap<String, Any?>)["\$action"] as Int)) {
+                    DocumentTransition.Action.CREATE.value -> DocumentCreateTransition(
+                        rawDocumentTransition,
+                        dataContractsMap[Identifier.from(rawDocumentTransition["\$dataContractId"])]!!
+                    )
+
+                    DocumentTransition.Action.REPLACE.value -> DocumentReplaceTransition(
+                        rawDocumentTransition,
+                        dataContractsMap[Identifier.from(rawDocumentTransition["\$dataContractId"])]!!
+                    )
+
+                    DocumentTransition.Action.DELETE.value -> DocumentReplaceTransition(
+                        rawDocumentTransition,
+                        dataContractsMap[Identifier.from(rawDocumentTransition["\$dataContractId"])]!!
+                    )
+
                     else -> throw IllegalStateException("Invalid action")
                 }
             }

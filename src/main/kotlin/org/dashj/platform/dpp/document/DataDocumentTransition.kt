@@ -7,11 +7,14 @@
 
 package org.dashj.platform.dpp.document
 
+import org.dashj.platform.dpp.contract.DataContract
 import org.dashj.platform.dpp.deepCopy
 import org.dashj.platform.dpp.util.Converters
 
-abstract class DataDocumentTransition(rawStateTransition: MutableMap<String, Any?>) :
-    DocumentTransition(rawStateTransition) {
+abstract class DataDocumentTransition(
+    rawStateTransition: MutableMap<String, Any?>,
+    dataContract: DataContract
+) : DocumentTransition(rawStateTransition, dataContract) {
 
     val data: Map<String, Any?>
 

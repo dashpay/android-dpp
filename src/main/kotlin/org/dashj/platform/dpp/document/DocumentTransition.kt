@@ -6,14 +6,15 @@
  */
 package org.dashj.platform.dpp.document
 
+import org.dashj.platform.dpp.contract.DataContract
 import org.dashj.platform.dpp.identifier.Identifier
 
-abstract class DocumentTransition {
+abstract class DocumentTransition(rawStateTransition: MutableMap<String, Any?>, var dataContract: DataContract) {
 
     enum class Action(val value: Int) {
         CREATE(0),
         REPLACE(1),
-        UPDATE(2),
+        // UPDATE(2), reserved
         DELETE(3);
 
         companion object {
@@ -37,7 +38,7 @@ abstract class DocumentTransition {
     val type: String
     var dataContractId: Identifier
 
-    constructor(rawStateTransition: MutableMap<String, Any?>) {
+    init {
         type = rawStateTransition["\$type"] as String
         id = Identifier.from(rawStateTransition["\$id"])
         dataContractId = Identifier.from(rawStateTransition["\$dataContractId"]!!)

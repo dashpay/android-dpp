@@ -6,9 +6,10 @@
  */
 package org.dashj.platform.dpp.document
 
-class DocumentDeleteTransition : DocumentTransition {
+import org.dashj.platform.dpp.contract.DataContract
+
+class DocumentDeleteTransition(rawStateTransition: MutableMap<String, Any?>, dataContract: DataContract) :
+    DocumentTransition(rawStateTransition, dataContract) {
 
     override val action = Action.DELETE
-
-    constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition)
 }

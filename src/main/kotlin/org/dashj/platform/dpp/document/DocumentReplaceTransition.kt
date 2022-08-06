@@ -6,13 +6,16 @@
  */
 package org.dashj.platform.dpp.document
 
-class DocumentReplaceTransition : DataDocumentTransition {
+import org.dashj.platform.dpp.contract.DataContract
+
+class DocumentReplaceTransition(rawStateTransition: MutableMap<String, Any?>, dataContract: DataContract) :
+    DataDocumentTransition(rawStateTransition, dataContract) {
 
     override val action = Action.REPLACE
     var updatedAt: Long?
     var revision: Int
 
-    constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
+    init {
         this.updatedAt = rawStateTransition["\$updatedAt"]?.let { it as Long }
         this.revision = rawStateTransition.remove("\$revision") as Int
     }

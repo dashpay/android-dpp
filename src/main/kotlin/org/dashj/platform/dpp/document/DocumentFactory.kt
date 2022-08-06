@@ -176,6 +176,12 @@ class DocumentFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
             "ownerId" to ownerId,
             "transitions" to rawDocumentTransitions
         )
-        return DocumentsBatchTransition(dpp.getNetworkParameters(), rawBatchTransition)
+
+        val dataContracts = documentsFlattened.map {
+            document ->
+            document.dataContract
+        }
+
+        return DocumentsBatchTransition(dpp.getNetworkParameters(), rawBatchTransition, dataContracts)
     }
 }

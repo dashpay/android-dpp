@@ -7,9 +7,11 @@
 package org.dashj.platform.dpp.document
 
 import org.bitcoinj.core.Base58
+import org.dashj.platform.dpp.contract.DataContract
 import java.lang.IllegalStateException
 
-open class DocumentCreateTransition : DataDocumentTransition {
+open class DocumentCreateTransition(rawStateTransition: MutableMap<String, Any?>, dataContract: DataContract) :
+    DataDocumentTransition(rawStateTransition, dataContract) {
 
     companion object {
         const val INITIAL_REVISION = 1
@@ -20,15 +22,13 @@ open class DocumentCreateTransition : DataDocumentTransition {
     var createdAt: Long?
     var updatedAt: Long?
 
-    constructor(rawStateTransition: MutableMap<String, Any?>) : super(rawStateTransition) {
-
+    init {
         val entropy = rawStateTransition["\$entropy"]
         this.entropy = when (entropy) {
             is ByteArray -> entropy
             is String -> Base58.decode(entropy)
             else -> throw IllegalStateException("entropy is not a ByteArray or String")
         }
-
         this.createdAt = rawStateTransition["\$createdAt"]?.let { it as Long }
         this.updatedAt = rawStateTransition["\$updatedAt"]?.let { it as Long }
     }
