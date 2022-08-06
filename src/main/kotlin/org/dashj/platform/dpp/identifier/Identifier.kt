@@ -9,7 +9,7 @@ package org.dashj.platform.dpp.identifier
 
 import org.bitcoinj.core.Base58
 import org.bitcoinj.core.Sha256Hash
-import org.dashj.platform.dpp.identifier.errors.IdentifierError
+import org.dashj.platform.dpp.identifier.errors.IdentifierException
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.Converters
@@ -57,7 +57,7 @@ data class Identifier(private val buffer: ByteArray) {
 
     init {
         if (buffer.size != IDENTIFIER_LENGTH) {
-            throw IdentifierError("Identifier must be 32 bytes")
+            throw IdentifierException("Identifier must be 32 bytes")
         }
     }
 
