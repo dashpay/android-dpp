@@ -29,7 +29,11 @@ class DriveErrorMetadata(metadata: String) : ErrorMetadata(metadata) {
     val data: Map<String, Any?>
 
     fun getFirstError(): String {
-        return (data["errors"] as List<Map<String, Any?>>).first()["name"] as String
+        return if (data.isNotEmpty()) {
+            (data["errors"] as List<Map<String, Any?>>).first()["name"] as String
+        } else {
+            "No extra error information specified."
+        }
     }
 
     init {
