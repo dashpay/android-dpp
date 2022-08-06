@@ -11,11 +11,12 @@ import com.google.common.base.Preconditions
 import org.dashj.platform.dpp.BaseObject
 import org.dashj.platform.dpp.Metadata
 import org.dashj.platform.dpp.identifier.Identifier
+import kotlin.math.max
 
 class Identity(
     var id: Identifier,
     var balance: Long,
-    var publicKeys: List<IdentityPublicKey>,
+    val publicKeys: MutableList<IdentityPublicKey>,
     val revision: Int,
     protocolVersion: Int
 ) : BaseObject(protocolVersion) {
@@ -26,13 +27,13 @@ class Identity(
     constructor(rawIdentity: Map<String, Any?>) : this(
         Identifier.from(rawIdentity["id"]),
         rawIdentity["balance"].toString().toLong(),
-        (rawIdentity["publicKeys"] as List<Any>).map { IdentityPublicKey(it as Map<String, Any>) },
+        (rawIdentity["publicKeys"] as List<Any>).map { IdentityPublicKey(it as Map<String, Any>) }.toMutableList(),
         rawIdentity["revision"] as Int,
         rawIdentity["protocolVersion"] as Int
     )
 
     constructor(id: Identifier, publicKeys: List<IdentityPublicKey>, revision: Int, protocolVersion: Int) :
-        this(id, 0, publicKeys, revision, protocolVersion)
+        this(id, 0, publicKeys.toMutableList(), revision, protocolVersion)
 
     fun getPublicKeyById(keyId: Int): IdentityPublicKey? {
         Preconditions.checkArgument(keyId >= 0, "keyId ($keyId) must be >= 0")
@@ -67,5 +68,15 @@ class Identity(
     fun reduceBalance(amount: Long): Long {
         balance -= amount
         return balance
+    }
+
+    /**
+     * Get the biggest public key ID
+     * @returns {number}
+     */
+    fun getPublicKeyMaxId(): Int {
+        return publicKeys.fold(-1) { result, publicKey ->
+            max(publicKey.id, result)
+        }
     }
 }

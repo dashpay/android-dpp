@@ -19,6 +19,7 @@ import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.AssetLockProofFactory
 import org.dashj.platform.dpp.util.CreditsConverter.convertSatoshiToCredits
 import org.dashj.platform.dpp.validation.ValidationResult
+import java.util.Date
 
 class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepository) : Factory(dpp, stateRepository) {
 
@@ -47,7 +48,7 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
                 index, it ->
                 IdentityPublicKey(
                     index,
-                    IdentityPublicKey.TYPES.ECDSA_SECP256K1,
+                    IdentityPublicKey.Type.ECDSA_SECP256K1,
                     IdentityPublicKey.Purpose.AUTHENTICATION,
                     IdentityPublicKey.SecurityLevel.MASTER,
                     it.pubKey,
@@ -60,10 +61,9 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
     }
 
     fun create(assetLockProof: AssetLockProof, publicKeyConfigs: List<Map<String, Any>>): Identity {
-        var i = 0
         val identity = Identity(
             assetLockProof.createIdentifier(),
-            publicKeyConfigs.map { publicKey -> IdentityPublicKey(publicKey as Map<String, Any>) },
+            publicKeyConfigs.map { publicKey -> IdentityPublicKey(publicKey) },
             0,
             ProtocolVersion.latestVersion
         )
@@ -128,6 +128,24 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         return IdentityTopUpTransition(dpp.getNetworkParameters(), identityId, assetLock)
     }
 
+    fun createIdentityUpdateTransition(identity: Identity, rawPublicKeys: Map<String, Any>): IdentityUpdateTransition {
+        return createIdentityUpdateTransition(
+            identity,
+            (rawPublicKeys["add"] as? List<Map<String, Any?>>)?.map { pk -> IdentityPublicKey(pk) },
+            rawPublicKeys["disablePublicKeys"] as? List<IdentityPublicKey>
+        )
+    }
+    fun createIdentityUpdateTransition(identity: Identity, publicKeysToAdd: List<IdentityPublicKey>?, publicKeysToDisable: List<IdentityPublicKey>?): IdentityUpdateTransition {
+        return IdentityUpdateTransition(
+            dpp.params,
+            identity.id,
+            identity.revision + 1,
+            publicKeysToAdd,
+            publicKeysToDisable?.map { pk -> pk.id },
+            if (publicKeysToDisable != null) Date().time else null
+        )
+    }
+
     fun applyIdentityCreateStateTransition(stateTransition: IdentityStateTransition): Identity {
         val identityCreateTransition = stateTransition as IdentityCreateTransition
 
@@ -141,7 +159,7 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
         val newIdentity = Identity(
             identityCreateTransition.identityId,
             0,
-            identityCreateTransition.publicKeys,
+            identityCreateTransition.publicKeys.map { it.copy(skipSignature = true) }.toMutableList(),
             0,
             ProtocolVersion.latestVersion
         )

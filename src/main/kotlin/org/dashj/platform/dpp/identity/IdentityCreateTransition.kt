@@ -48,7 +48,7 @@ class IdentityCreateTransition : IdentityStateTransition {
     override fun toObject(skipSignature: Boolean, skipIdentifiersConversion: Boolean): MutableMap<String, Any?> {
         val map = super.toObject(skipSignature, skipIdentifiersConversion)
         map["assetLockProof"] = assetLockProof.toObject()
-        map["publicKeys"] = publicKeys.map { it.toObject() }
+        map["publicKeys"] = publicKeys.map { it.toObject(skipSignature) }
         map.remove("signaturePublicKeyId")
         return map
     }
