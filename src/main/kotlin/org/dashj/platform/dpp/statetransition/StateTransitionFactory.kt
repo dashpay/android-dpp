@@ -33,26 +33,31 @@ class StateTransitionFactory(dpp: DashPlatformProtocol, stateRepository: StateRe
             StateTransition.Types.DATA_CONTRACT_CREATE -> {
                 val rawDataContract = rawStateTransition["dataContract"] as MutableMap<String, Any?>
                 val dataContract = ContractFactory(dpp, stateRepository).create(
-                    Identifier.from(rawDataContract["ownerId"]), rawDataContract
+                    Identifier.from(rawDataContract["ownerId"]),
+                    rawDataContract
                 )
 
                 stateTransition = DataContractCreateTransition(dpp.getNetworkParameters(), dataContract)
             }
             StateTransition.Types.DOCUMENTS_BATCH -> {
-                val dataContracts = (rawStateTransition["transitions"] as List<Map<String, Any?>>).map { documentTransition ->
-                    if (!documentTransition.containsKey("\$dataContractId")) {
-                        throw MissingDataContractIdException(documentTransition)
+                val dataContracts = (rawStateTransition["transitions"] as List<Map<String, Any?>>).map { transition ->
+                    if (!transition.containsKey("\$dataContractId")) {
+                        throw MissingDataContractIdException(transition)
                     }
 
-                    val dataContractId = Identifier.from(documentTransition["\$dataContractId"])
+                    val dataContractId = Identifier.from(transition["\$dataContractId"])
 
                     val dataContract = stateRepository.fetchDataContract(
-                        dataContractId,
+                        dataContractId
                     ) ?: throw DataContractNotPresentException(dataContractId)
 
                     dataContract
                 }
-                stateTransition = DocumentsBatchTransition(dpp.getNetworkParameters(), rawStateTransition, dataContracts)
+                stateTransition = DocumentsBatchTransition(
+                    dpp.getNetworkParameters(),
+                    rawStateTransition,
+                    dataContracts
+                )
             }
             StateTransition.Types.IDENTITY_CREATE -> {
                 stateTransition = IdentityCreateTransition(dpp.getNetworkParameters(), rawStateTransition)

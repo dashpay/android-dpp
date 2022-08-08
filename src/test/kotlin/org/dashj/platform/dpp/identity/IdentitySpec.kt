@@ -137,7 +137,8 @@ class IdentitySpec {
                     mapOf(
                         "id" to 0,
                         "type" to IdentityPublicKey.Type.ECDSA_SECP256K1.value,
-                        "data" to (((rawIdentity["publicKeys"] as List<*>)[0] as Map<*, *>)["data"] as ByteArray).toBase64(),
+                        "data" to (((rawIdentity["publicKeys"] as List<*>)[0] as Map<*, *>)["data"] as ByteArray)
+                            .toBase64(),
                         "purpose" to IdentityPublicKey.Purpose.AUTHENTICATION.value,
                         "securityLevel" to IdentityPublicKey.SecurityLevel.MASTER.value,
                         "readOnly" to false,

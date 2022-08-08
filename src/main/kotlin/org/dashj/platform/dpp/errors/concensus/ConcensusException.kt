@@ -132,7 +132,8 @@ abstract class ConcensusException(message: String) : DPPException(message) {
                 Codes.InvalidStateTransitionSignatureError -> InvalidStateTransitionSignatureException()
                 Codes.MissingPublicKeyError -> MissingPublicKeyException(arguments)
                 Codes.PublicKeyIsDisabledError -> PublicKeyIsDisabledException(arguments)
-                Codes.InvalidSignaturePublicKeySecurityLevelError -> InvalidSignaturePublicKeySecurityLevelException(arguments)
+                Codes.InvalidSignaturePublicKeySecurityLevelError ->
+                    InvalidSignaturePublicKeySecurityLevelException(arguments)
                 Codes.BalanceIsNotEnoughError -> BalanceIsNotEnoughException(arguments)
 //                Codes.DataContractAlreadyPresentError -> DataContractAlreadyPresentException(arguments)
 //                Codes.DataTriggerConditionError -> DataTriggerConditionException(arguments)

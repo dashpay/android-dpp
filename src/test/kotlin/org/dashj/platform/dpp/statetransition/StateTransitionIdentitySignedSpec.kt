@@ -329,21 +329,21 @@ class StateTransitionIdentitySignedSpec {
 
     @Test
     fun `#signByPrivateKey should sign and validate with BLS private key`() {
-        val blsIdentityPublicKey = IdentityPublicKey(
+        /*val blsIdentityPublicKey = IdentityPublicKey(
             identityPublicKey.id,
             IdentityPublicKey.Type.BLS12_381,
             identityPublicKey.purpose,
             identityPublicKey.securityLevel,
             blsPrivateKey.GetPublicKey().bitcoinSerialize(),
             identityPublicKey.readOnly
-        )
+        )*/
 
         stateTransition.signByPrivateKey(blsPrivateKeyHex, IdentityPublicKey.Type.BLS12_381)
 
         assertNotNull(stateTransition.signature)
 
         val isValid = stateTransition.verifyBLSSignatureByPublicKey(
-            blsPrivateKey.GetPublicKey().bitcoinSerialize(),
+            blsPrivateKey.GetPublicKey().bitcoinSerialize()
         )
 
         assertTrue(isValid)
@@ -529,7 +529,7 @@ class StateTransitionIdentitySignedSpec {
     }
 
     @Test
-    fun `#verifyESDSAHash160SignatureByPublicKeyHash should throw an StateTransitionIsNotSignedError error if transition is not signed`() {
+    fun `#verifyESDSAHash160SignatureByPublicKeyHash should throw an StateTransitionIsNotSignedError if tx is not signed`() {
         val publicKey = "dLfavDCp+ARA3O0AXsOFJ0W//mg="
         try {
             stateTransition.verifySignatureByPublicKeyHash(Converters.fromBase64(publicKey))
@@ -553,7 +553,7 @@ class StateTransitionIdentitySignedSpec {
     }
 
     @Test
-    fun `#verifyECDSASignatureByPublicKey should throw an StateTransitionIsNotSignedError error if transition is not signed`() {
+    fun `#verifyECDSASignatureByPublicKey should throw an StateTransitionIsNotSignedError if tx is not signed`() {
         val publicKey = "A1eUrJ7lM6F1m6dbIyk+vXimKfzki+QRMHMwoAmggt6L"
         try {
             stateTransition.verifySignatureByPublicKey(ECKey.fromPublicOnly(Converters.fromBase64(publicKey)))
@@ -582,7 +582,7 @@ class StateTransitionIdentitySignedSpec {
 
     @Test
     fun `#calculateFee should calculate fee`() {
-        val result = stateTransition.calculateFee()
+        // val result = stateTransition.calculateFee()
 
         // val fee = calculateStateTransitionFee(stateTransition)
 

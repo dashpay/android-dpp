@@ -135,7 +135,11 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
             rawPublicKeys["disablePublicKeys"] as? List<IdentityPublicKey>
         )
     }
-    fun createIdentityUpdateTransition(identity: Identity, publicKeysToAdd: List<IdentityPublicKey>?, publicKeysToDisable: List<IdentityPublicKey>?): IdentityUpdateTransition {
+    fun createIdentityUpdateTransition(
+        identity: Identity,
+        publicKeysToAdd: List<IdentityPublicKey>?,
+        publicKeysToDisable: List<IdentityPublicKey>?
+    ): IdentityUpdateTransition {
         return IdentityUpdateTransition(
             dpp.params,
             identity.id,

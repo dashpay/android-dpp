@@ -195,15 +195,6 @@ class IdentityTest {
     }
 
     @Test
-    @Disabled
-    fun verifySignedIdentityTest() {
-        val identityST = Fixtures.getIdentityCreateSTSignedFixture()
-        assertEquals("A6AJAfRJyKuNoNvt33ygYfYh6OIYA8tF1s2BQcRA9RNg", identityST.publicKeys[0].data.toBase64())
-        // TODO: fix the test. after removing isEnabled, this check failed because the test data is no longer valid
-        assertTrue(identityST.verifySignatureByPublicKey(ECKey.fromPublicOnly(identityST.publicKeys[0].data)))
-    }
-
-    @Test
     fun identityRoundTrip() {
         val fromFixture = Fixtures.getIdentityFixtureTwo()
 

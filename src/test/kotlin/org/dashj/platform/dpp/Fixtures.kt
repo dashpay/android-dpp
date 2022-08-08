@@ -40,7 +40,6 @@ import java.io.File
 object Fixtures {
 
     private val ownerId = Identifier.from("4mZmxva49PBb7BE7srw9o3gixvDfj1dAx1K2dmAAauGp")
-    private val contractId = Identifier.from("9rjz23TQ3rA2agxXD56XeDfw63hHJUwuj7joxSBEfRgX")
     private val stateRepository = StateRepositoryMock()
     val dpp = DashPlatformProtocol(stateRepository)
     private val PARAMS = TestNet3Params.get()
@@ -348,14 +347,6 @@ object Fixtures {
         rawStateTransition["publicKeys"] = publicKeysMap
 
         return IdentityCreateTransition(PARAMS, rawStateTransition)
-    }
-
-    fun getIdentityCreateSTSignedFixture(): IdentityCreateTransition {
-        val json = File("src/test/resources/data/identity-transition.json").readText()
-        val jsonObject = JSONObject(json)
-        val rawIdentity = jsonObject.toMap()
-
-        return IdentityCreateTransition(PARAMS, rawIdentity)
     }
 
     fun getDataContractSTSignedFixture(): DataContractCreateTransition {
