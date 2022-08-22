@@ -365,19 +365,6 @@ object Fixtures {
         return StateTransitionFactory(dpp, stateRepository).createStateTransition(rawContractST) as DataContractCreateTransition
     }
 
-    /*fun getDocumentsSTSignedFixture(): DocumentsBatchTransition {
-        val jsonObject = JSONObject(File("src/test/resources/data/documents-transition.json").readText())
-        val rawDocumentST = jsonObject.toMap()
-
-        return DocumentsBatchTransition(PARAMS, rawDocumentST)
-    }
-
-    fun getDocumentsSTSignedFixtureTwo(): DocumentsBatchTransition {
-        val jsonObject = JSONObject(File("src/test/resources/data/documents-transition.json").readText())
-        val rawDocumentST = jsonObject.toMap()
-        return StateTransitionFactory(dpp, stateRepository).createStateTransition(rawDocumentST) as DocumentsBatchTransition
-    }*/
-
     fun getChainAssetLockProofFixture(): ChainAssetLockProof {
         val outPoint = TransactionOutPoint(
             PARAMS,

@@ -329,14 +329,6 @@ class StateTransitionIdentitySignedSpec {
 
     @Test
     fun `#signByPrivateKey should sign and validate with BLS private key`() {
-        /*val blsIdentityPublicKey = IdentityPublicKey(
-            identityPublicKey.id,
-            IdentityPublicKey.Type.BLS12_381,
-            identityPublicKey.purpose,
-            identityPublicKey.securityLevel,
-            blsPrivateKey.GetPublicKey().bitcoinSerialize(),
-            identityPublicKey.readOnly
-        )*/
 
         stateTransition.signByPrivateKey(blsPrivateKeyHex, IdentityPublicKey.Type.BLS12_381)
 
