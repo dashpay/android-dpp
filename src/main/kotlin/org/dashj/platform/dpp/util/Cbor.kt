@@ -113,7 +113,7 @@ object Cbor {
     fun decodeList(payload: ByteArray): List<Any> {
         try {
             val dataItems = CborDecoder.decode(payload)
-            return readJSONArray(dataItems[0] as co.nstant.`in`.cbor.model.Array).filterNotNull()
+            return readJSONArray(dataItems[0] as Array).filterNotNull()
         } catch (e: ClassCastException) {
             throw CborDecodeException("payload is not a List<Any>", e)
         }
@@ -139,29 +139,14 @@ object Cbor {
 
         sortedKeys.forEach { key ->
             val value = obj[key]
-            if (value is Map<*, *>) {
-                writeJSONObject(obj[key] as Map<String, Any?>, builder.putMap(key))
-            } else {
-                if (value is List<*>) {
-                    addJSONArray(value, builder.putArray(key))
-                } else {
-                    addValueToMapBuilder(builder, key, value)
-                }
+            when (value) {
+                is Map<*, *> -> writeJSONObject(obj[key] as Map<String, Any?>, builder.putMap(key))
+                is List<*> -> writeJSONArray(value, builder.putArray(key))
+                else -> addValueToMapBuilder(builder, key, value)
             }
         }
         builder.end()
     }
-
-    /**
-     * CBOR Serialization of an array
-     *
-     * @param obj the array of items to be written
-     * @param arrayBuilder root array builder
-     * @param baos the byte stream that receives the CBOR data
-     * @param innerArrayBuilder the array builder that will receive the items in the array.
-     *        If null, then [arrayBuilder] will the destination of the obj array.
-     * @return
-     */
 
     private fun writeRootJSONArray(
         obj: List<Any?>,
@@ -177,35 +162,12 @@ object Cbor {
     ) {
         obj.forEach { value ->
             when (value) {
-                is Map<*, *> -> {
-                    writeJSONObject(value as Map<String, Any?>, builder.addMap())
-                }
-                is List<*> -> {
-                    addJSONArray(value, builder.addArray())
-                }
-                else -> {
-                    addValueToArrayBuilder(value, builder)
-                }
+                is Map<*, *> -> writeJSONObject(value as Map<String, Any?>, builder.addMap())
+                is List<*> -> writeJSONArray(value, builder.addArray())
+                else -> addValueToArrayBuilder(value, builder)
             }
         }
         builder.end()
-    }
-
-    private fun addJSONArray(
-        value: List<*>,
-        arrayBuilder: ArrayBuilder<*>
-    ) {
-        val count = value.size
-        for (i in 0 until count) {
-            val item = value[i]
-            if (item is Map<*, *>) {
-                writeJSONObject(item as Map<String, Any?>, arrayBuilder.addMap())
-            } else if (item is List<*>) {
-                addJSONArray(item, arrayBuilder.addArray())
-            } else {
-                addValueToArrayBuilder(item, arrayBuilder)
-            }
-        }
     }
 
     private fun addValueToMapBuilder(mapBuilder: MapBuilder<*>, key: String, value: Any?) {
@@ -250,27 +212,26 @@ object Cbor {
         keys.forEach { key ->
             val keyString = (key as UnicodeString).string
             val value = obj[key]
-            if (value is co.nstant.`in`.cbor.model.Map) {
-                resultMap[keyString] = readJSONObject(obj[key] as co.nstant.`in`.cbor.model.Map)
-            } else if (value is co.nstant.`in`.cbor.model.Array) {
-                resultMap[keyString] = readJSONArray(value)
-            } else {
-                addValueFromCborMap(resultMap, keyString, value)
+            when (value) {
+                is co.nstant.`in`.cbor.model.Map -> {
+                    resultMap[keyString] = readJSONObject(obj[key] as co.nstant.`in`.cbor.model.Map)
+                }
+                is Array -> resultMap[keyString] = readJSONArray(value)
+                else -> addValueFromCborMap(resultMap, keyString, value)
             }
         }
 
         return resultMap
     }
 
-    private fun readJSONArray(value: co.nstant.`in`.cbor.model.Array): List<Any?> {
+    private fun readJSONArray(value: Array): List<Any?> {
         val count = value.dataItems.size
         val resultList = ArrayList<Any?>(count)
         for (i in 0 until count) {
-            val item = value.dataItems[i]
-            if (item is co.nstant.`in`.cbor.model.Map) {
-                resultList.add(readJSONObject(item))
-            } else {
-                addValueFromCborArray(item, resultList)
+            when (val item = value.dataItems[i]) {
+                is co.nstant.`in`.cbor.model.Map -> resultList.add(readJSONObject(item))
+                is Array -> resultList.add(readJSONArray(item))
+                else -> addValueFromCborArray(item, resultList)
             }
         }
         return resultList
@@ -340,7 +301,6 @@ object Cbor {
                     else -> throw IllegalArgumentException("Unknown simple datatype")
                 }
             }
-            is Array -> array.add(readJSONArray(value))
             else -> throw java.lang.IllegalArgumentException(value.toString()) // the type is not known
         }
     }
