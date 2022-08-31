@@ -108,6 +108,8 @@ fun Map<String, Any?>.deepCopy(): Map<String, Any?> {
     return copy
 }
 
+// during CBOR encoding, Long and Int are lost, but we would like for them to be considered equal if
+// they have the same value
 fun List<Any>.deepCompare(list: List<Any>): Boolean {
     if (list.size != size)
         return false
@@ -120,6 +122,8 @@ fun List<Any>.deepCompare(list: List<Any>): Boolean {
             thisValue is Map<*, *> && value is Map<*, *> ->
                 (thisValue as Map<String, Any?>).deepCompare(value as Map<String, Any?>)
             thisValue is List<*> && value is List<*> -> (thisValue as List<Any>).deepCompare(value as List<Any>)
+            thisValue is Int && value is Long -> thisValue.toLong() == value
+            thisValue is Long && value is Int -> thisValue == value.toLong()
             else -> thisValue == value
         }
         if (!equals) {
@@ -144,6 +148,8 @@ fun Map<String, Any?>.deepCompare(map: Map<String, Any?>): Boolean {
             thisValue is Map<*, *> && value is Map<*, *> ->
                 (thisValue as Map<String, Any?>).deepCompare(value as Map<String, Any?>)
             thisValue is List<*> && value is List<*> -> (thisValue as List<Any>).deepCompare(value as List<Any>)
+            thisValue is Int && value is Long -> thisValue.toLong() == value
+            thisValue is Long && value is Int -> thisValue == value.toLong()
             else -> thisValue == value
         }
         if (!equals) {

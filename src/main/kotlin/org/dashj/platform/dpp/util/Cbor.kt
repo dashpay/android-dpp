@@ -10,9 +10,9 @@ package org.dashj.platform.dpp.util
 import co.nstant.`in`.cbor.CborBuilder
 import co.nstant.`in`.cbor.CborDecoder
 import co.nstant.`in`.cbor.CborEncoder
-import co.nstant.`in`.cbor.builder.AbstractBuilder
 import co.nstant.`in`.cbor.builder.ArrayBuilder
 import co.nstant.`in`.cbor.builder.MapBuilder
+import co.nstant.`in`.cbor.model.Array
 import co.nstant.`in`.cbor.model.ByteString
 import co.nstant.`in`.cbor.model.DataItem
 import co.nstant.`in`.cbor.model.DoublePrecisionFloat
@@ -21,9 +21,9 @@ import co.nstant.`in`.cbor.model.NegativeInteger
 import co.nstant.`in`.cbor.model.SimpleValue
 import co.nstant.`in`.cbor.model.SimpleValueType
 import co.nstant.`in`.cbor.model.UnicodeString
+import co.nstant.`in`.cbor.model.UnsignedInteger
 import org.dashj.platform.dpp.identifier.Identifier
 import java.io.ByteArrayOutputStream
-import java.lang.IllegalStateException
 import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.util.HashMap
@@ -32,13 +32,15 @@ import java.util.HashMap
  * @author Sam Barbosa
  * @author Eric Britten
  */
-
+/**
+ * Cbor is a utility class that converts Map<String, Any?> and List<Any> to CBOR format and vice versa.
+ */
 object Cbor {
 
     fun encode(obj: Map<String, Any?>): ByteArray {
         val baos = ByteArrayOutputStream()
         val cborBuilder = CborBuilder()
-        val mapBuilder = writeJSONObject(obj, cborBuilder.addMap(), baos)
+        val mapBuilder = writeRootJSONObject(obj, cborBuilder.addMap())
         mapBuilder.build()
         CborEncoder(baos).encode(cborBuilder.build())
         return baos.toByteArray()
@@ -47,8 +49,8 @@ object Cbor {
     fun encode(obj: List<Any>): ByteArray {
         val baos = ByteArrayOutputStream()
         val cborBuilder = CborBuilder()
-        val mapBuilder = writeJSONArray(obj, cborBuilder.addArray(), baos)
-        mapBuilder.build()
+        val arrayBuilder = writeRootJSONArray(obj, cborBuilder.addArray())
+        arrayBuilder.build()
         CborEncoder(baos).encode(cborBuilder.build())
         return baos.toByteArray()
     }
@@ -117,12 +119,18 @@ object Cbor {
         }
     }
 
+    private fun writeRootJSONObject(
+        obj: Map<String, Any?>,
+        mapBuilder: MapBuilder<CborBuilder>
+    ): CborBuilder {
+        writeJSONObject(obj, mapBuilder)
+        return mapBuilder.end()
+    }
+
     private fun writeJSONObject(
         obj: Map<String, Any?>,
-        mapBuilder: MapBuilder<CborBuilder>,
-        baos: ByteArrayOutputStream,
-        innerMapBuilder: AbstractBuilder<*>? = null
-    ): CborBuilder {
+        builder: MapBuilder<*>
+    ) {
         val sortedKeys = ArrayList<String>()
         sortedKeys.addAll(obj.keys)
         sortedKeys.sortWith { a, b ->
@@ -132,136 +140,70 @@ object Cbor {
         sortedKeys.forEach { key ->
             val value = obj[key]
             if (value is Map<*, *>) {
-                if (innerMapBuilder != null && innerMapBuilder is MapBuilder<*>) {
-                    writeJSONObject(obj[key] as Map<String, Any?>, mapBuilder, baos, innerMapBuilder.putMap(key))
-                } else {
-                    writeJSONObject(obj[key] as Map<String, Any?>, mapBuilder, baos, mapBuilder.putMap(key))
-                }
+                writeJSONObject(obj[key] as Map<String, Any?>, builder.putMap(key))
             } else {
-                val builder: AbstractBuilder<*> = innerMapBuilder ?: mapBuilder
                 if (value is List<*>) {
-                    if (builder is MapBuilder<*>) {
-                        addJSONArray(value, mapBuilder, baos, builder.putArray(key))
-                    } else if (builder is ArrayBuilder<*>) {
-                        addJSONArray(value, mapBuilder, baos, builder.addArray())
-                    }
-                } else if (builder is MapBuilder<*>) {
+                    addJSONArray(value, builder.putArray(key))
+                } else {
                     addValueToMapBuilder(builder, key, value)
-                } else if (builder is ArrayBuilder<*>) {
-                    addValueToArrayBuilder(value, builder)
                 }
             }
         }
+        builder.end()
+    }
 
-        return mapBuilder.end()
+    /**
+     * CBOR Serialization of an array
+     *
+     * @param obj the array of items to be written
+     * @param arrayBuilder root array builder
+     * @param baos the byte stream that receives the CBOR data
+     * @param innerArrayBuilder the array builder that will receive the items in the array.
+     *        If null, then [arrayBuilder] will the destination of the obj array.
+     * @return
+     */
+
+    private fun writeRootJSONArray(
+        obj: List<Any?>,
+        arrayBuilder: ArrayBuilder<CborBuilder>
+    ): CborBuilder {
+        writeJSONArray(obj, arrayBuilder)
+        return arrayBuilder.end()
     }
 
     private fun writeJSONArray(
         obj: List<Any?>,
-        mapBuilder: ArrayBuilder<CborBuilder>,
-        baos: ByteArrayOutputStream,
-        innerMapBuilder: AbstractBuilder<*>? = null
-    ): CborBuilder {
-        obj.forEach { value ->
-            if (value is Map<*, *>) {
-                throw IllegalArgumentException("List contains a map")
-            } else {
-                val builder: AbstractBuilder<*> = innerMapBuilder ?: mapBuilder
-                if (value is List<*>) {
-                    if (builder is MapBuilder<*>) {
-                        throw IllegalArgumentException("List contains a map")
-                    } else if (builder is ArrayBuilder<*>) {
-                        addJSONArrayInArray(value, null, baos, builder.addArray())
-                    }
-                } else if (builder is MapBuilder<*>) {
-                    throw IllegalArgumentException("List contains a map")
-                } else if (builder is ArrayBuilder<*>) {
-                    addValueToArrayBuilder(value, builder)
-                }
-            }
-        }
-
-        return mapBuilder.end()
-    }
-
-    /**
-     * Writes an array into an array.  This method does not allow maps to be in arrays
-     * @param obj List<Any?>
-     * @param mapBuilder ArrayBuilder<*>
-     * @param baos ByteArrayOutputStream
-     * @param innerMapBuilder AbstractBuilder<*>?
-     * @return ArrayBuilder<*>
-     */
-    private fun writeJSONArrayInArray(
-        obj: List<Any?>,
-        mapBuilder: ArrayBuilder<*>,
-        baos: ByteArrayOutputStream,
-        innerMapBuilder: AbstractBuilder<*>? = null
-    ): ArrayBuilder<*> {
-        obj.forEach { value ->
-            if (value is Map<*, *>) {
-                throw IllegalArgumentException("List contains a map")
-            } else {
-                val builder: AbstractBuilder<*> = innerMapBuilder ?: mapBuilder
-                if (value is List<*>) {
-                    if (builder is MapBuilder<*>) {
-                        throw IllegalArgumentException("List contains a map")
-                    } else if (builder is ArrayBuilder<*>) {
-                        addJSONArrayInArray(value, null, baos, builder.addArray())
-                    }
-                } else if (builder is MapBuilder<*>) {
-                    throw IllegalArgumentException("List contains a map")
-                } else if (builder is ArrayBuilder<*>) {
-                    addValueToArrayBuilder(value, builder)
-                }
-            }
-        }
-
-        return mapBuilder
-    }
-
-    /**
-     * Adds a JSON array inside a JSON array only.  This does not allow maps to be in arrays
-     * @param value List<*> The array to be added
-     * @param mapBuilder MapBuilder<CborBuilder>?
-     * @param baos ByteArrayOutputStream
-     * @param arrayBuilder ArrayBuilder<*> The array will be added to this builder
-     */
-    private fun addJSONArrayInArray(
-        value: List<*>,
-        mapBuilder: MapBuilder<CborBuilder>?,
-        baos: ByteArrayOutputStream,
-        arrayBuilder: ArrayBuilder<*>
+        builder: ArrayBuilder<*>
     ) {
-        val count = value.size
-        for (i in 0 until count) {
-            when (val item = value[i]) {
+        obj.forEach { value ->
+            when (value) {
                 is Map<*, *> -> {
-                    throw IllegalStateException("List contains a map")
+                    writeJSONObject(value as Map<String, Any?>, builder.addMap())
                 }
                 is List<*> -> {
-                    writeJSONArrayInArray(item, arrayBuilder.addArray(), baos, null)
+                    addJSONArray(value, builder.addArray())
                 }
                 else -> {
-                    addValueToArrayBuilder(item!!, arrayBuilder)
+                    addValueToArrayBuilder(value, builder)
                 }
             }
         }
+        builder.end()
     }
 
     private fun addJSONArray(
         value: List<*>,
-        mapBuilder: MapBuilder<CborBuilder>,
-        baos: ByteArrayOutputStream,
         arrayBuilder: ArrayBuilder<*>
     ) {
         val count = value.size
         for (i in 0 until count) {
             val item = value[i]
             if (item is Map<*, *>) {
-                writeJSONObject(item as Map<String, Any?>, mapBuilder, baos, arrayBuilder.addMap())
+                writeJSONObject(item as Map<String, Any?>, arrayBuilder.addMap())
+            } else if (item is List<*>) {
+                addJSONArray(item, arrayBuilder.addArray())
             } else {
-                addValueToArrayBuilder(item!!, arrayBuilder)
+                addValueToArrayBuilder(item, arrayBuilder)
             }
         }
     }
@@ -272,14 +214,14 @@ object Cbor {
             is Boolean -> mapBuilder.put(key, value)
             is Int -> mapBuilder.put(key, value.toLong())
             is BigInteger -> mapBuilder.put(key, value.toLong())
-            is Number -> mapBuilder.put(key, value.toLong())
             is Float -> mapBuilder.put(key, value)
             is Long -> mapBuilder.put(key, value)
             is Double -> mapBuilder.put(key, value)
             is ByteArray -> mapBuilder.put(key, value)
             is Identifier -> mapBuilder.put(key, value.toBuffer())
+            is Number -> mapBuilder.put(key, value.toLong())
             null -> mapBuilder.put(UnicodeString(key), SimpleValue(SimpleValueType.NULL))
-            else -> mapBuilder.put(key, value.toString()) // ?
+            else -> throw IllegalArgumentException("No converter for $value)")
         }
     }
 
@@ -289,35 +231,31 @@ object Cbor {
             is Boolean -> arrayBuilder.add(value)
             is Int -> arrayBuilder.add(value.toLong())
             is BigInteger -> arrayBuilder.add(value.toLong())
-            is Number -> arrayBuilder.add(value.toLong())
             is Float -> arrayBuilder.add(value)
             is Long -> arrayBuilder.add(value)
             is Double -> arrayBuilder.add(value)
             is ByteArray -> arrayBuilder.add(value)
             is Identifier -> arrayBuilder.add(value.toBuffer())
+            is Number -> arrayBuilder.add(value.toLong())
             null -> arrayBuilder.add(SimpleValue(SimpleValueType.NULL))
-            else -> arrayBuilder.add(value.toString()) // ?
+            else -> throw IllegalArgumentException("No converter for $value")
         }
     }
 
     private fun readJSONObject(obj: co.nstant.`in`.cbor.model.Map): MutableMap<String, Any?> {
         val resultMap = HashMap<String, Any?>()
-        val sortedKeys = ArrayList<DataItem>()
-        sortedKeys.addAll(obj.keys)
+        val keys = ArrayList<DataItem>()
+        keys.addAll(obj.keys)
 
-        sortedKeys.forEach { key ->
+        keys.forEach { key ->
             val keyString = (key as UnicodeString).string
             val value = obj[key]
             if (value is co.nstant.`in`.cbor.model.Map) {
                 resultMap[keyString] = readJSONObject(obj[key] as co.nstant.`in`.cbor.model.Map)
+            } else if (value is co.nstant.`in`.cbor.model.Array) {
+                resultMap[keyString] = readJSONArray(value)
             } else {
-                if (value is co.nstant.`in`.cbor.model.Array) {
-                    resultMap[keyString] = readJSONArray(value)
-                } else {
-                    if (value != null) {
-                        addValueFromCborMap(resultMap, keyString, value)
-                    }
-                }
+                addValueFromCborMap(resultMap, keyString, value)
             }
         }
 
@@ -343,21 +281,21 @@ object Cbor {
             is UnicodeString -> {
                 map[key] = value.string
             }
-            is co.nstant.`in`.cbor.model.Number -> {
-                if (value.value.toLong() < Int.MAX_VALUE) {
+            is NegativeInteger -> {
+                if (value.value.toLong() >= Int.MIN_VALUE) {
                     map[key] = value.value.toInt()
                 } else {
                     map[key] = value.value.toLong()
                 }
             }
-            is HalfPrecisionFloat -> {
-                if (value.value.toLong() > Int.MIN_VALUE) {
+            is UnsignedInteger -> {
+                if (value.value.toLong() <= Int.MAX_VALUE) {
                     map[key] = value.value.toInt()
                 } else {
                     map[key] = value.value.toLong()
                 }
             }
-            is NegativeInteger -> map[key] = value
+            is HalfPrecisionFloat -> map[key] = value.value
             is DoublePrecisionFloat -> map[key] = value.value
             is ByteString -> map[key] = value.bytes
             is SimpleValue -> {
@@ -369,28 +307,28 @@ object Cbor {
                     else -> throw IllegalArgumentException("Unknown simple datatype")
                 }
             }
-            else -> map[key] = value.toString() // ?
+            else -> throw java.lang.IllegalArgumentException(value.toString()) // the type is not known
         }
     }
 
     private fun addValueFromCborArray(value: DataItem, array: ArrayList<Any?>) {
         when (value) {
             is UnicodeString -> array.add(value.string)
-            is co.nstant.`in`.cbor.model.Number -> {
-                if (value.value.toLong() < Int.MAX_VALUE) {
+            is NegativeInteger -> {
+                if (value.value.toLong() >= Int.MIN_VALUE) {
                     array.add(value.value.toLong().toInt())
                 } else {
                     array.add(value.value.toLong())
                 }
             }
-            is HalfPrecisionFloat -> {
-                if (value.value.toLong() > Int.MIN_VALUE) {
-                    array.add(value.value.toInt())
+            is UnsignedInteger -> {
+                if (value.value.toLong() <= Int.MAX_VALUE) {
+                    array.add(value.value.toLong().toInt())
                 } else {
                     array.add(value.value.toLong())
                 }
             }
-            is NegativeInteger -> array.add(value)
+            is HalfPrecisionFloat -> array.add(value.value)
             is DoublePrecisionFloat -> array.add(value.value)
             is ByteString -> array.add(value.bytes)
             is SimpleValue -> {
@@ -402,7 +340,8 @@ object Cbor {
                     else -> throw IllegalArgumentException("Unknown simple datatype")
                 }
             }
-            else -> throw java.lang.IllegalArgumentException(value.toString()) // ?
+            is Array -> array.add(readJSONArray(value))
+            else -> throw java.lang.IllegalArgumentException(value.toString()) // the type is not known
         }
     }
 }
