@@ -19,7 +19,6 @@ import org.dashj.platform.dpp.statetransition.StateTransition
 import org.dashj.platform.dpp.statetransition.errors.PublicKeyMismatchError
 import org.dashj.platform.dpp.toBase64
 import org.dashj.platform.dpp.toHex
-import org.dashj.platform.dpp.toHexString
 import org.dashj.platform.dpp.util.Cbor
 import org.dashj.platform.dpp.util.Converters
 import org.junit.jupiter.api.Assertions.assertArrayEquals
@@ -99,7 +98,7 @@ class IdentityTest {
         val json2 = HashMap<String, Any?>()
 
         json2["protocolVersion"] = 0
-        json2["type"] = StateTransition.Types.DATA_CONTRACT_CREATE
+        json2["type"] = StateTransition.Types.DATA_CONTRACT_CREATE.value
 
         val bytes = Cbor.encode(json)
         val bytes2 = Cbor.encode(json2)
@@ -107,11 +106,11 @@ class IdentityTest {
         assertEquals(
             "a4647479706500697369676e6174757265f66f70726f746f636f6c56657273696f6e00747369676e61747572" +
                 "655075626c69634b65794964f6",
-            bytes.toHexString()
+            bytes.toHex()
         )
         assertEquals(
-            "a2647479706574444154415f434f4e54524143545f4352454154456f70726f746f636f6c56657273696f6e00",
-            bytes2.toHexString()
+            "a26474797065006f70726f746f636f6c56657273696f6e00",
+            bytes2.toHex()
         )
     }
 
