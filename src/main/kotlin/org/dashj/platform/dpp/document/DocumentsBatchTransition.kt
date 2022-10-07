@@ -48,7 +48,7 @@ class DocumentsBatchTransition : StateTransitionIdentitySigned {
                         dataContractsMap[Identifier.from(rawDocumentTransition["\$dataContractId"])]!!
                     )
 
-                    DocumentTransition.Action.DELETE.value -> DocumentReplaceTransition(
+                    DocumentTransition.Action.DELETE.value -> DocumentDeleteTransition(
                         rawDocumentTransition,
                         dataContractsMap[Identifier.from(rawDocumentTransition["\$dataContractId"])]!!
                     )
