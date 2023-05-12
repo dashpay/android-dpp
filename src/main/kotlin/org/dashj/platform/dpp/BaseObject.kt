@@ -7,7 +7,6 @@
 package org.dashj.platform.dpp
 
 import org.bitcoinj.core.Sha256Hash
-import org.bitcoinj.core.Utils
 import org.bitcoinj.core.VarInt
 import org.dashj.platform.dpp.util.Cbor
 

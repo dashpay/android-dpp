@@ -19,7 +19,7 @@ open class Factory(val dpp: DashPlatformProtocol, val stateRepository: StateRepo
     companion object {
         @JvmStatic
         fun decodeProtocolEntity(buffer: ByteArray): Pair<Int, MutableMap<String, Any?>> {
-            val protocolVersionCompact = VarInt(buffer, 0)//Utils.readUint32(buffer, 0).toInt()
+            val protocolVersionCompact = VarInt(buffer, 0)
             val protocolVersion = protocolVersionCompact.value
             val rawEntity = buffer.copyOfRange(protocolVersionCompact.sizeInBytes, buffer.size)
             val rawObject = Cbor.decode(rawEntity)
