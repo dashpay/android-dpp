@@ -8,6 +8,7 @@ package org.dashj.platform.dpp.identity
 
 import org.bitcoinj.core.Sha256Hash
 import org.bitcoinj.core.Utils
+import org.bitcoinj.core.VarInt
 import org.dashj.platform.dpp.Metadata
 import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.toBase64
@@ -98,9 +99,11 @@ class IdentitySpec {
         val identityDataToEncode = identity.toObject().toMutableMap()
         identityDataToEncode.remove("protocolVersion")
         val encoded = Cbor.encode(identityDataToEncode)
-        val buffer = ByteArray(encoded.size + ProtocolVersion.SIZE)
-        Utils.uint32ToByteArrayLE(identity.protocolVersion.toLong(), buffer, 0)
-        System.arraycopy(encoded, 0, buffer, ProtocolVersion.SIZE, encoded.size)
+
+        val protocolVersionCompact = VarInt(identity.protocolVersion.toLong())
+        val buffer = ByteArray(encoded.size + protocolVersionCompact.sizeInBytes)
+        System.arraycopy(protocolVersionCompact.encode(), 0, buffer, 0, protocolVersionCompact.sizeInBytes)
+        System.arraycopy(encoded, 0, buffer, protocolVersionCompact.sizeInBytes, encoded.size)
 
         assertArrayEquals(result, buffer)
     }
@@ -112,10 +115,11 @@ class IdentitySpec {
         val identityDataToEncode = identity.toObject().toMutableMap()
         identityDataToEncode.remove("protocolVersion")
         val encoded = Cbor.encode(identityDataToEncode)
-        val buffer = ByteArray(encoded.size + ProtocolVersion.SIZE)
-        Utils.uint32ToByteArrayLE(identity.protocolVersion.toLong(), buffer, 0)
-        System.arraycopy(encoded, 0, buffer, ProtocolVersion.SIZE, encoded.size)
 
+        val protocolVersionCompact = VarInt(identity.protocolVersion.toLong())
+        val buffer = ByteArray(encoded.size + protocolVersionCompact.sizeInBytes)
+        System.arraycopy(protocolVersionCompact.encode(), 0, buffer, 0, protocolVersionCompact.sizeInBytes)
+        System.arraycopy(encoded, 0, buffer, protocolVersionCompact.sizeInBytes, encoded.size)
         assertArrayEquals(result, Sha256Hash.hashTwice(buffer))
     }
 

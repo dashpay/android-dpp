@@ -137,9 +137,9 @@ class IdentityTest {
 
         val hash = stateTransition.hash()
 
-        assertEquals("60efcd3cdc3676ce9221f4e66435a2a4dce6d4d8e9bfe2817e073aa13bfdcf34", hash.toHex())
+        assertEquals("bdf9cee9cd70f527e0b73ee0b4e7b00b090d4861266bf38e29273e51ce8760e0", hash.toHex())
         assertEquals(
-            "01000000a3647479706500697369676e6174757265f6747369676e61747572655075626c69634b65794964f6",
+            "01a3647479706500697369676e6174757265f6747369676e61747572655075626c69634b65794964f6",
             serializedDataBytes.toHex()
         )
 

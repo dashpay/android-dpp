@@ -6,7 +6,7 @@
  */
 package org.dashj.platform.dpp
 
-import org.bitcoinj.core.Utils
+import org.bitcoinj.core.VarInt
 import org.dashj.platform.dpp.util.Cbor
 
 open class Factory(val dpp: DashPlatformProtocol, val stateRepository: StateRepository) {
@@ -19,10 +19,11 @@ open class Factory(val dpp: DashPlatformProtocol, val stateRepository: StateRepo
     companion object {
         @JvmStatic
         fun decodeProtocolEntity(buffer: ByteArray): Pair<Int, MutableMap<String, Any?>> {
-            val protocolVersion = Utils.readUint32(buffer, 0).toInt()
-            val rawEntity = buffer.copyOfRange(ProtocolVersion.SIZE, buffer.size)
+            val protocolVersionCompact = VarInt(buffer, 0)//Utils.readUint32(buffer, 0).toInt()
+            val protocolVersion = protocolVersionCompact.value
+            val rawEntity = buffer.copyOfRange(protocolVersionCompact.sizeInBytes, buffer.size)
             val rawObject = Cbor.decode(rawEntity)
-            return Pair(protocolVersion, rawObject.toMutableMap())
+            return Pair(protocolVersion.toInt(), rawObject.toMutableMap())
         }
     }
 }
