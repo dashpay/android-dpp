@@ -7,7 +7,7 @@
 package org.dashj.platform.dpp
 
 import org.bitcoinj.core.Sha256Hash
-import org.bitcoinj.core.Utils
+import org.bitcoinj.core.VarInt
 import org.dashj.platform.dpp.util.Cbor
 
 /**
@@ -41,9 +41,11 @@ abstract class BaseObject(var protocolVersion: Int = ProtocolVersion.latestVersi
 
     fun encodeProtocolEntity(payload: Map<String, Any?>): ByteArray {
         val encoded = Cbor.encode(payload)
-        val buffer = ByteArray(encoded.size + ProtocolVersion.SIZE)
-        Utils.uint32ToByteArrayLE(protocolVersion.toLong(), buffer, 0)
-        System.arraycopy(encoded, 0, buffer, ProtocolVersion.SIZE, encoded.size)
+        val protocolVersionCompact = VarInt(protocolVersion.toLong())
+        val buffer = ByteArray(encoded.size + protocolVersionCompact.sizeInBytes)
+
+        System.arraycopy(protocolVersionCompact.encode(), 0, buffer, 0, protocolVersionCompact.sizeInBytes)
+        System.arraycopy(encoded, 0, buffer, protocolVersionCompact.sizeInBytes, encoded.size)
         return buffer
     }
 
