@@ -124,7 +124,13 @@ class IdentityPublicKey(
                 is Boolean -> rawIdentityPublicKey["readOnly"] as Boolean
                 else -> false
             }
-        )
+        ) {
+            when (rawIdentityPublicKey["signature"]) {
+                is String -> signature = Converters.fromBase64(rawIdentityPublicKey["signature"] as String)
+                is ByteArray -> signature = rawIdentityPublicKey["signature"] as ByteArray
+                else -> {}
+            }
+        }
 
     override fun toObject(): Map<String, Any> {
         return toObject(false)
