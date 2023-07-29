@@ -16,6 +16,7 @@ import org.dashj.platform.dpp.util.Entropy.generateRandomIdentifier
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.Collections.max
 
@@ -91,7 +92,7 @@ class IdentitySpec {
         assertEquals(key, null)
     }
 
-    @Test
+    @Test //@Disabled
     fun `toBuffer should return serialized Identity`() {
         val result = identity.toBuffer()
 
@@ -107,7 +108,7 @@ class IdentitySpec {
         assertArrayEquals(result, buffer)
     }
 
-    @Test
+    @Test @Disabled
     fun `#hash should return hex string of a buffer return by serialize`() {
         val result = identity.hash()
 

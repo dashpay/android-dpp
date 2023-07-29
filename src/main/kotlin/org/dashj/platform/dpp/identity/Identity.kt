@@ -8,6 +8,7 @@
 package org.dashj.platform.dpp.identity
 
 import com.google.common.base.Preconditions
+import org.dashj.dpp.DPP
 import org.dashj.platform.dpp.BaseObject
 import org.dashj.platform.dpp.Metadata
 import org.dashj.platform.dpp.identifier.Identifier
@@ -78,5 +79,9 @@ class Identity(
         return publicKeys.fold(-1) { result, publicKey ->
             max(publicKey.id, result)
         }
+    }
+
+    override fun toBuffer(): ByteArray {
+        return DPP.serializeIdentityFromRawObject(toObject())
     }
 }

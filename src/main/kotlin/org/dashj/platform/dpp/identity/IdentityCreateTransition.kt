@@ -7,6 +7,7 @@
 package org.dashj.platform.dpp.identity
 
 import org.bitcoinj.core.NetworkParameters
+import org.dashj.dpp.DPP
 import org.dashj.platform.dpp.ProtocolVersion
 import org.dashj.platform.dpp.identifier.Identifier
 import org.dashj.platform.dpp.statetransition.AssetLockProofFactory
@@ -49,6 +50,7 @@ class IdentityCreateTransition : IdentityStateTransition {
         val map = super.toObject(skipSignature, skipIdentifiersConversion)
         map["assetLockProof"] = assetLockProof.toObject()
         map["publicKeys"] = publicKeys.map { it.toObject(skipSignature) }
+        // not used for Identity Create Transition
         map.remove("signaturePublicKeyId")
         return map
     }
@@ -67,5 +69,9 @@ class IdentityCreateTransition : IdentityStateTransition {
 
     fun getOwnerId(): Identifier {
         return identityId
+    }
+
+    override fun toBuffer(): ByteArray {
+        return DPP.signableBytesIdentityCreateTransition(toObject(false, false))
     }
 }

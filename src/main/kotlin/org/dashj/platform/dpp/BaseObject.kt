@@ -33,7 +33,7 @@ abstract class BaseObject(var protocolVersion: Int = ProtocolVersion.latestVersi
      * Return serialized object
      *
      */
-    fun toBuffer(): ByteArray {
+    open fun toBuffer(): ByteArray {
         val serializedData = toObject().toMutableMap()
         serializedData.remove("protocolVersion")
         return encodeProtocolEntity(serializedData)

@@ -30,6 +30,7 @@ class IdentityPublicKey(
         BLS12_381(1),
         ECDSA_HASH160(2),
         BIP13_SCRIPT_HASH(3),
+        EDSSA_25519_HASH160(4),
         INVALID(30000); // for tests
 
         companion object {
@@ -44,7 +45,9 @@ class IdentityPublicKey(
         AUTHENTICATION(0),
         ENCRYPTION(1),
         DECRYPTION(2),
-        WITHDRAW(3);
+        WITHDRAW(3),
+        SYSTEM(4),
+        VOTING(5);
 
         companion object {
             private val values = values()
