@@ -1,7 +1,7 @@
 buildscript {
     ext.kotlin_version = '1.4.32'
     ext.dashj_version = '19.1-CJ-SNAPSHOT'
-    ext.dpp_version = '0.24-SNAPSHOT'
+    ext.dpp_version = '0.25-SNAPSHOT'
     repositories {
         mavenCentral()
         mavenLocal()
@@ -47,6 +47,7 @@ dependencies {
     implementation "org.dashj:dashj-core:$dashj_version"
     implementation 'com.google.guava:guava:29.0-android'
     implementation 'org.json:json:20190722'
+    implementation 'org.dashj:manual:0.25-SNAPSHOT'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
