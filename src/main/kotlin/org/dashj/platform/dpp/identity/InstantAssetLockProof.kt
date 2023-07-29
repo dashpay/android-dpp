@@ -34,7 +34,7 @@ class InstantAssetLockProof(
                 Converters.byteArrayFromBase64orByteArray(
                     rawAssetLockProof["instantLock"] ?: error("missing instantLock field")
                 ),
-                InstantSendLock.ISLOCK_VERSION // Core 0.17
+                InstantSendLock.ISDLOCK_VERSION // Core 0.17
             )
         )
 

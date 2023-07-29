@@ -268,6 +268,7 @@ object Fixtures {
     fun getInstantAssetLockProofFixture(oneTimePrivateKey: ECKey = ECKey()): InstantAssetLockProof {
         val privateKeyHex = "cSBnVM4xvxarwGQuAfQFwqDg9k5tErHUHzgWsEfD4zdwUasvqRVY"
         val privateKey = DumpedPrivateKey.fromBase58(PARAMS, privateKeyHex).key
+        val oneTimePublicKey = ECKey()
 
         val transaction = Transaction(PARAMS)
         transaction.addInput(
@@ -277,7 +278,8 @@ object Fixtures {
             0, ScriptBuilder.createP2PKHOutputScript(privateKey)
         )
 
-        transaction.addOutput(Coin.valueOf(90000), ScriptBuilder.createCreditBurnOutput(oneTimePrivateKey))
+        transaction.addOutput(Coin.COIN, ScriptBuilder.createCreditBurnOutput(oneTimePrivateKey))
+        transaction.addOutput(Coin.valueOf(5000), oneTimePublicKey)
         transaction.addOutput(Coin.valueOf(5000), ScriptBuilder().op(OP_RETURN).data(byteArrayOf(1, 2, 3)).build())
         transaction.addSignedInput(
             TransactionOutPoint(
@@ -302,6 +304,7 @@ object Fixtures {
                 )
             ),
             transaction.txId,
+            Sha256Hash.wrap("7c30826123d0f29fe4c4a8895d7ba4eb469b1fafa6ad7b23896a1a591766a536"),
             BLSLazySignature(
                 PARAMS,
                 Converters.fromHex(
