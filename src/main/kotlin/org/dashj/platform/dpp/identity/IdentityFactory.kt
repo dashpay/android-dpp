@@ -11,6 +11,7 @@ import org.bitcoinj.core.ECKey
 import org.bitcoinj.core.Transaction
 import org.bitcoinj.core.TransactionOutPoint
 import org.bitcoinj.quorums.InstantSendLock
+import org.dashj.dpp.DPP
 import org.dashj.platform.dpp.DashPlatformProtocol
 import org.dashj.platform.dpp.Factory
 import org.dashj.platform.dpp.ProtocolVersion
@@ -78,7 +79,8 @@ class IdentityFactory(dpp: DashPlatformProtocol, stateRepository: StateRepositor
     }
 
     fun createFromBuffer(payload: ByteArray, options: Options = Options()): Identity {
-        val (protocolVersion, rawIdentity) = decodeProtocolEntity(payload)
+        val payloadCbor = DPP.getIdentityCborFromBincode(payload)
+        val (protocolVersion, rawIdentity) = decodeProtocolEntity(payloadCbor)
         rawIdentity["protocolVersion"] = protocolVersion
         return createFromObject(rawIdentity, options)
     }
