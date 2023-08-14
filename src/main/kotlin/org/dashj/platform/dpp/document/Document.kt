@@ -94,7 +94,7 @@ class Document(rawDocument: Map<String, Any?>, dataContract: DataContract) : Bas
     }
 
     fun get(path: String): Any? {
-        val keys = path.split("/")
+        val keys = path.split('.')
         var value: Any? = data
         for (key in keys) {
             if ((value as Map<String, Any?>).containsKey(key)) {
