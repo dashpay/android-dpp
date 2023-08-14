@@ -36,6 +36,10 @@ open class StateRepositoryMock : StateRepository {
         return null
     }
 
+    override fun fetchIdentityFromPubKeyHash(pubKeyHash: ByteArray): Identity? {
+        TODO("Not yet implemented")
+    }
+
     override fun storeIdentity(identity: Identity) {
         TODO("Not yet implemented")
     }
