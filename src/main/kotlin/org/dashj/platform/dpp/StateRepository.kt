@@ -46,6 +46,8 @@ interface StateRepository {
      */
     fun fetchIdentity(id: Identifier): Identity?
 
+    fun fetchIdentityFromPubKeyHash(pubKeyHash: ByteArray): Identity?
+
     fun storeIdentity(identity: Identity)
 
     fun storeIdentityPublicKeyHashes(identity: Identifier, publicKeyHashes: List<ByteArray>)
